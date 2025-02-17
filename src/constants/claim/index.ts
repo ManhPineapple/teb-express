@@ -1,0 +1,97 @@
+type MapStatusClassName = {
+  [key: number]: { text: string; className: string };
+};
+
+type MapReason = {
+  [key: number]: string;
+};
+
+export const CLAIM_STATUS_APPLYING = 1;
+export const CLAIM_STATUS_PENDING = 2;
+export const CLAIM_STATUS_PROCESSED = 3;
+
+export const CLAIM_STATUS_TEXT: MapStatusClassName = {
+  [CLAIM_STATUS_APPLYING]: {
+    text: "Pending",
+    className: "text-[#3f51b5] bg-[#e6ebf5]",
+  },
+  [CLAIM_STATUS_PENDING]: {
+    text: "Processing",
+    className: "text-[#3f51b5] bg-[#e6ebf5]",
+  },
+  [CLAIM_STATUS_PROCESSED]: {
+    text: "Processed",
+    className: "text-[#3f51b5] bg-[#e6ebf5]",
+  },
+};
+
+export const REASON_CATEGORY_EDIT_ORDER = 1;
+export const REASON_CATEGORY_SHIPPING_FEE_ORDER = 2;
+export const REASON_CATEGORY_NO_CHANGE_STATUS = 3;
+export const REASON_CATEGORY_OTHER = 4;
+export const REASON_CATEGORY_MISSING_FAIL = 5;
+export const REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL = 6;
+export const REASON_CATEGORY_ORDER_SHIPPING_FEE = 7;
+export const REASON_CATEGORY_OTHER_EDIT = 8;
+export const REASON_CATEGORY_SYSTEM = 9;
+
+export const REASON_CATEGORY_EDIT_ORDER_TEXT = "Sửa đơn";
+export const REASON_CATEGORY_SHIPPING_FEE_ORDER_TEXT = "Phí hóa đơn";
+export const REASON_CATEGORY_NO_CHANGE_STATUS_TEXT =
+  "Không cập nhật trạng thái";
+export const REASON_CATEGORY_OTHER_TEXT = "Khác";
+export const REASON_CATEGORY_MISSING_FAIL_TEXT =
+  "Đơn hàng bị thất lạc, hỏng hóc";
+export const REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL_TEXT =
+  "Trễ hành trình, Không cập nhật trạng thái, Hoàn, Hủy";
+export const REASON_CATEGORY_ORDER_SHIPPING_FEE_TEXT =
+  "Hóa Đơn, Phí Vận chuyển";
+export const REASON_CATEGORY_OTHER_EDIT_TEXT = "Thay đổi thông tin đơn hàng";
+export const REASON_CATEGORY_SYSTEM_TEXT = "Hệ thống";
+
+export const MAP_REASON_CATEGORY_TEXT: MapReason = {
+  [REASON_CATEGORY_EDIT_ORDER]: REASON_CATEGORY_EDIT_ORDER_TEXT,
+  [REASON_CATEGORY_SHIPPING_FEE_ORDER]: REASON_CATEGORY_SHIPPING_FEE_ORDER_TEXT,
+  [REASON_CATEGORY_NO_CHANGE_STATUS]: REASON_CATEGORY_NO_CHANGE_STATUS_TEXT,
+  [REASON_CATEGORY_OTHER]: REASON_CATEGORY_OTHER_TEXT,
+  [REASON_CATEGORY_MISSING_FAIL]: REASON_CATEGORY_MISSING_FAIL_TEXT,
+  [REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL]:
+    REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL_TEXT,
+  [REASON_CATEGORY_ORDER_SHIPPING_FEE]: REASON_CATEGORY_ORDER_SHIPPING_FEE_TEXT,
+  [REASON_CATEGORY_OTHER_EDIT]: REASON_CATEGORY_OTHER_EDIT_TEXT,
+  [REASON_CATEGORY_SYSTEM]: REASON_CATEGORY_SYSTEM_TEXT,
+};
+
+export const REASON_CATEGORIES = [
+  {
+    key: REASON_CATEGORY_MISSING_FAIL,
+    name: REASON_CATEGORY_MISSING_FAIL_TEXT,
+  },
+  {
+    key: REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL,
+    name: REASON_CATEGORY_DELAY_STATUS_REFUND_CANCEL_TEXT,
+  },
+  {
+    key: REASON_CATEGORY_ORDER_SHIPPING_FEE,
+    name: REASON_CATEGORY_ORDER_SHIPPING_FEE_TEXT,
+  },
+  {
+    key: REASON_CATEGORY_OTHER_EDIT,
+    name: REASON_CATEGORY_OTHER_EDIT_TEXT,
+  },
+  {
+    key: REASON_CATEGORY_SYSTEM,
+    name: REASON_CATEGORY_SYSTEM_TEXT,
+  },
+  {
+    key: REASON_CATEGORY_OTHER,
+    name: REASON_CATEGORY_OTHER_TEXT,
+  },
+];
+
+export const ROLE_CUSTOMER = "customer";
+export const ROLE_ADMIN = "admin";
+export const ROLE_SUPPORT = "support";
+export const ROLE_ACCOUNTANT = "accountant";
+
+export const CLAIM_ADMIN_REPLY = 1;
