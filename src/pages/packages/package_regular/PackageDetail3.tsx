@@ -28,12 +28,12 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuditLog } from "./components/audit-logs";
-import DeliveryLog from "./components/deliver-logs";
-import { ModalCreateTracking } from "./components/modal-create-tracking/ModalCreateTracking";
-import { ModalCancel } from "./components/modal-package-detail/ModalCancel";
-import ModalUpdatePackages from "./components/modal-update-package/ModalUpdatePackage";
-import PackageTracking from "./components/track";
+import { AuditLog } from "../components/audit-logs";
+import DeliveryLog from "../components/deliver-logs";
+import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
+import { ModalCancel } from "../components/modal-package-detail/ModalCancel";
+import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import PackageTracking from "../components/track";
 import { PackageDetail } from "./PackageDetail";
 
 type RefundFee = {
@@ -73,7 +73,7 @@ type ExtraFee = {
   coupon: any;
 };
 
-export function PD3CQ() {
+export function PD3() {
   const { package_id } = useParams<{ package_id: any }>();
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(
     null
@@ -225,10 +225,8 @@ export function PD3CQ() {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate("/packages-china");
+    navigate("/packages");
   };
-
-  // console.log("aaa:", packageDetail);
 
   const handleDownloadBarcode = async () => {
     const files: any[] = [];
@@ -454,14 +452,6 @@ export function PD3CQ() {
                   {packageDetail?.include_battery ? "Yes" : "No"}
                 </div>
               </div>
-              <div className="grid grid-cols-12 mb-2">
-                <div className="col-span-4 font-normal text-[#626363]">
-                  Custom barcode:
-                </div>
-                <div className="col-span-8">
-                  {packageDetail?.custom_cn_barcode || "N/A"}
-                </div>
-              </div>
             </div>
           </div>
           <div className="">
@@ -535,7 +525,7 @@ export function PD3CQ() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Additional charges:
+                  Peak season fees (Phí mùa cao điểm):
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${sumExtraFee().toFixed(2)}

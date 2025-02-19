@@ -108,7 +108,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <ScrollArea type="always" className="max-h-64">
-                      {product!.map((pd) => (
+                      {product?.map((pd) => (
                         <SelectItem key={pd.id} value={pd.sku}>
                           {pd.sku}
                         </SelectItem>
@@ -183,7 +183,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 };
 
 import { useWatch } from "react-hook-form";
-import { PackageDetail } from "../../PackageDetail";
+import { PackageDetail } from "../../package_regular/PackageDetail";
 
 const CustomLabel: React.FC<ProductFormProps> = ({
   control,
@@ -334,7 +334,7 @@ const ModalUpdatePackages = ({
     values.package_quantity = Number(values.package_quantity);
     values.product_price = Number(values.product_price);
 
-    const packageProducts = values.package_products!.map(
+    const packageProducts = values.package_products?.map(
       (productFormData: any) => {
         const product = listProducts?.find(
           (e) => e.sku === productFormData?.sku
@@ -352,7 +352,7 @@ const ModalUpdatePackages = ({
       }
     );
 
-    values.package_products = packageProducts.filter(
+    values.package_products = packageProducts?.filter(
       (item) => item !== undefined
     );
     try {
@@ -379,7 +379,7 @@ const ModalUpdatePackages = ({
     const currentValues = form.getValues();
     form.setValue(
       "package_products",
-      currentValues.package_products!.map((product, i) =>
+      currentValues.package_products?.map((product, i) =>
         i === index ? null : product
       )
     );
@@ -431,7 +431,7 @@ const ModalUpdatePackages = ({
                           </SelectTrigger>
                           <SelectContent>
                             <ScrollArea type="always" className="max-h-64">
-                              {listServices!.map((service) => (
+                              {listServices?.map((service) => (
                                 <SelectItem
                                   key={service.id}
                                   value={service.name}
@@ -794,7 +794,7 @@ const ModalUpdatePackages = ({
             </div>
             <hr className="my-4" />
             <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-              {/* {form.watch("package_products")!.map((_, index: number) => (
+              {/* {form.watch("package_products")?.map((_, index: number) => (
                 <ProductForm
                   key={uniqueId("PrdForm")}
                   index={index}

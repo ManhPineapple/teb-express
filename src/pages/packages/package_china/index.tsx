@@ -1,20 +1,18 @@
 import { DataTableSkeleton } from "@/components/shared/data-table-skeleton";
 import PageHead from "@/components/shared/page-head";
 import { getCountListPackages } from "@/services/packages";
+import { usePackageStore } from "@/store/tableStore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import PackageTable from "./components/packages-table";
-import { useGetListPackages } from "./queries/queries";
-import { usePackageStore } from "@/store/tableStore";
+import PackageTable from "../components/packages-table";
+import { useGetListPackages } from "../queries/queries";
 
-export default function PackagePage() {
+export default function ChinaPackage() {
   const [count, setCount] = useState<any>({ count: 0 });
   const setPackages = usePackageStore((state) => state.setPackages);
-  // const [showBanner, setShowBanner] = useState<boolean>(false);
-  // const bannerRef = useRef<HTMLDivElement>(null);
+  const service = "CN";
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         const status = searchStatus?.toLowerCase();
@@ -27,7 +25,8 @@ export default function PackagePage() {
           safeStatus,
           startDate,
           endDate,
-          byDate
+          byDate,
+          service
         );
         setCount(countResponse);
       } catch (error) {
@@ -53,7 +52,8 @@ export default function PackagePage() {
     searchStatus,
     startDate,
     endDate,
-    byDate
+    byDate,
+    service
   );
 
   useEffect(() => {
@@ -65,14 +65,6 @@ export default function PackagePage() {
   // const packages = data?.packages;
   const packages = usePackageStore((state) => state.packages);
   const pageCount = Math.ceil(count.count / pageLimit);
-
-  // useEffect(() => {
-  //   const hasVisited = document.cookie.split('; ').find(row => row.startsWith('hasVisited='));
-  //   if (!hasVisited) {
-  //     setShowBanner(true);
-  //     document.cookie = "hasVisited=true; max-age=" + 3 * 24 * 60 * 60; // Set cookie to expire in 3 days
-  //   }
-  // }, []);
 
   if (isLoading) {
     return (
@@ -87,19 +79,6 @@ export default function PackagePage() {
   }
 
   return (
-    // {showBanner && (
-    //   <div ref={bannerRef} className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black bg-opacity-50">
-    //     <div className="relative">
-    //       <button
-    //         onClick={() => setShowBanner(false)}
-    //         className="absolute top-2 right-2 text-white text-[40px] cursor-pointer"
-    //       >
-    //         &times; {/* This represents the close "X" */}
-    //       </button>
-    //       <img src="https://i.ibb.co/7W3k6b7/Thu-ngo-ANan-Bay-ba-n-final-2.png" alt="Banner" className="h-[80vh] w-auto" />
-    //     </div>
-    //   </div>
-    // )}
     <div className="p-5">
       <PageHead title="Orders | Ananbay" />
       <PackageTable

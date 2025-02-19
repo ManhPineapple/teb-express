@@ -4,11 +4,14 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
+import ModalUpdatePackage from "@/components/shared/popup-modal-update";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { PackageDetail } from "./PackageDetail";
-import { getPackagesDetail } from "@/services/packages";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   EXTRA_FEE_CANCEL_LABEL,
   EXTRA_FEE_TYPE_DISCOUNT,
@@ -17,21 +20,18 @@ import {
   PACKAGE_STATUS_CREATED_TEXT,
   PACKAGE_STATUS_PENDING_PICKUP_TEXT,
 } from "@/constants/packages";
+import { getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
 import { ArrowUpRight, Info } from "lucide-react";
-import PackageTracking from "./components/track";
-import { ModalCancel } from "./components/modal-package-detail/ModalCancel";
-import ModalUpdatePackage from "@/components/shared/popup-modal-update";
-import ModalUpdatePackages from "./components/modal-update-package/ModalUpdatePackage";
-import { ModalCreateTracking } from "./components/modal-create-tracking/ModalCreateTracking";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { AuditLog } from "./components/audit-logs";
-import DeliveryLog from "./components/deliver-logs";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { AuditLog } from "../components/audit-logs";
+import DeliveryLog from "../components/deliver-logs";
+import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
+import { ModalCancel } from "../components/modal-package-detail/ModalCancel";
+import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import PackageTracking from "../components/track";
+import { PackageDetail } from "./PackageDetail";
 
 type RefundFee = {
   id: number;

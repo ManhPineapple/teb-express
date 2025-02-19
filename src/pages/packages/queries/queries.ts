@@ -8,7 +8,8 @@ export const useGetListPackages = (
   status: string | undefined,
   startDate: string | undefined,
   endDate: string | undefined,
-  byDate: string | undefined
+  byDate: string | undefined,
+  service: string | undefined
 ) => {
   return useQuery({
     queryKey: ["packages", offset, pageLimit, order_number],
@@ -23,7 +24,8 @@ export const useGetListPackages = (
         safeStatus,
         startDate,
         endDate,
-        byDate
+        byDate,
+        service
       );
     },
   });

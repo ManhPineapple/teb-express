@@ -2,16 +2,16 @@ import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/signin";
 import Bill from "@/pages/bill";
 import BillDetail from "@/pages/bill/bill-detail";
-import ChinaPackage from "@/pages/China";
-import { PackageDetailChina } from "@/pages/China/PackageDetail";
 import ListClaim from "@/pages/claim";
 import { ClaimDetail } from "@/pages/claim/ClaimDetail";
 import LandingPage from "@/pages/landing-page";
 import NotFound from "@/pages/not-found";
 import NotificationPage from "@/pages/notification";
 import Order from "@/pages/order";
-import { PackageReturn } from "@/pages/packages/packages-return";
-import { PD3 } from "@/pages/packages/PD3";
+import ChinaPackage from "@/pages/packages/package_china";
+import PackageDetailChina from "@/pages/packages/package_china/PackageDetail";
+import { PD3 } from "@/pages/packages/package_regular/PackageDetail3";
+import { PackageReturn } from "@/pages/packages/package_regular/packages-return";
 import ListCoupon from "@/pages/settings/coupons/ListCoupon";
 import CustomizeLabel from "@/pages/settings/customize-label/CustomizeLabel";
 import PriceTable from "@/pages/settings/prices/Prices";
@@ -29,7 +29,7 @@ const DashboardLayout = lazy(
 const SignUp = lazy(() => import("@/pages/auth/signup"));
 const Account = lazy(() => import("@/pages/settings/account/Account"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
-const OrderPage = lazy(() => import("@/pages/packages"));
+const OrderPage = lazy(() => import("@/pages/packages/package_regular"));
 
 // ----------------------------------------------------------------------
 
@@ -68,10 +68,6 @@ export default function AppRouter() {
         {
           path: "/package/details/:package_id",
           element: <PD3 />,
-        },
-        {
-          path: "/package-china/details/:package_id",
-          element: <PackageDetailChina />,
         },
         {
           path: "/package-china/details/:package_id",

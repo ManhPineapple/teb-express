@@ -39,7 +39,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
 
 const orderFormSchema = z.object({
-  service: z.string().min(1, { message: "Service is required" }),
+  service: z.string().optional(),
   recipient: z
     .string()
     .min(5, { message: "Recipient is required, at least 5 characters" }),
@@ -78,11 +78,13 @@ const orderFormSchema = z.object({
     }),
   include_battery: z.boolean().optional(),
   package_products: z.array(z.any()).optional(),
-  scan_days: z.string().optional(),
-  custom_url: z.string().optional(),
-  package_name: z.string().optional(),
-  package_quantity: z.string().optional(),
-  product_price: z.string().optional(),
+  // package_name: z.string().optional(),
+  // package_quantity: z.string().optional(),
+  // product_price: z.string().optional(),
+  cn_package_status: z.number().optional(),
+  cn_product_link: z.string().optional(),
+  cn_product_price: z.string().optional(),
+  cn_shipping_fee: z.string().optional(),
   custom_cn_barcode: z.string().optional(),
 });
 
@@ -138,7 +140,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <ScrollArea type="always" className="max-h-64">
-                      {product!.map((pd) => (
+                      {product?.map((pd) => (
                         <SelectItem key={pd.id} value={pd.sku}>
                           {pd.sku}
                         </SelectItem>
@@ -213,9 +215,37 @@ const ProductForm: React.FC<ProductFormProps> = ({
   );
 };
 
-import { useWatch } from "react-hook-form";
-
 const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
+  const [selectedState, setSelectedState] = useState("");
+  const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [cnPackageType, setCnPackageType] = useState<string>("Purchased");
+  const [listServices, setListServices] = useState<Service[] | null>([]);
+  const [listProducts, setListProducts] = useState<Product[] | null>([]);
+
+  useEffect(() => {
+    const fetchPackageService = async () => {
+      try {
+        const data = await getListServices();
+        setListServices(data.services);
+      } catch (error) {
+        /* empty */
+      }
+    };
+
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductList();
+        setListProducts(data.products);
+      } catch (error) {
+        /* empty */
+      }
+    };
+
+    fetchPackageService();
+    fetchProduct();
+  }, []);
+
   const createOrderForm = useForm<OrderFormSchemaType>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
@@ -223,27 +253,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     },
   });
 
-  const productValue = useWatch({
-    control: createOrderForm.control,
-    name: `package_products`,
-  });
-
-  console.log("productValue:", productValue);
-
-  const scanDaysValue = useWatch({
-    control: createOrderForm.control,
-    name: `scan_days`,
-  });
-
-  const handleSKUChange = (field: any, value: string) => {
-    field.onChange(value);
-  };
-
-  const [selectedState, setSelectedState] = useState("");
-  const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleInputChange = (event: any) => {
+  const handleChooseStateInputChange = (event: any) => {
     const value = event.target.value;
     setSelectedState(value);
     if (value.length > 0) {
@@ -284,32 +294,6 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     setFilteredStates([]);
   };
 
-  const [listServices, setListServices] = useState<Service[] | null>([]);
-  const [listProducts, setListProducts] = useState<Product[] | null>([]);
-
-  useEffect(() => {
-    const fetchPackageService = async () => {
-      try {
-        const data = await getListServices();
-        setListServices(data.services);
-      } catch (error) {
-        /* empty */
-      }
-    };
-
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductList();
-        setListProducts(data.products);
-      } catch (error) {
-        /* empty */
-      }
-    };
-
-    fetchPackageService();
-    fetchProduct();
-  }, []);
-
   const addProductForm = () => {
     const currentValues = createOrderForm.getValues();
     createOrderForm.setValue("package_products", [
@@ -322,7 +306,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     const currentValues = createOrderForm.getValues();
     createOrderForm.setValue(
       "package_products",
-      currentValues.package_products!.map((product, i) =>
+      currentValues.package_products?.map((product, i) =>
         i === index ? null : product
       )
     );
@@ -342,8 +326,27 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     values.package_quantity = Number(values.package_quantity);
     //@ts-expect-error ts-such
     values.product_price = Number(values.product_price);
+    //@ts-expect-error ts-such
+    values.cn_product_price = Number(values.cn_product_price);
+    //@ts-expect-error ts-such
+    values.cn_shipping_fee = Number(values.cn_shipping_fee);
 
-    const packageProducts = values.package_products!.map(
+    values.service = values.service || "Express (CN exclusive)";
+
+    if (values.service == "Express (CN exclusive)") {
+      if (cnPackageType == "Purchased") {
+        values.cn_package_status = 3;
+      } else if (
+        cnPackageType == "Pre-purchased"
+      ) {
+        values.cn_package_status = 1;
+      } else {
+        // default cnPackageType value is purchased
+        values.cn_package_status = 3;
+      }
+    }
+
+    const packageProducts = values.package_products?.map(
       (productFormData: any) => {
         const product = listProducts?.find(
           (e) => e.sku === productFormData?.sku
@@ -361,7 +364,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
       }
     );
 
-    values.package_products = packageProducts.filter(
+    values.package_products = packageProducts?.filter(
       (item) => item !== undefined
     );
 
@@ -369,7 +372,6 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
 
     try {
       const result = await createPackage(values);
-      console.log("Order created successfully:", result);
       toast.success("Order created successfully");
       modalClose();
       const { setPackages } = usePackageStore.getState();
@@ -392,7 +394,8 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     }
   };
 
-  const selectedService = createOrderForm.watch("service") || listServices?.[1]?.name;
+  const selectedService =
+    createOrderForm.watch("service") || listServices?.[1]?.name;
 
   return (
     <div className="w-full px-2">
@@ -529,7 +532,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                         className="mt-3 h-11 border rounded-sm focus:outline-none"
                         type="text"
                         value={selectedState}
-                        onChange={handleInputChange}
+                        onChange={handleChooseStateInputChange}
                         placeholder="Nhập tên bang"
                         onKeyDown={(e) =>
                           e.key === "Enter" &&
@@ -730,7 +733,9 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                   <FormItem>
                     <FormControl>
                       <Select
-                        value={field.value?.toString() || listServices?.[1]?.name}
+                        value={
+                          field.value?.toString() || listServices?.[1]?.name
+                        }
                         onValueChange={(value) => {
                           if (value) {
                             field.onChange(value);
@@ -742,7 +747,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                         </SelectTrigger>
                         <SelectContent>
                           <ScrollArea type="always" className="max-h-64">
-                            {listServices!.map((service) => (
+                            {listServices?.map((service) => (
                               <SelectItem key={service.id} value={service.name}>
                                 {service.name === "Saver"
                                   ? "Standard"
@@ -759,26 +764,142 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
               />
               {selectedService === "Express (CN exclusive)" && (
                 <>
-                  <div className="flex mt-10">
-                    <strong className="mr-2">Nhãn Trung Quốc:</strong>
-                  </div>
-                  <FormField
-                    control={createOrderForm.control}
-                    name="custom_cn_barcode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Mã nhãn"
-                            {...field}
-                            className="px-4 py-6 shadow-inner drop-shadow-xl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <Select
+                    defaultValue={cnPackageType}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setCnPackageType(value);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
+                      <SelectValue placeholder="Dịch vụ" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <ScrollArea type="always" className="max-h-64">
+                        <SelectItem
+                          key={"Pre-purchased"}
+                          value={"Pre-purchased"}
+                        >
+                          Hàng nhờ mua
+                        </SelectItem>
+                        <SelectItem key={"Purchased"} value={"Purchased"}>
+                          Hàng đã mua
+                        </SelectItem>
+                      </ScrollArea>
+                    </SelectContent>
+                  </Select>
+
+                  {cnPackageType == "Pre-purchased" && (
+                    <>
+                      <div className="flex mt-10">
+                        <strong className="mr-2">Link sản phẩm</strong>
+                      </div>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="cn_product_link"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Link sản phẩm"
+                                {...field}
+                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex mt-10">
+                        <strong className="mr-2">Giá sản phẩm</strong>
+                      </div>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="cn_product_price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Giá sản phẩm trên web"
+                                {...field}
+                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+
+                  {cnPackageType == "Purchased" && (
+                    <>
+                      <div className="flex mt-10">
+                        <strong className="mr-2">Giá ship</strong>
+                      </div>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="cn_shipping_fee"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Giá ship nhờ trả, bỏ qua nếu đã tự trả"
+                                {...field}
+                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex mt-10">
+                        <strong className="mr-2">Ảnh biên nhận</strong>
+                      </div>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="custom_cn_barcode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Ảnh biên nhận"
+                                {...field}
+                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex mt-10">
+                        <strong className="mr-2">Nhãn Trung Quốc:</strong>
+                      </div>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="custom_cn_barcode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Mã nhãn"
+                                {...field}
+                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -810,7 +931,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                       )
                   )}
               </div>
-              <div className="flex gap-3 my-3">
+              {/* <div className="flex gap-3 my-3">
                 <FormField
                   control={createOrderForm.control}
                   name="package_name"
@@ -899,69 +1020,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Custom Label</strong>
-              </div>
-              <hr className="my-4" />
-              <div className="flex border p-4 shadow-sm gap-x-8">
-                <div className="flex-1 min-w-[25%]">
-                  <FormField
-                    control={createOrderForm.control}
-                    name={`scan_days`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) =>
-                              handleSKUChange(field, value)
-                            }
-                          >
-                            <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                              <SelectValue placeholder="Scan days" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <ScrollArea type="always" className="max-h-64">
-                                <SelectItem value="1">1 day</SelectItem>
-                                <SelectItem value="2">2 days</SelectItem>
-                                <SelectItem value="3">3 days</SelectItem>
-                              </ScrollArea>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-[20%]">
-                  <FormField
-                    control={createOrderForm.control}
-                    name={`custom_url`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            required={!!scanDaysValue}
-                            placeholder="url"
-                            {...field}
-                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
-                            style={{
-                              textOverflow: "ellipsis",
-                              overflow: "hidden",
-                              whiteSpace: "nowrap",
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

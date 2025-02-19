@@ -21,12 +21,12 @@ import { ArrowUpRight, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { AuditLog } from "./components/audit-logs";
-import DeliveryLog from "./components/deliver-logs";
-import { ModalCreateTracking } from "./components/modal-create-tracking/ModalCreateTracking";
-import { ModalCancel } from "./components/modal-package-detail/ModalCancel";
-import ModalUpdatePackages from "./components/modal-update-package/ModalUpdatePackage";
-import PackageTracking from "./components/track";
+import { AuditLog } from "../components/audit-logs";
+import DeliveryLog from "../components/deliver-logs";
+import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
+import { ModalCancel } from "../components/modal-package-detail/ModalCancel";
+import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import PackageTracking from "../components/track";
 
 export type PackageDetail = {
   id: number;
