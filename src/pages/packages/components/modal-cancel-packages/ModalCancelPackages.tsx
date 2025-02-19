@@ -45,8 +45,6 @@ export function ModalCancelPackages({ selectedRowsLabel }: ModalCancelProps) {
         ele.status_string !== PACKAGE_STATUS_PENDING_PICKUP_TEXT
     );
 
-    console.log("selectedInvalid:", selectedInvalid);
-
     if (selectedInvalid.length > 0) {
       let codeSelectedInvalid = selectedInvalid.map((ele) => ele.order_number);
       if (codeSelectedInvalid.length > 3) {
@@ -99,8 +97,6 @@ export function ModalCancelPackages({ selectedRowsLabel }: ModalCancelProps) {
       });
     }
   };
-
-  console.log("selected:", selectedRowsLabel);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

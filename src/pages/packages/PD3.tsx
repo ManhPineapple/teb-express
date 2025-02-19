@@ -228,8 +228,6 @@ export function PD3() {
     navigate("/packages");
   };
 
-  console.log("aaa:", packageDetail);
-
   const handleDownloadBarcode = async () => {
     const files: any[] = [];
     // const selectedItems = selectedRowsLabel.map((x) => ({

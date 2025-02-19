@@ -58,7 +58,6 @@ const DashboardPage: React.FC = () => {
     : new Date();
 
   const formattedStartDate = startDate.toISOString().split("T")[0];
-  console.log("start:", formattedStartDate);
   const formattedEndDate = endDate.toISOString().split("T")[0];
 
   // Function to calculate start and end dates based on selected time
@@ -221,9 +220,6 @@ const DashboardPage: React.FC = () => {
     const m = date.substr(5, 2);
     return `${d}/${m}`;
   };
-
-  // console.log("dataValues:", datavalues);
-  // console.log("days:", days);
 
   const fillData = (datavalues: any, days: string[]) => {
     setChartData({

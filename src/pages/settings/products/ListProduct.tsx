@@ -54,7 +54,6 @@ const ListProductPage: React.FC = () => {
 
   const handleSearch = () => {
     setSearchValue(searchInput);
-    console.log("Searching for:", searchInput);
   };
 
   return (

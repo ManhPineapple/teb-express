@@ -51,7 +51,6 @@ const ImportOrdersForm = ({ modalClose }: { modalClose: () => void }) => {
       setLoading(false);
     }
   };
-  console.log("err:", importErrors);
 
   const handleClose = async () => {
     setResultVisible(false);

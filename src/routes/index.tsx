@@ -3,7 +3,7 @@ import { LoginPage } from "@/pages/auth/signin";
 import Bill from "@/pages/bill";
 import BillDetail from "@/pages/bill/bill-detail";
 import ChinaPackage from "@/pages/China";
-import { PD3CQ } from "@/pages/China/PD3";
+import { PackageDetailChina } from "@/pages/China/PackageDetail";
 import ListClaim from "@/pages/claim";
 import { ClaimDetail } from "@/pages/claim/ClaimDetail";
 import LandingPage from "@/pages/landing-page";
@@ -71,11 +71,11 @@ export default function AppRouter() {
         },
         {
           path: "/package-china/details/:package_id",
-          element: <PD3CQ />,
+          element: <PackageDetailChina />,
         },
         {
           path: "/package-china/details/:package_id",
-          element: <PD3CQ />,
+          element: <PackageDetailChina />,
         },
         {
           path: "/package/return",

@@ -8,8 +8,6 @@ type TFileUploadProps = {
   value: File[];
 };
 export default function FileUpload({ onChange, value }: TFileUploadProps) {
-  console.log('files=>', value);
-
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*' as unknown as Accept,
     onDrop: (acceptedFiles: File[]) => {

@@ -195,8 +195,6 @@ export default function OrdersTable({
       tracking_number: x.tracking_number,
     }));
 
-    console.log("Selected Items:", selectedItems);
-
     const allTrackingNumbersEmpty = selectedItems.every(
       (element) => element.tracking_number === ""
     );
@@ -291,7 +289,6 @@ export default function OrdersTable({
     };
 
     const result = await processPackage(params);
-    console.log("result:", result);
 
     if (!result || !result.success) {
       toast.error(result.message, {
@@ -371,8 +368,6 @@ export default function OrdersTable({
   //     });
   //   }
   // };
-
-  // console.log("selected:", selectedRowsLabel);
 
   return (
     <>
