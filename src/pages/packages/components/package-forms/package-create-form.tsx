@@ -138,7 +138,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <ScrollArea type="always" className="max-h-64">
-                      {product!.map((pd) => (
+                      {product?.map((pd) => (
                         <SelectItem key={pd.id} value={pd.sku}>
                           {pd.sku}
                         </SelectItem>
@@ -322,7 +322,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     const currentValues = createOrderForm.getValues();
     createOrderForm.setValue(
       "package_products",
-      currentValues.package_products!.map((product, i) =>
+      currentValues.package_products?.map((product, i) =>
         i === index ? null : product
       )
     );
@@ -343,7 +343,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
     //@ts-expect-error ts-such
     values.product_price = Number(values.product_price);
 
-    const packageProducts = values.package_products!.map(
+    const packageProducts = values.package_products?.map(
       (productFormData: any) => {
         const product = listProducts?.find(
           (e) => e.sku === productFormData?.sku
@@ -742,7 +742,7 @@ const OrderCreateForm = ({ modalClose }: { modalClose: () => void }) => {
                         </SelectTrigger>
                         <SelectContent>
                           <ScrollArea type="always" className="max-h-64">
-                            {listServices!.map((service) => (
+                            {listServices?.map((service) => (
                               <SelectItem key={service.id} value={service.name}>
                                 {service.name === "Saver"
                                   ? "Standard"

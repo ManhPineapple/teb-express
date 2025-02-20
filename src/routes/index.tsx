@@ -1,6 +1,7 @@
 import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/signin";
 import Bill from "@/pages/bill";
+import BillChina from "@/pages/bill-china";
 import BillDetail from "@/pages/bill/bill-detail";
 import ChinaPackage from "@/pages/China";
 import { PD3CQ } from "@/pages/China/PD3";
@@ -92,6 +93,10 @@ export default function AppRouter() {
         {
           path: "/bill",
           element: <Bill />,
+        },
+        {
+          path: "/bill-china",
+          element: <BillChina />,
         },
         // {
         //   path: "/tracking",
