@@ -14,6 +14,7 @@ import {
   PACKAGE_REFUND_COMPLETE,
   PACKAGE_STATUS_CREATED_TEXT,
   PACKAGE_STATUS_PENDING_PICKUP_TEXT,
+  PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
 import { getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
@@ -28,6 +29,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { packageListTypeChina } from ".";
 import { AuditLog } from "../components/audit-logs";
 import DeliveryLog from "../components/deliver-logs";
 import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
@@ -290,7 +292,9 @@ export default function PackageDetailChina() {
                 </div>
                 <div className="flex hover:text-[#13c2c2]">
                   <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
-                    {currentPackage?.tracking_number ? currentPackage.tracking_number : "N/A"}
+                    {currentPackage?.tracking_number
+                      ? currentPackage.tracking_number
+                      : "N/A"}
                   </span>
                   {currentPackage?.tracking_number && (
                     <ArrowUpRight className="w-4 h-4" />
@@ -327,6 +331,7 @@ export default function PackageDetailChina() {
           </div>
           <div className="flex gap-2">
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
+              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT||
               packageDetail?.status_string ===
                 PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
               <div className="">
@@ -334,13 +339,15 @@ export default function PackageDetailChina() {
               </div>
             )}
 
-            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+            {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
+              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ) && (
               <div className="">
                 <ModalUpdatePackage
                   renderModal={(onClose) => (
                     <ModalUpdatePackages
                       modalClose={onClose}
                       packageDetail={packageDetail}
+                      packageListType={packageListTypeChina}
                     />
                   )}
                 />
@@ -586,12 +593,16 @@ export default function PackageDetailChina() {
               {extraFee && extraFee.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
-                    <div className="col-span-10 text-[#626363]">Service name</div>
+                    <div className="col-span-10 text-[#626363]">
+                      Service name
+                    </div>
                     <div className="col-span-2 text-center">Fee</div>
                   </div>
                   {extraFee.map((extraFee, index) => (
                     <div className="grid grid-cols-12" key={index}>
-                      <div className="col-span-10">{extraFee.extra_fee_types?.name}</div>
+                      <div className="col-span-10">
+                        {extraFee.extra_fee_types?.name}
+                      </div>
                       <div className="col-span-2 text-center">
                         {extraFee.amount}
                       </div>

@@ -1,29 +1,26 @@
 import DataTable from "@/components/shared/data-table";
 import {
-  PACKAGE_STATUS_CREATED_TEXT,
-  PACKAGE_STATUS_PENDING_PICKUP_TEXT,
+  PACKAGE_STATUS_CREATED_TEXT
 } from "@/constants/packages";
 import {
-  cancelPackages,
   fetchBarcodeFile,
   getExportedFile,
-  getListPackages,
-  processPackage,
+  processPackage
 } from "@/services/packages";
+import JsBarcode from "jsbarcode";
 import jsPDF, * as jsPdfLib from "jspdf";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { columns } from "./columns";
 import PackageTabs from "./package-status-tab";
 import PackageTableActions from "./package-table-action";
-import { usePackageStore } from "@/store/tableStore";
-import JsBarcode from "jsbarcode";
 
-type TStudentsTableProps = {
+type TPackagesTableProps = {
   packages: any;
   page: number;
   count: any;
   pageCount: number;
+  packageListType: number;
 };
 
 export type SelectedRowLabel = {
@@ -35,11 +32,12 @@ export type SelectedRowLabel = {
   tracking_number: string;
 };
 
-export default function OrdersTable({
+export default function PackagesTable({
   count,
   packages,
   pageCount,
-}: TStudentsTableProps) {
+  packageListType
+}: TPackagesTableProps) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedRowsLabel, setSelectedRowsLabel] = useState<
     SelectedRowLabel[]
@@ -385,11 +383,12 @@ export default function OrdersTable({
         countSelectedRows={countSelectedRows}
         feeSelectedRows={feeSelectedRows}
         selectedRowsLabel={selectedRowsLabel}
+        packageListType={packageListType}
       />
       <PackageTabs count={count} />
       {packages && (
         <DataTable
-          columns={columns}
+          columns={columns(packageListType)}
           data={packages}
           pageCount={pageCount}
           changeSelectedIds={handleChangeSelectedIds}

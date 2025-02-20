@@ -28,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { packageListTypeRegular } from ".";
 import { AuditLog } from "../components/audit-logs";
 import DeliveryLog from "../components/deliver-logs";
 import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
@@ -379,6 +380,7 @@ export function PD3() {
                     <ModalUpdatePackages
                       modalClose={onClose}
                       packageDetail={packageDetail}
+                      packageListType={packageListTypeRegular}
                     />
                   )}
                 />

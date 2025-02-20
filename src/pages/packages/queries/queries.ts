@@ -9,7 +9,7 @@ export const useGetListPackages = (
   startDate: string | undefined,
   endDate: string | undefined,
   byDate: string | undefined,
-  service: string | undefined
+  service?: string | undefined
 ) => {
   return useQuery({
     queryKey: ["packages", offset, pageLimit, order_number],

@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import PackageTable from "../components/packages-table";
 import { useGetListPackages } from "../queries/queries";
 
+export const packageListTypeRegular = 0;
 export default function PackagePage() {
   const [count, setCount] = useState<any>({ count: 0 });
   const setPackages = usePackageStore((state) => state.setPackages);
@@ -107,6 +108,7 @@ export default function PackagePage() {
         page={page}
         count={count}
         pageCount={pageCount}
+        packageListType={packageListTypeRegular}
       />
     </div>
   );
