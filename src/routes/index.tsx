@@ -10,7 +10,7 @@ import NotificationPage from "@/pages/notification";
 import Order from "@/pages/order";
 import ChinaPackage from "@/pages/packages/package_china";
 import PackageDetailChina from "@/pages/packages/package_china/PackageDetail";
-import { PD3 } from "@/pages/packages/package_regular/PackageDetail3";
+import { PackageDetail } from "@/pages/packages/package_regular/PackageDetail";
 import { PackageReturn } from "@/pages/packages/package_regular/packages-return";
 import ListCoupon from "@/pages/settings/coupons/ListCoupon";
 import CustomizeLabel from "@/pages/settings/customize-label/CustomizeLabel";
@@ -67,7 +67,7 @@ export default function AppRouter() {
         },
         {
           path: "/package/details/:package_id",
-          element: <PD3 />,
+          element: <PackageDetail />,
         },
         {
           path: "/package-china/details/:package_id",

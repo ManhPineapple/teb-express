@@ -21,9 +21,9 @@ import React from "react";
 import { DateRange } from "react-day-picker";
 import { useSearchParams } from "react-router-dom";
 import { ModalCancelPackages } from "../modal-cancel-packages/ModalCancelPackages";
-import { ModalConfirmAddresses } from "../modal-confirm-addresses/ModalConfirmAddresses";
-import ImportOrdersForm from "../package-forms/import-form";
-import OrderCreateForm from "../package-forms/package-create-form";
+import { ModalConfirmAddresses } from "../modal-confirm-address/ModalConfirmAddresses";
+import ImportOrdersForm from "../modal-create-package/import-form";
+import OrderCreateForm from "../modal-create-package/package-create-form";
 
 export default function PackageTableActions({
   handleExport,

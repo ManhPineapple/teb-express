@@ -1,6 +1,6 @@
 import ModalUpdatePackage from "@/components/shared/popup-modal-update";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -17,14 +17,22 @@ import {
 } from "@/constants/packages";
 import { getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
-import { ArrowUpRight, Info } from "lucide-react";
+import JsBarcode from "jsbarcode";
+import {
+  ArrowUpRight,
+  Barcode,
+  CircleArrowLeft,
+  Info,
+  PackageOpen,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { packageListTypeRegular } from ".";
 import { AuditLog } from "../components/audit-logs";
 import DeliveryLog from "../components/deliver-logs";
+import { ModalCancel } from "../components/modal-cancel-packages/ModalCancel";
 import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
-import { ModalCancel } from "../components/modal-package-detail/ModalCancel";
 import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
 import PackageTracking from "../components/track";
 
@@ -110,7 +118,7 @@ type ExtraFee = {
   coupon: any;
 };
 
-export default function PackageDetail() {
+export function PackageDetail() {
   const { package_id } = useParams<{ package_id: any }>();
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(
     null
@@ -118,7 +126,6 @@ export default function PackageDetail() {
   const [refundFee, setRefundFee] = useState<RefundFee[] | null>([]);
   const [extraFee, setExtraFee] = useState<ExtraFee[] | null>([]);
   const [displayDeliverDetail, setDisplayDeliverDetail] = useState(false);
-
   const ids = parseInt(package_id, 10);
 
   useEffect(() => {
@@ -177,12 +184,12 @@ export default function PackageDetail() {
   const sumExtraFee = () => {
     let amount = 0;
 
-    if (
-      packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT &&
-      !isPkgExceedNotEstimate()
-    ) {
-      amount += calculateFee(packageDetail.weight);
-    }
+    // if (
+    //   packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT &&
+    //   !isPkgExceedNotEstimate()
+    // ) {
+    //   amount = 0.5;
+    // }
 
     amount += extraFees().reduce((total, v) => {
       if (
@@ -260,439 +267,471 @@ export default function PackageDetail() {
     return Math.ceil(timeInMillisec / (1000 * 60 * 60 * 24));
   };
 
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate("/packages");
+  };
+
+  const handleDownloadBarcode = async () => {
+    const files: any[] = [];
+    // const selectedItems = selectedRowsLabel.map((x) => ({
+    //   order_number: x.order_number,
+    //   code: x.code,
+    //   tracking_number: x.tracking_number,
+    // }));
+
+    // console.log("Selected Items:", selectedItems);
+
+    // const allTrackingNumbersEmpty = selectedItems.every(
+    //   (element) => element.tracking_number === ""
+    // );
+
+    // if (allTrackingNumbersEmpty) {
+    //   toast.error("The selected order has no barcode!", {
+    //     autoClose: 3000,
+    //   });
+    //   return;
+    // }
+
+    try {
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, packageDetail!.code_package, {
+        format: "CODE128",
+        displayValue: true,
+        fontSize: 8,
+        height: 50,
+        width: 0.8,
+      });
+
+      const imageDataUrl = canvas.toDataURL("image/png");
+
+      files.push({
+        fileName: `${packageDetail?.order_number || "barcode"}.png`,
+        imageDataUrl,
+      });
+    } catch (error) {
+      console.error("Error generating barcode:", error);
+      toast.error("Error generating barcode", {
+        autoClose: 3000,
+      });
+    }
+
+    files.forEach(({ fileName, imageDataUrl }) => {
+      const link = document.createElement("a");
+      link.href = imageDataUrl;
+      link.download = fileName;
+      link.click();
+    });
+
+    if (files.length > 0) {
+      toast.success("Barcodes downloaded successfully!", {
+        autoClose: 3000,
+      });
+    } else {
+      toast.error("No barcodes generated!", {
+        autoClose: 3000,
+      });
+    }
+  };
+
   return (
-    <div className="h-max relative max-xl:h-max pb-5">
-      <div className="mb-2 bg-[#fff] p-6 flex gap-10 justify-between max-sm:flex-wrap">
-        <div className="flex gap-10 max-sm:flex-wrap">
-          <div>
-            <div className="text-sm font-normal text-[#626363]">
-              Code package:
+    <div className="max-w-full rounded-lg h-full">
+      <div className="p-3 px-6">
+        <div className="sm:flex justify-between">
+          <div className="flex gap-10 max-sm:flex-wrap max-sm:mb-3">
+            <div className="flex justify-between">
+              <CircleArrowLeft
+                className="absolute top-5 cursor-pointer"
+                onClick={handleBackClick}
+              />
+              <div className="ml-[30px]">
+                <div className="text-sm font-normal text-[#626363]">
+                  Code package:
+                </div>
+                <span className="text-base font-bold">
+                  {packageDetail?.code_package
+                    ? packageDetail.code_package
+                    : "N/A"}
+                </span>
+              </div>
             </div>
-            <span className="text-base font-bold">
-              {packageDetail?.code_package ? packageDetail.code_package : "N/A"}
-            </span>
-          </div>
-          <div>
-            <div className="text-sm font-normal text-[#626363]">Service:</div>
-            <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
-              {packageDetail?.service_name}
-            </span>
-          </div>
-          {packageDetail?.tracking_number ? (
-            <PackageTracking current={current} />
-          ) : (
+            <div>
+              <div className="text-sm font-normal text-[#626363]">Service:</div>
+              <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
+                {packageDetail?.service_name === "Saver"
+                  ? "Standard"
+                  : packageDetail?.service_name}
+              </span>
+            </div>
+            {packageDetail?.tracking_number ? (
+              <PackageTracking current={current} />
+            ) : (
+              <div>
+                <div className="text-sm font-normal text-[#626363]">
+                  Last mile tracking:
+                </div>
+                <div className="flex hover:text-[#13c2c2]">
+                  <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
+                    {current?.tracking_number ? current.tracking_number : "N/A"}
+                  </span>
+                  {current?.tracking_number && (
+                    <ArrowUpRight className="w-4 h-4" />
+                  )}
+                </div>
+              </div>
+            )}
             <div>
               <div className="text-sm font-normal text-[#626363]">
-                Last mile tracking:
+                Created date:
               </div>
-              <div className="flex hover:text-[#13c2c2]">
-                <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
-                  {current?.tracking_number ? current.tracking_number : "N/A"}
-                </span>
-                {current?.tracking_number && (
-                  <ArrowUpRight className="w-4 h-4" />
-                )}
-              </div>
+              <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
+                {packageDetail?.created_at
+                  ? format(
+                      new Date(packageDetail.created_at),
+                      "dd/MM/yyyy - HH:mm:ss"
+                    )
+                  : "N/A"}
+              </span>
             </div>
-          )}
-          <div>
-            <div className="text-sm font-normal text-[#626363]">
-              Created date:
-            </div>
-            <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
-              {packageDetail?.created_at
-                ? format(
-                    new Date(packageDetail.created_at),
-                    "dd/MM/yyyy - HH:mm:ss"
-                  )
-                : "N/A"}
-            </span>
-          </div>
-          <div>
-            <div className="text-sm font-normal text-[#626363]">Status:</div>
-            <span
-              className={`text-base font-medium px-2 p-1 rounded-2xl capitalize ${
-                packageDetail?.status_string
-                  ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
-                      .className
-                  : "N/A"
-              }`}
-            >
-              {packageDetail?.status_string}
-            </span>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
-            packageDetail?.status_string ===
-              PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
-            <div className="">
-              <ModalCancel ids={[ids]} />
-            </div>
-          )}
-
-          {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
-            <div className="">
-              <ModalUpdatePackage
-                renderModal={(onClose) => (
-                  <ModalUpdatePackages
-                    modalClose={onClose}
-                    packageDetail={packageDetail}
-                  />
-                )}
-              />
-            </div>
-          )}
-
-          {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
-            <div className="">
-              <ModalCreateTracking sumFee={sumFee} />
-            </div>
-          )}
-        </div>
-      </div>
-      <Separator />
-
-      <div className="px-5 grid xl:grid-cols-3 gap-5 max-sm:grid-cols-1 mt-3">
-        <div>
-          <div className="border-b pb-3">Fee:</div>
-          <div className="flex justify-between">
-            <div className="total-title font-medium text-[#aaabab]">
-              Delivery fee:
-            </div>
-            <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-              ${packageDetail?.shipping_fee}
-            </div>
-          </div>
-          <div className="flex justify-between mt-3">
-            <div className="total-title font-medium text-[#aaabab]">
-              Peak season fees (Phí mùa cao điểm):
-            </div>
-            <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-              ${sumExtraFee().toFixed(2)}
-            </span>
-          </div>
-          <div className="flex justify-between mt-3">
-            <div className="total-title font-medium text-[#aaabab]">
-              Discounts:
-            </div>
-            <div className="flex">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="pt-1.5" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-sm">Discount by weight</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                ${discount().toFixed(2)}
+            <div>
+              <div className="text-sm font-normal text-[#626363]">Status:</div>
+              <span
+                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${
+                  packageDetail?.status_string
+                    ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
+                        .className
+                    : "N/A"
+                }`}
+              >
+                {packageDetail?.status_string}
               </span>
             </div>
           </div>
-          {refundFee!.length > 0 && (
-            <div className=" mt-[15px]">
+          <div className="flex gap-2">
+            {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
+              packageDetail?.status_string ===
+                PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
+              <div className="">
+                <ModalCancel ids={[ids]} />
+              </div>
+            )}
+
+            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+              <div className="">
+                <ModalUpdatePackage
+                  renderModal={(onClose) => (
+                    <ModalUpdatePackages
+                      modalClose={onClose}
+                      packageDetail={packageDetail}
+                      packageListType={packageListTypeRegular}
+                    />
+                  )}
+                />
+              </div>
+            )}
+
+            <Button
+              className="text-xs md:text-sm bg-[#8D181B]"
+              onClick={() => handleDownloadBarcode()}
+              disabled={!packageDetail?.tracking_number}
+            >
+              <Barcode className="mr-2 h-4 w-4" /> Download Barcode
+            </Button>
+
+            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+              <div className="">
+                <ModalCreateTracking sumFee={sumFee} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div className="grid grid-cols-12 max-xl:grid-cols-1">
+        <div className="grid grid-cols-2 xl:col-span-7 max-sm:grid-cols-1">
+          <div className="">
+            <div className=" sm:h-[200px] items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold ">Order Details:</div>
+              <div className="grid grid-cols-12 my-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Detail:
+                </div>
+                <div className="col-span-8"> {packageDetail?.detail}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Order number:
+                </div>
+                <div className="col-span-8">{packageDetail?.order_number}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Weight:
+                </div>
+                <div className="col-span-8">{packageDetail?.weight} gram</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Length:
+                </div>
+                <div className="col-span-8"> {packageDetail?.length} cm</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Width:
+                </div>
+                <div className="col-span-8"> {packageDetail?.width} cm</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Height:
+                </div>
+                <div className="col-span-8"> {packageDetail?.height} cm</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Battery:
+                </div>
+                <div className="col-span-8">
+                  {packageDetail?.include_battery ? "Yes" : "No"}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="">
+            <div className=" h-full items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold">Recipient:</div>
+              <div className="grid grid-cols-12 my-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Full Name:
+                </div>
+                <div className="col-span-8"> {packageDetail?.recipient}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Phone:
+                </div>
+                <div className="col-span-8"> {packageDetail?.phone_number}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Address:
+                </div>
+                <div className="col-span-8"> {packageDetail?.address_1}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Address 2:
+                </div>
+                <div className="col-span-8"> {packageDetail?.address_2}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  City:
+                </div>
+                <div className="col-span-8"> {packageDetail?.city}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  State Code:
+                </div>
+                <div className="col-span-8"> {packageDetail?.state_code}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Zip Code:
+                </div>
+                <div className="col-span-8"> {packageDetail?.zipcode}</div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Country Code:
+                </div>
+                <div className="col-span-8">{packageDetail?.country_code}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-5 mt-2 mx-5">
+          <Card className="max-w-screen">
+            <CardHeader>
+              <CardTitle className="border-b pb-3">Fee:</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Refund fee:
+                  Delivery fee:
                 </div>
                 <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${sumRefundFee()}
+                  ${packageDetail?.shipping_fee}
                 </div>
               </div>
-              {/* <div className="">
-                  {isAlreadyRefunded() ? (
-                    <span className="refund-txt refunded"> */}
-              {/* <img
-                  src={checkSvg}
-                  style={{ marginTop: "-3px" }}
-                  alt="Check mark"
-                /> */}
-              {/* Đã hoàn vào ví
-                    </span>
-                  ) : (
-                    <span className="waiting_refund flex bg-[#f6f7f7] text-[#898a8a] p-1.5 rounded-3xl text-sm">
-                      <Clock className="w-4 h-5" /> Estimated time:
-                      <strong>
-                        {getDateDiff(packageDetail?.estimate_date_process)} days
-                      </strong>
-                    </span>
-                  )}
-                </div> */}
+              <div className="flex justify-between mt-3">
+                <div className="total-title font-medium text-[#aaabab]">
+                  Peak season fees (Phí mùa cao điểm):
+                </div>
+                <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
+                  ${sumExtraFee().toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between mt-3">
+                <div className="total-title font-medium text-[#aaabab]">
+                  Discounts:
+                </div>
+                <div className="flex">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="pt-1.5" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-sm">Discount by weight</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
+                    ${discount().toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              {refundFee!.length > 0 && (
+                <div className=" mt-[15px]">
+                  <div className="flex justify-between">
+                    <div className="total-title font-medium text-[#aaabab]">
+                      Refund fee:
+                    </div>
+                    <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
+                      ${sumRefundFee()}
+                    </div>
+                  </div>
+                  {/* <div className="">
+                    {isAlreadyRefunded() ? (
+                      <span className="refund-txt refunded"> */}
+                  {/* <img
+                    src={checkSvg}
+                    style={{ marginTop: "-3px" }}
+                    alt="Check mark"
+                  /> */}
+                  {/* Đã hoàn vào ví
+                      </span>
+                    ) : (
+                      <span className="waiting_refund flex bg-[#f6f7f7] text-[#898a8a] p-1.5 rounded-3xl text-sm">
+                        <Clock className="w-4 h-5" /> Estimated time:
+                        <strong>
+                          {getDateDiff(packageDetail?.estimate_date_process)} days
+                        </strong>
+                      </span>
+                    )}
+                  </div> */}
+                </div>
+              )}
+              <hr className="mt-5" />
+              <div className="total mt-3 flex justify-between">
+                <div className="total-title font-medium text-[#aaabab]">
+                  Total fee:
+                </div>
+                <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
+                  ${sumFee().toFixed(2)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      <div className="grid grid-cols-12 max-xl:grid-cols-1">
+        <div className="col-span-7">
+          <div className="p-6">
+            <div className="max-xl:mb-5 mt-5">
+              <Card className="h-full">
+                <CardHeader className="">
+                  <div>
+                    <div className="flex gap-5 border-b">
+                      <button
+                        className={`pb-3 ${!displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
+                        onClick={() => setDisplayDeliverDetail(false)}
+                      >
+                        Deliver order
+                      </button>
+                      <button
+                        className={`pb-3 ${displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
+                        onClick={() => setDisplayDeliverDetail(true)}
+                      >
+                        Order history
+                      </button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {displayDeliverDetail ? <AuditLog /> : <DeliveryLog />}
+                </CardContent>
+              </Card>
             </div>
-          )}
-          <hr className="mt-5" />
-          <div className="total mt-3 flex justify-between">
-            <div className="total-title font-medium text-[#aaabab]">
-              Total fee:
-            </div>
-            <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
-              ${sumFee().toFixed(2)}
-            </span>
           </div>
         </div>
 
-        <div className="col-span-2 max-sm:grid-cols-1">
-          <div className="grid grid-cols-2 gap-5 max-sm:grid-cols-1">
-            <div>
-              <div className="border-b pb-3">Order Details:</div>
-              <div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Detail:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.detail}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Order number:
-                  </div>
-                  <div className="col-span-8">
-                    {packageDetail?.order_number}
-                  </div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Weight:
-                  </div>
-                  <div className="col-span-8">{packageDetail?.weight} gram</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Length:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.length} cm</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Width:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.width} cm</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Height:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.height} cm</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Battery:
-                  </div>
-                  <div className="col-span-8">
-                    {packageDetail?.include_battery ? "Yes" : "No"}
-                  </div>
-                </div>
+        <div className="col-span-5">
+          <div className="">
+            <div className=" h-full items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold">
+                Product Information:
               </div>
-            </div>
-
-            <div>
-              <div className="border-b pb-3">Recipient:</div>
-              <div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Full Name:
+              {packageDetail?.package_products &&
+              packageDetail?.package_products?.length > 0 ? (
+                <div className="mt-3">
+                  <div className="grid grid-cols-12 mb-5">
+                    <div className="col-span-5 text-[#626363]">SKU</div>
+                    <div className="col-span-5 text-[#37393e]">Name</div>
+                    <div className="col-span-2">Quantity</div>
                   </div>
-                  <div className="col-span-8"> {packageDetail?.recipient}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Phone:
-                  </div>
-                  <div className="col-span-8">
-                    {packageDetail?.phone_number}
-                  </div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Address:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.address_1}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Address2:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.address_2}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    City:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.city}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    State Code:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.state_code}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Zip Code:
-                  </div>
-                  <div className="col-span-8"> {packageDetail?.zipcode}</div>
-                </div>
-                <div className="grid grid-cols-12 mb-2">
-                  <div className="col-span-4 font-normal text-[#626363]">
-                    Country Code:
-                  </div>
-                  <div className="col-span-8">
-                    {packageDetail?.country_code}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <Card className="">
-              <CardHeader>
-                <CardTitle className="border-b pb-3">Help & Claims:</CardTitle>
-              </CardHeader>
-              <CardContent></CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="border-b pb-3">
-                  Product Information:
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {packageDetail?.package_products &&
-                  packageDetail?.package_products?.length > 0 && (
-                    <div>
-                      <div className="grid grid-cols-12 mb-5">
-                        <div className="col-span-5 text-[#626363]">SKU</div>
-                        <div className="col-span-5 text-[#37393e]">Name</div>
-                        <div className="col-span-2">Quantity</div>
+                  {packageDetail?.package_products.map((product, index) => (
+                    <div className="grid grid-cols-12" key={index}>
+                      <Link
+                        to={`/setting/products?search=${product.sku}`}
+                        className="col-span-5"
+                      >
+                        <div className="text-[#0554f2]">{product.sku}</div>
+                      </Link>
+                      <div className="col-span-5">{product.name}</div>
+                      <div className="col-span-2 text-center">
+                        {product.quantity}
                       </div>
-                      {packageDetail?.package_products.map((product, index) => (
-                        <div className="grid grid-cols-12" key={index}>
-                          <Link
-                            to={`/setting/products?search=${product.sku}`}
-                            className="col-span-5"
-                          >
-                            <div className="text-[#0554f2]">{product.sku}</div>
-                          </Link>
-                          <div className="col-span-5">{product.name}</div>
-                          <div className="col-span-2 text-center">
-                            {product.quantity}
-                          </div>
-                        </div>
-                      ))}
                     </div>
-                  )}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="max-xl:mb-5 mt-5">
-            <Card className="h-full">
-              <CardHeader className="">
-                <div>
-                  <div className="flex gap-5 border-b">
-                    <button
-                      className={`pb-3 ${!displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
-                      onClick={() => setDisplayDeliverDetail(false)}
-                    >
-                      Deliver order
-                    </button>
-                    <button
-                      className={`pb-3 ${displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
-                      onClick={() => setDisplayDeliverDetail(true)}
-                    >
-                      Order history
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              </CardHeader>
-              <CardContent>
-                {displayDeliverDetail ? <AuditLog /> : <DeliveryLog />}
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="text-center">
+                  <PackageOpen
+                    strokeWidth={0.5}
+                    className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
+                  />
+                  <p className="text-[#aaabab] mt-3">
+                    No product information yet.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="">
+            <div className=" h-full items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold">Help & Claims:</div>
+              <div>
+                <div className="text-center">
+                  <PackageOpen
+                    strokeWidth={0.5}
+                    className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
+                  />
+                  <p className="text-[#aaabab] mt-3">
+                    No help and claims information yet.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* <div className="bg-[#fff] p-6  bottom-0 w-full xl:absolute">
-        <div className="total float-right">
-          <div className="total-title text-xs font-medium text-[#aaabab]">
-            Total fee:
-          </div>
-          <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
-            ${sumFee().toFixed(2)}
-          </span>
-        </div>
-        <div className="flex gap-6 max-[600px]:flex-wrap">
-          <div>
-            <div className="total-title text-xs font-medium text-[#aaabab]">
-              Delivery fee:
-            </div>
-            <span className="total-number text-lg font-medium leading-[34px] text-[#111212] tracking-[.2px]">
-              ${packageDetail?.shipping_fee}
-            </span>
-          </div>
-          <div>
-            <div className="total-title text-xs font-medium text-[#aaabab]">
-              Peak season fees (Phí mùa cao điểm):
-            </div>
-            <span className="total-number text-lg font-medium leading-[34px] text-[#111212] tracking-[.2px]">
-              ${sumExtraFee().toFixed(2)}
-            </span>
-          </div>
-          <div>
-            <div className="total-title text-xs font-medium text-[#aaabab]">
-              Discounts:
-            </div>
-            <div className="flex">
-              <span className="total-number text-lg font-medium leading-[34px] text-[#111212] tracking-[.2px]">
-                ${discount().toFixed(2)}
-              </span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="pt-2" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Discount by weight</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </div>
-          {refundFee!.length > 0 && (
-            <div className="flex">
-              <div>
-                <div className="total-title text-xs font-medium text-[#aaabab]">
-                  Refund fee:
-                </div>
-                <span className="total-number text-lg font-medium leading-[34px] text-[#111212] tracking-[.2px]">
-                  ${sumRefundFee()}
-                </span>
-              </div>
-              <div className="mt-[15px]">
-                {isAlreadyRefunded() ? (
-                  <span className="refund-txt refunded"> */}
-      {/* <img
-                  src={checkSvg}
-                  style={{ marginTop: "-3px" }}
-                  alt="Check mark"
-                /> */}
-      {/* Đã hoàn vào ví
-                  </span>
-                ) : (
-                  <span className="waiting_refund flex bg-[#f6f7f7] text-[#898a8a] p-1.5 rounded-3xl text-sm">
-                    <Clock className="w-4 h-5" /> Estimated time:
-                    <strong>
-                      {getDateDiff(packageDetail?.estimate_date_process)} days
-                    </strong>
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div> */}
-      <ToastContainer />
     </div>
   );
 }
