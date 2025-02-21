@@ -284,7 +284,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
               style={{ color: "#FA8C16" }}
             >
               <span className="pkg-exceed" title="Oversized Package">
-                ${convertPrice(row.original).toFixed(2)}
+                {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
               </span>
             </div>
           );
@@ -292,7 +292,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       } else {
         return (
           <div className="capitalize font-medium text-center mr-5">
-            ${convertPrice(row.original).toFixed(2)}
+            {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
           </div>
         );
       }

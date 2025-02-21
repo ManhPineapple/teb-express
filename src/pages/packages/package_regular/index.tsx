@@ -28,7 +28,8 @@ export default function PackagePage() {
           safeStatus,
           startDate,
           endDate,
-          byDate
+          byDate,
+          "Express"
         );
         setCount(countResponse);
       } catch (error) {
@@ -54,7 +55,8 @@ export default function PackagePage() {
     searchStatus,
     startDate,
     endDate,
-    byDate
+    byDate,
+    "Express"
   );
 
   useEffect(() => {

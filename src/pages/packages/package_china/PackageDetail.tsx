@@ -79,6 +79,9 @@ export type PackageDetail = {
   package_name: string;
   package_quantity: number;
   product_price: number;
+  cn_product_link: string;
+  cn_product_price: string;
+  cn_shipping_fee: string;
   custom_cn_barcode: string;
 };
 
@@ -331,7 +334,7 @@ export default function PackageDetailChina() {
           </div>
           <div className="flex gap-2">
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
-              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT||
+              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ||
               packageDetail?.status_string ===
                 PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
               <div className="">
@@ -340,7 +343,8 @@ export default function PackageDetailChina() {
             )}
 
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
-              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ) && (
+              packageDetail?.status_string ===
+                PACKAGE_STATUS_PURCHASED_TEXT) && (
               <div className="">
                 <ModalUpdatePackage
                   renderModal={(onClose) => (
@@ -362,7 +366,7 @@ export default function PackageDetailChina() {
               <Barcode className="mr-2 h-4 w-4" /> Download Barcode
             </Button>
 
-            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+            {packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT && (
               <div className="">
                 <ModalCreateTracking sumFee={sumFee} />
               </div>
@@ -419,6 +423,21 @@ export default function PackageDetailChina() {
                 </div>
                 <div className="col-span-8">
                   {packageDetail?.include_battery ? "Yes" : "No"}
+                </div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Product link:
+                </div>
+                <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+                  <a
+                    href={packageDetail?.cn_product_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {packageDetail?.cn_product_link || "N/A"}
+                  </a>
                 </div>
               </div>
               <div className="grid grid-cols-12 mb-2">
@@ -497,7 +516,7 @@ export default function PackageDetailChina() {
                   Delivery fee:
                 </div>
                 <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${packageDetail?.shipping_fee}
+                  ¥{packageDetail?.shipping_fee}
                 </div>
               </div>
               <div className="flex justify-between mt-3">
@@ -505,7 +524,7 @@ export default function PackageDetailChina() {
                   Additional charges:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${sumExtraFee().toFixed(2)}
+                ¥{sumExtraFee().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between mt-3">
@@ -524,7 +543,7 @@ export default function PackageDetailChina() {
                     </Tooltip>
                   </TooltipProvider>
                   <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                    ${discount().toFixed(2)}
+                  ¥{discount().toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -535,7 +554,7 @@ export default function PackageDetailChina() {
                       Refund fee:
                     </div>
                     <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                      ${sumRefundFee()}
+                    ¥{sumRefundFee()}
                     </div>
                   </div>
                 </div>
@@ -546,7 +565,7 @@ export default function PackageDetailChina() {
                   Total fee:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
-                  ${sumFee().toFixed(2)}
+                ¥{sumFee().toFixed(2)}
                 </span>
               </div>
             </CardContent>
@@ -604,7 +623,7 @@ export default function PackageDetailChina() {
                         {extraFee.extra_fee_types?.name}
                       </div>
                       <div className="col-span-2 text-center">
-                        {extraFee.amount}
+                        ¥{extraFee.amount}
                       </div>
                     </div>
                   ))}

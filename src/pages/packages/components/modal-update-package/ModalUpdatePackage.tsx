@@ -80,8 +80,8 @@ const orderFormSchema = z.object({
   scan_days: z.string().optional(),
   custom_url: z.string().optional(),
   package_name: z.string().optional(),
-  package_quantity: z.number().optional(),
-  product_price: z.number().optional(),
+  package_quantity: z.string().optional(),
+  product_price: z.string().optional(),
 
   cn_package_status: z.number().optional(),
   cn_product_link: z.string().optional(),
@@ -234,7 +234,7 @@ const ModalUpdatePackage = ({
   const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const defautCnPackageType = packageDetail.status_string == "Purchased" ? "Purchased" : "Pre-purchased";
+  const defautCnPackageType = packageDetail.status_string == "purchased" ? "Purchased" : "Pre-purchased";
   const [cnPackageType, ] = useState<string>(defautCnPackageType);
   const [listServices, setListServices] = useState<Service[] | null>([]);
   const [listProducts, setListProducts] = useState<Product[] | null>([]);
@@ -285,9 +285,12 @@ const ModalUpdatePackage = ({
       scan_days: packageDetail.scan_days,
       custom_url: packageDetail.custom_url,
       package_name: packageDetail.package_name,
-      package_quantity: packageDetail.package_quantity || 0,
-      product_price: packageDetail.product_price || 0,
+      package_quantity: (packageDetail.package_quantity || 0).toString(),
+      product_price: (packageDetail.product_price || 0).toString(),
       custom_cn_barcode: packageDetail.custom_cn_barcode,
+      cn_product_link: packageDetail.cn_product_link,
+      cn_product_price: (packageDetail.cn_product_price).toString(),
+      cn_shipping_fee: (packageDetail.cn_shipping_fee).toString(),
     },
   });
 
@@ -374,7 +377,9 @@ const ModalUpdatePackage = ({
     values.width = Number(values.width);
     //@ts-expect-error ts-such
     values.length = Number(values.length);
+    //@ts-expect-error ts-such
     values.package_quantity = Number(values.package_quantity);
+    //@ts-expect-error ts-such
     values.product_price = Number(values.product_price);
     //@ts-expect-error ts-such
     values.cn_product_price = Number(values.cn_product_price);
