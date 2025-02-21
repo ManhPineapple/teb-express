@@ -22,6 +22,29 @@ export async function getTransactions(
   }
 }
 
+export async function getTransactionsChina(
+  page: number,
+  limit: number,
+  search?: any,
+  selectedType?: number
+) {
+  try {
+    const queryString =
+      `?page=${page}&limit=${limit}` +
+      (search.get("start_date")
+        ? `&start_date=${search.get("start_date")}`
+        : "") +
+      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (selectedType ? `&type=${selectedType}` : "");
+
+    const res = await CustomAxios.get(`/transactions/china${queryString}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export async function getBillList(page: number, limit: number, search?: any) {
   try {
     const queryString =
@@ -33,6 +56,24 @@ export async function getBillList(page: number, limit: number, search?: any) {
       (search.get("search") ? `&search=${search.get("search")}` : "");
 
     const res = await CustomAxios.get(`/bills/list${queryString}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+export async function getBillListChina(page: number, limit: number, search?: any) {
+  try {
+    const queryString =
+      `?page=${page}&limit=${limit}` +
+      (search.get("start_date")
+        ? `&start_date=${search.get("start_date")}`
+        : "") +
+      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (search.get("search") ? `&search=${search.get("search")}` : "");
+
+    const res = await CustomAxios.get(`/bills/listChina${queryString}`);
     return res.data;
   } catch (error) {
     console.log(error);

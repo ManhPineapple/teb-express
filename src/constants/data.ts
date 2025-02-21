@@ -43,6 +43,12 @@ export const navItems: NavItem[] = [
     icon: "billing",
     label: "Bill",
   },
+  {
+    title: "Bill China",
+    href: "/bill-china",
+    icon: "billing",
+    label: "Bill China",
+  },
   // {
   //   title: "Tracking",
   //   href: "/tracking",

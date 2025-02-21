@@ -78,6 +78,9 @@ export type PackageDetail = {
   package_name: string;
   package_quantity: number;
   product_price: number;
+  cn_product_link: string;
+  cn_product_price: string;
+  cn_shipping_fee: string;
   custom_cn_barcode: string;
 };
 
@@ -118,7 +121,7 @@ type ExtraFee = {
   coupon: any;
 };
 
-export function PackageDetail() {
+export function PackageDetailRegular() {
   const { package_id } = useParams<{ package_id: any }>();
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(
     null

@@ -289,8 +289,8 @@ const ModalUpdatePackage = ({
       product_price: (packageDetail.product_price || 0).toString(),
       custom_cn_barcode: packageDetail.custom_cn_barcode,
       cn_product_link: packageDetail.cn_product_link,
-      cn_product_price: (packageDetail.cn_product_price).toString(),
-      cn_shipping_fee: (packageDetail.cn_shipping_fee).toString(),
+      cn_product_price: (packageDetail.cn_product_price)?.toString(),
+      cn_shipping_fee: (packageDetail.cn_shipping_fee)?.toString(),
     },
   });
 

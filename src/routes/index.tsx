@@ -1,6 +1,7 @@
 import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/signin";
 import Bill from "@/pages/bill";
+import BillChina from "@/pages/bill-china";
 import BillDetail from "@/pages/bill/bill-detail";
 import ListClaim from "@/pages/claim";
 import { ClaimDetail } from "@/pages/claim/ClaimDetail";
@@ -10,7 +11,7 @@ import NotificationPage from "@/pages/notification";
 import Order from "@/pages/order";
 import ChinaPackage from "@/pages/packages/package_china";
 import PackageDetailChina from "@/pages/packages/package_china/PackageDetail";
-import { PackageDetail } from "@/pages/packages/package_regular/PackageDetail";
+import { PackageDetailRegular } from "@/pages/packages/package_regular/PackageDetail";
 import { PackageReturn } from "@/pages/packages/package_regular/packages-return";
 import ListCoupon from "@/pages/settings/coupons/ListCoupon";
 import CustomizeLabel from "@/pages/settings/customize-label/CustomizeLabel";
@@ -67,7 +68,7 @@ export default function AppRouter() {
         },
         {
           path: "/package/details/:package_id",
-          element: <PackageDetail />,
+          element: <PackageDetailRegular />,
         },
         {
           path: "/package-china/details/:package_id",
@@ -88,6 +89,10 @@ export default function AppRouter() {
         {
           path: "/bill",
           element: <Bill />,
+        },
+        {
+          path: "/bill-china",
+          element: <BillChina />,
         },
         // {
         //   path: "/tracking",
