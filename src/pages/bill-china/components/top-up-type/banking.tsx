@@ -86,7 +86,7 @@ const BankingTopup: React.FC = () => {
     const body = {
       amount: Number(firstInput),
     };
-    CustomAxios.post(`/transactions/top-up/update/${topupId}`, body)
+    CustomAxios.post(`/transactions/top-up/update-china/${topupId}`, body)
       .then((response) => {
         if (response.status == 200)
           toast.success("Yêu cầu nạp tiền của bạn đang được xử lý");
