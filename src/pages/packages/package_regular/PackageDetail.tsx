@@ -1,8 +1,12 @@
+import ModalUpdatePackage from "@/components/shared/popup-modal-update";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { PackageDetail } from "./PackageDetail";
-import { getPackagesDetail } from "@/services/packages";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   EXTRA_FEE_CANCEL_LABEL,
   EXTRA_FEE_TYPE_DISCOUNT,
@@ -11,7 +15,9 @@ import {
   PACKAGE_STATUS_CREATED_TEXT,
   PACKAGE_STATUS_PENDING_PICKUP_TEXT,
 } from "@/constants/packages";
+import { getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
+import JsBarcode from "jsbarcode";
 import {
   ArrowUpRight,
   Barcode,
@@ -19,22 +25,64 @@ import {
   Info,
   PackageOpen,
 } from "lucide-react";
-import PackageTracking from "./components/track";
-import { ModalCancel } from "./components/modal-package-detail/ModalCancel";
-import ModalUpdatePackage from "@/components/shared/popup-modal-update";
-import ModalUpdatePackages from "./components/modal-update-package/ModalUpdatePackage";
-import { ModalCreateTracking } from "./components/modal-create-tracking/ModalCreateTracking";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { AuditLog } from "./components/audit-logs";
-import DeliveryLog from "./components/deliver-logs";
-import { Button } from "@/components/ui/button";
-import JsBarcode from "jsbarcode";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { packageListTypeRegular } from ".";
+import { AuditLog } from "../components/audit-logs";
+import DeliveryLog from "../components/deliver-logs";
+import { ModalCancel } from "../components/modal-cancel-packages/ModalCancel";
+import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
+import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import PackageTracking from "../components/track";
+
+export type PackageDetail = {
+  id: number;
+  order_number: string;
+  label: string;
+  recipient: string;
+  company: string;
+  phone_number: string;
+  address_1: string;
+  address_2: string;
+  city: string;
+  state_code: string;
+  zipcode: string;
+  country_code: string;
+  detail: string;
+  weight: number;
+  width: number;
+  length: number;
+  height: number;
+  actual_weight: number;
+  actual_width: number;
+  actual_length: number;
+  actual_height: number;
+  status_string: string;
+  service_id: number;
+  note: string;
+  service_name: string;
+  service_code: string;
+  tracking_number: string;
+  code_package: string;
+  shipping_fee: number;
+  created_at: string;
+  alert: number;
+  is_insured: boolean;
+  estimate_date_process: string;
+  is_package_exceed: boolean;
+  include_battery: boolean;
+  package_products: any[];
+  scan_days: string;
+  custom_url: string;
+  package_name: string;
+  package_quantity: number;
+  product_price: number;
+  cn_product_link: string;
+  cn_product_price: string;
+  cn_shipping_fee: string;
+  custom_cn_barcode: string;
+};
 
 type RefundFee = {
   id: number;
@@ -73,7 +121,7 @@ type ExtraFee = {
   coupon: any;
 };
 
-export function PD3() {
+export function PackageDetailRegular() {
   const { package_id } = useParams<{ package_id: any }>();
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(
     null
@@ -228,8 +276,6 @@ export function PD3() {
     navigate("/packages");
   };
 
-  console.log("aaa:", packageDetail);
-
   const handleDownloadBarcode = async () => {
     const files: any[] = [];
     // const selectedItems = selectedRowsLabel.map((x) => ({
@@ -381,6 +427,7 @@ export function PD3() {
                     <ModalUpdatePackages
                       modalClose={onClose}
                       packageDetail={packageDetail}
+                      packageListType={packageListTypeRegular}
                     />
                   )}
                 />

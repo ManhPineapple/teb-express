@@ -14,6 +14,7 @@ import {
   PACKAGE_REFUND_COMPLETE,
   PACKAGE_STATUS_CREATED_TEXT,
   PACKAGE_STATUS_PENDING_PICKUP_TEXT,
+  PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
 import { getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
@@ -28,13 +29,61 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuditLog } from "./components/audit-logs";
-import DeliveryLog from "./components/deliver-logs";
-import { ModalCreateTracking } from "./components/modal-create-tracking/ModalCreateTracking";
-import { ModalCancel } from "./components/modal-package-detail/ModalCancel";
-import ModalUpdatePackages from "./components/modal-update-package/ModalUpdatePackage";
-import PackageTracking from "./components/track";
-import { PackageDetail } from "./PackageDetail";
+import { packageListTypeChina } from ".";
+import { AuditLog } from "../components/audit-logs";
+import DeliveryLog from "../components/deliver-logs";
+import { ModalCancel } from "../components/modal-cancel-packages/ModalCancel";
+import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
+import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import PackageTracking from "../components/track";
+
+export type PackageDetail = {
+  id: number;
+  order_number: string;
+  label: string;
+  recipient: string;
+  company: string;
+  phone_number: string;
+  address_1: string;
+  address_2: string;
+  city: string;
+  state_code: string;
+  zipcode: string;
+  country_code: string;
+  detail: string;
+  weight: number;
+  width: number;
+  length: number;
+  height: number;
+  actual_weight: number;
+  actual_width: number;
+  actual_length: number;
+  actual_height: number;
+  status_string: string;
+  service_id: number;
+  note: string;
+  service_name: string;
+  service_code: string;
+  tracking_number: string;
+  code_package: string;
+  shipping_fee: number;
+  created_at: string;
+  alert: number;
+  is_insured: boolean;
+  estimate_date_process: string;
+  is_package_exceed: boolean;
+  include_battery: boolean;
+  package_products: any[];
+  scan_days: string;
+  custom_url: string;
+  package_name: string;
+  package_quantity: number;
+  product_price: number;
+  cn_product_link: string;
+  cn_product_price: string;
+  cn_shipping_fee: string;
+  custom_cn_barcode: string;
+};
 
 type RefundFee = {
   id: number;
@@ -73,7 +122,8 @@ type ExtraFee = {
   coupon: any;
 };
 
-export function PD3CQ() {
+export default function PackageDetailChina() {
+  const navigate = useNavigate();
   const { package_id } = useParams<{ package_id: any }>();
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(
     null
@@ -100,7 +150,7 @@ export function PD3CQ() {
     fetchPackageDetail();
   }, [package_id]);
 
-  const current = {
+  const currentPackage = {
     tracking_number: packageDetail?.tracking_number,
     service_name: packageDetail?.service_name,
     country_code: packageDetail?.country_code,
@@ -114,20 +164,10 @@ export function PD3CQ() {
     );
   };
 
-  const isPkgExceedNotEstimate = () => {
-    return (
-      packageDetail?.is_package_exceed && packageDetail?.shipping_fee === 0
-    );
-  };
-
   const extraFees = () => {
     return (extraFee || []).filter(
       ({ extra_fee_type_id }) => extra_fee_type_id !== EXTRA_FEE_TYPE_DISCOUNT
     );
-  };
-
-  const calculateFee = (weight: number) => {
-    return weight * 10;
   };
 
   const extraFeeDiscount = () => {
@@ -138,13 +178,6 @@ export function PD3CQ() {
 
   const sumExtraFee = () => {
     let amount = 0;
-
-    // if (
-    //   packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT &&
-    //   !isPkgExceedNotEstimate()
-    // ) {
-    //   amount = 0.5;
-    // }
 
     amount += extraFees().reduce((total, v) => {
       if (
@@ -157,45 +190,6 @@ export function PD3CQ() {
     }, 0);
 
     return amount;
-  };
-
-  // maybe use later
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mapExtraFee = () => {
-    const result = [];
-
-    if (
-      packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT &&
-      !isPkgExceedNotEstimate()
-    ) {
-      const fee = calculateFee(packageDetail.weight);
-      if (fee > 0) {
-        result.push({
-          extra_fee_types: { name: "Peak season surcharge" },
-          amount: fee,
-        });
-      }
-    }
-
-    for (const ele of extraFees()) {
-      const index = result.findIndex(
-        (x) => x.extra_fee_types?.name === ele.extra_fee_types?.name
-      );
-
-      if (ele.extra_fee_type_id === EXTRA_FEE_CANCEL_LABEL) {
-        if (!isAlreadyRefunded) {
-          continue;
-        }
-      }
-
-      if (index === -1) {
-        result.push({ ...ele });
-      } else {
-        result[index].amount += ele.amount;
-      }
-    }
-
-    return result;
   };
 
   const discount = () => {
@@ -215,41 +209,12 @@ export function PD3CQ() {
     return (packageDetail?.shipping_fee ?? 0) + sumExtraFee() + discount();
   };
 
-  const getDateDiff = (t: any) => {
-    const today = new Date();
-    const dateToReply = new Date(t);
-    const timeInMillisec = dateToReply.getTime() - today.getTime();
-    return Math.ceil(timeInMillisec / (1000 * 60 * 60 * 24));
-  };
-
-  const navigate = useNavigate();
-
   const handleBackClick = () => {
     navigate("/packages-china");
   };
 
-  // console.log("aaa:", packageDetail);
-
   const handleDownloadBarcode = async () => {
     const files: any[] = [];
-    // const selectedItems = selectedRowsLabel.map((x) => ({
-    //   order_number: x.order_number,
-    //   code: x.code,
-    //   tracking_number: x.tracking_number,
-    // }));
-
-    // console.log("Selected Items:", selectedItems);
-
-    // const allTrackingNumbersEmpty = selectedItems.every(
-    //   (element) => element.tracking_number === ""
-    // );
-
-    // if (allTrackingNumbersEmpty) {
-    //   toast.error("The selected order has no barcode!", {
-    //     autoClose: 3000,
-    //   });
-    //   return;
-    // }
 
     try {
       const canvas = document.createElement("canvas");
@@ -322,7 +287,7 @@ export function PD3CQ() {
               </span>
             </div>
             {packageDetail?.tracking_number ? (
-              <PackageTracking current={current} />
+              <PackageTracking current={currentPackage} />
             ) : (
               <div>
                 <div className="text-sm font-normal text-[#626363]">
@@ -330,9 +295,11 @@ export function PD3CQ() {
                 </div>
                 <div className="flex hover:text-[#13c2c2]">
                   <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
-                    {current?.tracking_number ? current.tracking_number : "N/A"}
+                    {currentPackage?.tracking_number
+                      ? currentPackage.tracking_number
+                      : "N/A"}
                   </span>
-                  {current?.tracking_number && (
+                  {currentPackage?.tracking_number && (
                     <ArrowUpRight className="w-4 h-4" />
                   )}
                 </div>
@@ -367,6 +334,7 @@ export function PD3CQ() {
           </div>
           <div className="flex gap-2">
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
+              packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ||
               packageDetail?.status_string ===
                 PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
               <div className="">
@@ -374,13 +342,16 @@ export function PD3CQ() {
               </div>
             )}
 
-            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+            {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
+              packageDetail?.status_string ===
+                PACKAGE_STATUS_PURCHASED_TEXT) && (
               <div className="">
                 <ModalUpdatePackage
                   renderModal={(onClose) => (
                     <ModalUpdatePackages
                       modalClose={onClose}
                       packageDetail={packageDetail}
+                      packageListType={packageListTypeChina}
                     />
                   )}
                 />
@@ -395,7 +366,7 @@ export function PD3CQ() {
               <Barcode className="mr-2 h-4 w-4" /> Download Barcode
             </Button>
 
-            {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
+            {packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT && (
               <div className="">
                 <ModalCreateTracking sumFee={sumFee} />
               </div>
@@ -452,6 +423,21 @@ export function PD3CQ() {
                 </div>
                 <div className="col-span-8">
                   {packageDetail?.include_battery ? "Yes" : "No"}
+                </div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Product link:
+                </div>
+                <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+                  <a
+                    href={packageDetail?.cn_product_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {packageDetail?.cn_product_link || "N/A"}
+                  </a>
                 </div>
               </div>
               <div className="grid grid-cols-12 mb-2">
@@ -530,7 +516,7 @@ export function PD3CQ() {
                   Delivery fee:
                 </div>
                 <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${packageDetail?.shipping_fee}
+                  ¥{packageDetail?.shipping_fee}
                 </div>
               </div>
               <div className="flex justify-between mt-3">
@@ -538,7 +524,7 @@ export function PD3CQ() {
                   Additional charges:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${sumExtraFee().toFixed(2)}
+                ¥{sumExtraFee().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between mt-3">
@@ -557,7 +543,7 @@ export function PD3CQ() {
                     </Tooltip>
                   </TooltipProvider>
                   <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                    ${discount().toFixed(2)}
+                  ¥{discount().toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -568,28 +554,9 @@ export function PD3CQ() {
                       Refund fee:
                     </div>
                     <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                      ${sumRefundFee()}
+                    ¥{sumRefundFee()}
                     </div>
                   </div>
-                  {/* <div className="">
-                    {isAlreadyRefunded() ? (
-                      <span className="refund-txt refunded"> */}
-                  {/* <img
-                    src={checkSvg}
-                    style={{ marginTop: "-3px" }}
-                    alt="Check mark"
-                  /> */}
-                  {/* Đã hoàn vào ví
-                      </span>
-                    ) : (
-                      <span className="waiting_refund flex bg-[#f6f7f7] text-[#898a8a] p-1.5 rounded-3xl text-sm">
-                        <Clock className="w-4 h-5" /> Estimated time:
-                        <strong>
-                          {getDateDiff(packageDetail?.estimate_date_process)} days
-                        </strong>
-                      </span>
-                    )}
-                  </div> */}
                 </div>
               )}
               <hr className="mt-5" />
@@ -598,7 +565,7 @@ export function PD3CQ() {
                   Total fee:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
-                  ${sumFee().toFixed(2)}
+                ¥{sumFee().toFixed(2)}
                 </span>
               </div>
             </CardContent>
@@ -637,6 +604,43 @@ export function PD3CQ() {
         </div>
 
         <div className="col-span-5">
+          <div className="">
+            <div className=" h-full items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold">
+                Additional charges Information:
+              </div>
+              {extraFee && extraFee.length > 0 ? (
+                <div className="mt-3">
+                  <div className="grid grid-cols-12 mb-5">
+                    <div className="col-span-10 text-[#626363]">
+                      Service name
+                    </div>
+                    <div className="col-span-2 text-center">Fee</div>
+                  </div>
+                  {extraFee.map((extraFee, index) => (
+                    <div className="grid grid-cols-12" key={index}>
+                      <div className="col-span-10">
+                        {extraFee.extra_fee_types?.name}
+                      </div>
+                      <div className="col-span-2 text-center">
+                        ¥{extraFee.amount}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center">
+                  <PackageOpen
+                    strokeWidth={0.5}
+                    className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
+                  />
+                  <p className="text-[#aaabab] mt-3">
+                    No product information yet.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="">
             <div className=" h-full items-center justify-center p-6">
               <div className="border-b pb-3 font-bold">

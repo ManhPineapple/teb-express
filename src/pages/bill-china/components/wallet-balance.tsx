@@ -32,9 +32,10 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       return null;
     }
 
-    let now = new Date().getTime();
-    let target = new Date(user_info.debt_time).getTime();
-    let daysLeft = user_info.debt_max_day - (now - target) / (24 * 3600 * 1000);
+    const now = new Date().getTime();
+    const target = new Date(user_info.debt_time).getTime();
+    const daysLeft =
+      user_info.debt_max_day - (now - target) / (24 * 3600 * 1000);
     let text = "0 ngày";
     if (daysLeft >= 1) {
       text = `${Math.floor(daysLeft)} ngày`;
@@ -68,8 +69,8 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       <div className="flex flex-col items-center p-4 bg-[#fff7e6] rounded-xl">
         <span className="text-gray-700">Tiền chưa thanh toán</span>
         <span className="text-xl font-semibold">
-          ${(Math.trunc(debit() * 100) / 100).toFixed(2)}
-          <span>(Tối đa: ${maxDebitAmoung()})</span>
+          ¥{(Math.trunc(debit() * 100) / 100).toFixed(2)}
+          <span>(Tối đa: ¥{maxDebitAmoung()})</span>
           {debitDayLeft() != null && (
             <div className="text-sm font-light">
               Thời gian công nợ còn lại: {debitDayLeft()}
@@ -80,7 +81,7 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       <div className="flex flex-col items-center p-4 bg-purple-100 rounded-xl">
         <span className="text-gray-700">Tiền chờ xử lý</span>
         <span className="text-xl font-semibold">
-          ${(Math.trunc(pendingAmount * 100) / 100).toFixed(2)}
+          ¥{(Math.trunc(pendingAmount * 100) / 100).toFixed(2)}
         </span>
       </div>
     </div>

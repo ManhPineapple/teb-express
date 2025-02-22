@@ -168,8 +168,6 @@ export function ClaimDetail() {
   }, [id]);
 
   const urls = files.map(({ url }) => url);
-  console.log("urlsError:", fileErrors);
-  console.log("urls:", files);
 
   const onConfirm = (file: FileWithUid) => {
     setFiles((prevFiles) => prevFiles.filter(({ uid }) => uid !== file.uid));

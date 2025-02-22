@@ -47,7 +47,7 @@ const convertPrice = (item: any) => {
   }
 };
 
-export const columns: ColumnDef<TPackage>[] = [
+export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -76,7 +76,7 @@ export const columns: ColumnDef<TPackage>[] = [
           <div className="capitalize font-medium flex gap-2">
             <Link
               to={{
-                pathname: `/package/details/${row.original.id}`,
+                pathname: `/package${packageListType == 0 ? "" : "-china"}/details/${row.original.id}`,
               }}
               className="text-no-underline text-[#006a5e]"
             >
@@ -284,7 +284,7 @@ export const columns: ColumnDef<TPackage>[] = [
               style={{ color: "#FA8C16" }}
             >
               <span className="pkg-exceed" title="Oversized Package">
-                ${convertPrice(row.original).toFixed(2)}
+                {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
               </span>
             </div>
           );
@@ -292,7 +292,7 @@ export const columns: ColumnDef<TPackage>[] = [
       } else {
         return (
           <div className="capitalize font-medium text-center mr-5">
-            ${convertPrice(row.original).toFixed(2)}
+            {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
           </div>
         );
       }

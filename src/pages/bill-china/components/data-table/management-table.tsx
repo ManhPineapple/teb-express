@@ -31,10 +31,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  getBillList,
   getBillListChina,
   getInvoice,
-  getInvoiceDownloadUrl,
+  getInvoiceDownloadUrl
 } from "@/services/bill";
 import saveAs from "file-saver";
 import { Link, useSearchParams } from "react-router-dom";
@@ -62,7 +61,7 @@ const handleCopy = (text: string) => {
 };
 
 const total = (ship: any, extra: number) => {
-  let total = ship + extra;
+  const total = ship + extra;
   return total;
 };
 
@@ -135,13 +134,7 @@ const columns: ColumnDef<Payment>[] = [
         total(row.original.shipping_fee, row.original.extra_fee)
       );
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-right font-medium">¥{amount}</div>;
     },
   },
   {

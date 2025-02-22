@@ -10,7 +10,7 @@ import {
   TransactionStatusProcess,
   TransactionStatusSuccess,
 } from "@/constants/bill";
-import { getTransactions, getTransactionsChina } from "@/services/bill";
+import { getTransactionsChina } from "@/services/bill";
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { BillDatePickerWithRange } from "../components/bill-datepicker";
@@ -177,7 +177,7 @@ const HistoryTab: React.FC = () => {
                     ? `+ $ ${Math.abs(item.amount)
                         .toFixed(2)
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
-                    : ` ${item.type === typePay ? "-" : "+"} $${Math.abs(
+                    : ` ${item.type === typePay ? "-" : "+"} ¥${Math.abs(
                         item.amount
                       )
                         .toFixed(2)

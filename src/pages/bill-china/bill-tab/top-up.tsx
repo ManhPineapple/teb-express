@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { BsCreditCard2BackFill } from "react-icons/bs";
-import LianlianIcon from "../../../assets/lianlian.svg";
 import PayoneerIcon from "../../../assets/payoneer.svg";
 import PingpongIcon from "../../../assets/pingpong.svg";
 import BankingTopup from "../components/top-up-type/banking";
-import LianlianTopup from "../components/top-up-type/lianlian";
 import PayoneerTopup from "../components/top-up-type/payoneer";
 import PingpongTopup from "../components/top-up-type/pingpong";
 

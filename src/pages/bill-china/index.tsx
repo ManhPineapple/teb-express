@@ -1,6 +1,7 @@
+import PageHead from "@/components/shared/page-head";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { userService } from "@/services/auth";
-import { getTransactions, getTransactionsChina } from "@/services/bill";
+import { getTransactionsChina } from "@/services/bill";
 import { ArrowRightLeft, FileClock, FileCog, Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -10,7 +11,6 @@ import PendingTab from "./bill-tab/pending";
 import Topup from "./bill-tab/top-up";
 import Withdraw from "./bill-tab/withdraw";
 import WalletBalance from "./components/wallet-balance";
-import PageHead from "@/components/shared/page-head";
 
 const BillChina: React.FC = () => {
   const [balance, setBalance] = useState(0.0);

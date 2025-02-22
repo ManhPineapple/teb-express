@@ -1,12 +1,13 @@
 import { DataTableSkeleton } from "@/components/shared/data-table-skeleton";
 import PageHead from "@/components/shared/page-head";
 import { getCountListPackages } from "@/services/packages";
+import { usePackageStore } from "@/store/tableStore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import PackageTable from "./components/packages-table";
-import { useGetListPackages } from "./queries/queries";
-import { usePackageStore } from "@/store/tableStore";
+import PackageTable from "../components/packages-table";
+import { useGetListPackages } from "../queries/queries";
 
+export const packageListTypeRegular = 0;
 export default function PackagePage() {
   const [count, setCount] = useState<any>({ count: 0 });
   const setPackages = usePackageStore((state) => state.setPackages);
@@ -27,7 +28,8 @@ export default function PackagePage() {
           safeStatus,
           startDate,
           endDate,
-          byDate
+          byDate,
+          "Express"
         );
         setCount(countResponse);
       } catch (error) {
@@ -53,7 +55,8 @@ export default function PackagePage() {
     searchStatus,
     startDate,
     endDate,
-    byDate
+    byDate,
+    "Express"
   );
 
   useEffect(() => {
@@ -107,6 +110,7 @@ export default function PackagePage() {
         page={page}
         count={count}
         pageCount={pageCount}
+        packageListType={packageListTypeRegular}
       />
     </div>
   );
