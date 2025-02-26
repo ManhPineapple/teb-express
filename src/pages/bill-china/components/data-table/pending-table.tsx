@@ -106,10 +106,10 @@ const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    accessorKey: "amount",
+    accessorKey: "amount_china",
     header: () => <div className="text-right">Total fee</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.getValue("amount_china"));
 
       // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("en-US", {

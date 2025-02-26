@@ -36,7 +36,7 @@ const BillChina: React.FC = () => {
 
   const handleGetHolding = async () => {
     try {
-      const result = await userService.getUserInfo();
+      const result = await userService.getUserInfoChina();
       setPendingAmount(result.user.holding_money);
       setUserInfo(result.user.user_info);
     } catch (error) {
