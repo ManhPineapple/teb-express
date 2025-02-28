@@ -234,8 +234,10 @@ const ModalUpdatePackage = ({
   const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const defautCnPackageType = packageDetail.status_string == "purchased" ? "Purchased" : "Pre-purchased";
-  const [cnPackageType, ] = useState<string>(defautCnPackageType);
+  const defaultTab = packageDetail.status_string === "purchased" ? "Purchased" : "Pre-purchased";
+  const defaultCnPackageType = packageDetail.is_purchased == true ? "Purchased" : "Pre-purchased";
+  const [cnPackageType, ] = useState<string>(defaultCnPackageType);
+  const [cnPackageTab, ] = useState<string>(defaultTab)
   const [listServices, setListServices] = useState<Service[] | null>([]);
   const [listProducts, setListProducts] = useState<Product[] | null>([]);
 
@@ -826,7 +828,7 @@ const ModalUpdatePackage = ({
                     </SelectContent>
                   </Select>
 
-                  {cnPackageType == "Pre-purchased" && (
+                  {cnPackageTab == "Pre-purchased" && (
                     <>
                       <div className="flex mt-10">
                         <strong className="mr-2">Link sản phẩm</strong>
@@ -871,10 +873,10 @@ const ModalUpdatePackage = ({
                     </>
                   )}
 
-                  {cnPackageType == "Purchased" && (
+                  {cnPackageTab == "Purchased" && (
                     <>
                       <div className="flex mt-10">
-                        <strong className="mr-2">Giá ship</strong>
+                        <strong className="mr-2">Giá ship nội địa</strong>
                       </div>
                       <FormField
                         control={updatePackageForm.control}

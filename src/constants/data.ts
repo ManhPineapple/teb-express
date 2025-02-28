@@ -12,49 +12,41 @@ export const navItems: NavItem[] = [
     icon: "shopping",
     href: "/packages",
     label: "Orders",
-    // children: [
-    //   {
-    //     title: "Orders",
-    //     href: "/packages",
-    //     label: "Orders",
-    //   },
-    //   {
-    //     title: "Returned Orders",
-    //     href: "/package/return",
-    //     label: "Returned Orders",
-    //   },
-    // ],
+    children: [
+      {
+        title: "Orders",
+        href: "/packages",
+        icon: "shopping",
+        label: "Orders",
+      },
+      {
+        title: "Bill",
+        href: "/bill",
+        icon: "billing",
+        label: "Bill",
+      },
+    ],
   },
-  // {
-  //   title: "FBA ORDER",
-  //   href: "/shipments",
-  //   icon: "fba",
-  //   label: "FBA Order",
-  // },
   {
-    title: "Orders China",
+    title: "China Orders",
     icon: "shopping",
     href: "/packages-china",
     label: "Orders",
+    children: [
+      {
+        title: "China Orders",
+        href: "/packages-china",
+        icon: "shopping",
+        label: "China Orders",
+      },
+      {
+        title: "China Bill",
+        href: "/bill-china",
+        icon: "billing",
+        label: "China Bill",
+      },
+    ],
   },
-  {
-    title: "Bill",
-    href: "/bill",
-    icon: "billing",
-    label: "Bill",
-  },
-  {
-    title: "Bill China",
-    href: "/bill-china",
-    icon: "billing",
-    label: "Bill China",
-  },
-  // {
-  //   title: "Tracking",
-  //   href: "/tracking",
-  //   icon: "map",
-  //   label: "Tracking",
-  // },
   {
     title: "Setting",
     icon: "setting",

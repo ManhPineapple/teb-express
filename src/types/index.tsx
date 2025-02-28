@@ -12,6 +12,7 @@ export interface NavItem {
     title: string;
     href: string;
     label?: string;
+    icon?: keyof typeof Icons;
   }[];
 }
 

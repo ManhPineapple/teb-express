@@ -69,11 +69,49 @@ const DashboardNavItem: React.FC<DashboardNavItemProps> = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                {item.children.map((child) => (
+                {item.children.map((child) => {
+                  const ChildIcon = child.icon ? Icons[child.icon] : Icon;
+                  return (
+                    <div
+                      className="my-1"
+                      key={child.href}
+                      onClickCapture={() => setOpen && setOpen(true)}
+                    >
+                      <NavLink
+                        className={({ isActive }) =>
+                          cn(
+                            "flex items-center rounded-full px-3 py-2 text-[#8d181b] transition-colors duration-300 hover:bg-gray-50 hover:text-[#8d181b] dark:hover:text-[#8d181b]",
+                            isActive &&
+                              "bg-gray-50 text-[#8d181b] dark:text-[#8d181b]"
+                          )
+                        }
+                        to={child.href}
+                        end
+                      >
+                        <ChildIcon className="h-5 w-5" aria-hidden="true" />
+                        <span className="mx-2 text-sm font-medium">
+                          {child.label}
+                        </span>
+                      </NavLink>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {isShowSettingOptions && !isMinimized && (
+            <div
+              className="ml-5 left-full top-0 flex flex-col bg-[#EEEDEB] shadow-lg"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              {item.children.map((child) => {
+                const ChildIcon = child.icon ? Icons[child.icon] : Icon;
+                return (
                   <div
                     className="my-1"
                     key={child.href}
-                    onClickCapture={() => setOpen && setOpen(true)}
+                    onClickCapture={() => setOpen && setOpen(false)}
                   >
                     <NavLink
                       className={({ isActive }) =>
@@ -86,46 +124,14 @@ const DashboardNavItem: React.FC<DashboardNavItemProps> = ({
                       to={child.href}
                       end
                     >
-                      <Icon className="h-5 w-5" aria-hidden="true" />
+                      <ChildIcon className="h-5 w-5" aria-hidden="true" />
                       <span className="mx-2 text-sm font-medium">
                         {child.label}
                       </span>
                     </NavLink>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          {isShowSettingOptions && !isMinimized && (
-            <div
-              className="ml-5 left-full top-0 flex flex-col bg-[#EEEDEB] shadow-lg"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              {item.children.map((child) => (
-                <div
-                  className="my-1"
-                  key={child.href}
-                  onClickCapture={() => setOpen && setOpen(false)}
-                >
-                  <NavLink
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center rounded-full px-3 py-2 text-[#8d181b] transition-colors duration-300 hover:bg-gray-50 hover:text-[#8d181b] dark:hover:text-[#8d181b]",
-                        isActive &&
-                          "bg-gray-50 text-[#8d181b] dark:text-[#8d181b]"
-                      )
-                    }
-                    to={child.href}
-                    end
-                  >
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                    <span className="mx-2 text-sm font-medium">
-                      {child.label}
-                    </span>
-                  </NavLink>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>

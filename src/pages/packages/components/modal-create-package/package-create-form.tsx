@@ -84,7 +84,7 @@ const orderFormSchema = z.object({
   package_quantity: z.string().optional(),
   product_price: z.string().optional(),
 
-  cn_package_status: z.number().optional(),
+  is_purchased: z.boolean().optional(),
   cn_product_link: z.string().optional(),
   cn_product_price: z.string().optional(),
   cn_shipping_fee: z.string().optional(),
@@ -360,12 +360,12 @@ const OrderCreateForm = ({
 
     if (values.service == "Express (CN exclusive)") {
       if (cnPackageType == "Purchased") {
-        values.cn_package_status = 3;
+        values.is_purchased = true;
       } else if (cnPackageType == "Pre-purchased") {
-        values.cn_package_status = 1;
+        values.is_purchased = false;
       } else {
         // default cnPackageType value is purchased
-        values.cn_package_status = 3;
+        values.is_purchased = true;
       }
     }
 
