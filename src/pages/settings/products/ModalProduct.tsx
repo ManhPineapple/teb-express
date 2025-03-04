@@ -110,7 +110,6 @@ const ModalAddOrUpdateProduct: React.FC<{
         toast.error(e.response.data.error);
       }
     }
-    console.log("pd:", productEdit);
   };
 
   return (

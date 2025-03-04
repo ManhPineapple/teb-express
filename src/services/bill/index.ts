@@ -22,6 +22,29 @@ export async function getTransactions(
   }
 }
 
+export async function getTransactionsChina(
+  page: number,
+  limit: number,
+  search?: any,
+  selectedType?: number
+) {
+  try {
+    const queryString =
+      `?page=${page}&limit=${limit}` +
+      (search.get("start_date")
+        ? `&start_date=${search.get("start_date")}`
+        : "") +
+      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (selectedType ? `&type=${selectedType}` : "");
+
+    const res = await CustomAxios.get(`/transactions/china${queryString}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export async function getBillList(page: number, limit: number, search?: any) {
   try {
     const queryString =
@@ -40,6 +63,24 @@ export async function getBillList(page: number, limit: number, search?: any) {
   }
 }
 
+export async function getBillListChina(page: number, limit: number, search?: any) {
+  try {
+    const queryString =
+      `?page=${page}&limit=${limit}` +
+      (search.get("start_date")
+        ? `&start_date=${search.get("start_date")}`
+        : "") +
+      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (search.get("search") ? `&search=${search.get("search")}` : "");
+
+    const res = await CustomAxios.get(`/bills/listChina${queryString}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export async function getBillDetails(code: string) {
   try {
     const res = await CustomAxios.get(`/bills/${code}`);
@@ -51,7 +92,7 @@ export async function getBillDetails(code: string) {
 
 export async function getBillPackages(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/${code}/packages`);
+    const res = await CustomAxios.get(`/bills/packages/${code}`);
     return res.data;
   } catch (error) {
     console.log(error);
@@ -61,7 +102,7 @@ export async function getBillPackages(code: string) {
 
 export async function getExtraFee(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/${code}/fees`);
+    const res = await CustomAxios.get(`/bills/fees/${code}`);
     return res.data;
   } catch (error) {
     console.log(error);

@@ -135,7 +135,7 @@ const BillDetail: React.FC = () => {
               <TableHead className="text-right">Fee create</TableHead>
             </TableRow>
           </TableHeader>
-          {billPackage && billPackage.length > 0 &&
+          {billPackage!.length > 0 &&
             billPackage?.map((item) => (
               <TableBody>
                 <TableRow>
@@ -155,7 +155,7 @@ const BillDetail: React.FC = () => {
                   </TableCell>
                   <TableCell>{item.tracking_number}</TableCell>
                   <TableCell className="text-right">
-                    +${toZeroIfSmall(item.shipping_fee).toFixed(2)}
+                    +¥{toZeroIfSmall(item.shipping_fee).toFixed(2)}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -178,7 +178,7 @@ const BillDetail: React.FC = () => {
               <TableHead className="text-right">Fee extra</TableHead>
             </TableRow>
           </TableHeader>
-          {extraFee && extraFee!.length > 0 &&
+          {extraFee!.length > 0 &&
             extraFee?.map((item) => (
               <TableBody>
                 <TableRow>
@@ -200,7 +200,7 @@ const BillDetail: React.FC = () => {
                   <TableCell>{item.type_name}</TableCell>
                   <TableCell>{item.description}</TableCell>
                   <TableCell className="text-right">
-                    +${toZeroIfSmall(item.amount).toFixed(2)}
+                    +¥{toZeroIfSmall(item.amount).toFixed(2)}
                   </TableCell>
                 </TableRow>
               </TableBody>

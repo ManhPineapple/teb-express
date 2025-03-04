@@ -115,6 +115,7 @@ export const PACKAGE_REFUND_COMPLETE = 2;
 export const EXTRA_FEE_TYPE_DISCOUNT = 15;
 
 export const PACKAGE_STATUS_CREATED_TEXT = "pending";
+export const PACKAGE_STATUS_PURCHASED_TEXT = "purchased";
 export const PACKAGE_STATUS_PENDING_PICKUP_TEXT = "pre-transit";
 export const PACKAGE_STATUS_PROCESSING_TEXT = "processing";
 export const PACKAGE_STATUS_IN_TRANSIT_TEXT = "in-transit";
@@ -130,6 +131,10 @@ export const PACKAGE_STATUS_ARCHIVED_TEXT = "archived";
 export const MAP_STATUS_CLASS_NAME: MapStatusClassName = {
   [PACKAGE_STATUS_CREATED_TEXT]: {
     text: PACKAGE_STATUS_CREATED_TEXT,
+    className: "text-[#722ed1] bg-[#f9f0ff]",
+  },
+  [PACKAGE_STATUS_PURCHASED_TEXT]: {
+    text: PACKAGE_STATUS_PURCHASED_TEXT,
     className: "text-[#722ed1] bg-[#f9f0ff]",
   },
   [PACKAGE_STATUS_PENDING_PICKUP_TEXT]: {

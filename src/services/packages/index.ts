@@ -28,6 +28,28 @@ export async function getPackagesHolding(
   }
 }
 
+export async function getPackagesHoldingChina(
+  page: number,
+  limit: number,
+  search?: any
+) {
+  try {
+    const queryString =
+      `?page=${page}&limit=${limit}` +
+      (search.get("start_date")
+        ? `&start_date=${search.get("start_date")}`
+        : "") +
+      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (search.get("search") ? `&search=${search.get("search")}` : "");
+
+    const res = await CustomAxios.get(`/packages/holdingChina${queryString}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export async function getPackagesDetail(package_id: string) {
   try {
     const res = await CustomAxios.get(`/packages/${package_id}`);

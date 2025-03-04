@@ -20,10 +20,10 @@ import {
 import React from "react";
 import { DateRange } from "react-day-picker";
 import { useSearchParams } from "react-router-dom";
-import ImportOrdersForm from "../package-forms/import-form";
-import OrderCreateForm from "../package-forms/package-create-form";
 import { ModalCancelPackages } from "../modal-cancel-packages/ModalCancelPackages";
-import { ModalConfirmAddresses } from "../modal-confirm-addresses/ModalConfirmAddresses";
+import { ModalConfirmAddresses } from "../modal-confirm-address/ModalConfirmAddresses";
+import ImportOrdersForm from "../modal-create-package/import-form";
+import OrderCreateForm from "../modal-create-package/package-create-form";
 
 export default function PackageTableActions({
   handleExport,
@@ -35,6 +35,7 @@ export default function PackageTableActions({
   countSelectedRows,
   feeSelectedRows,
   selectedRowsLabel,
+  packageListType
 }: {
   handleExport: () => void;
   handleDownloadLabel: () => void;
@@ -45,6 +46,7 @@ export default function PackageTableActions({
   countSelectedRows: number | undefined;
   feeSelectedRows: number | undefined;
   selectedRowsLabel: any[];
+  packageListType: number;
 }) {
   return (
     <div className="xl:flex items-center justify-between py-5 max-xl:flex-wrap">
@@ -102,17 +104,11 @@ export default function PackageTableActions({
               />
               <PopupModal
                 renderModal={(onClose) => (
-                  <OrderCreateForm modalClose={onClose} />
+                  <OrderCreateForm modalClose={onClose} packageListType={packageListType}/>
                 )}
               />
             </div>
           ))}
-        {/* <ImportModal
-          renderModal={(onClose) => <ImportOrdersForm modalClose={onClose} />}
-        />
-        <PopupModal
-          renderModal={(onClose) => <OrderCreateForm modalClose={onClose} />}
-        /> */}
       </div>
     </div>
   );

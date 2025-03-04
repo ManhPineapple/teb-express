@@ -24,9 +24,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TUSState, US_STATES } from "@/constants/packages";
-import { updatePackages } from "@/services/packages";
+import { createPackage, getListPackages } from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
+import { usePackageStore } from "@/store/tableStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { uniqueId } from "lodash";
@@ -218,24 +219,18 @@ const ProductForm: React.FC<ProductFormProps> = ({
 };
 
 import { useWatch } from "react-hook-form";
-import { PackageDetail } from "../../package_china/PackageDetail";
-type PackageDetailProps = {
-  modalClose: () => void;
-  packageDetail: PackageDetail;
-  packageListType: number;
-};
 
-const ModalUpdatePackage = ({
+const OrderCreateForm = ({
   modalClose,
-  packageDetail,
   packageListType,
-}: PackageDetailProps) => {
-  const [selectedState, setSelectedState] = useState(packageDetail.state_code);
+}: {
+  modalClose: () => void;
+  packageListType: number;
+}) => {
+  const [selectedState, setSelectedState] = useState("");
   const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const defautCnPackageType = packageDetail.status_string == "purchased" ? "Purchased" : "Pre-purchased";
-  const [cnPackageType, ] = useState<string>(defautCnPackageType);
+  const [cnPackageType, setCnPackageType] = useState<string>("Purchased");
   const [listServices, setListServices] = useState<Service[] | null>([]);
   const [listProducts, setListProducts] = useState<Product[] | null>([]);
 
@@ -262,45 +257,20 @@ const ModalUpdatePackage = ({
     fetchProduct();
   }, []);
 
-  const updatePackageForm = useForm<OrderFormSchemaType>({
+  const createOrderForm = useForm<OrderFormSchemaType>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
-      service: packageDetail.service_name,
-      recipient: packageDetail.recipient,
-      phone: packageDetail.phone_number,
-      address_1: packageDetail.address_1,
-      address_2: packageDetail.address_2,
-      city: packageDetail.city,
-      state_code: packageDetail.state_code,
-      country_code: packageDetail.country_code,
-      detail: packageDetail.detail,
-      zipcode: packageDetail.zipcode,
-      order_number: packageDetail.order_number,
-      weight: packageDetail.weight.toString(),
-      length: packageDetail.length.toString(),
-      width: packageDetail.width.toString(),
-      height: packageDetail.height.toString(),
-      include_battery: packageDetail.include_battery || false,
-      package_products: packageDetail.package_products || [{}],
-      scan_days: packageDetail.scan_days,
-      custom_url: packageDetail.custom_url,
-      package_name: packageDetail.package_name,
-      package_quantity: (packageDetail.package_quantity || 0).toString(),
-      product_price: (packageDetail.product_price || 0).toString(),
-      custom_cn_barcode: packageDetail.custom_cn_barcode,
-      cn_product_link: packageDetail.cn_product_link,
-      cn_product_price: (packageDetail.cn_product_price)?.toString(),
-      cn_shipping_fee: (packageDetail.cn_shipping_fee)?.toString(),
+      package_products: [{}],
     },
   });
 
   const productValue = useWatch({
-    control: updatePackageForm.control,
+    control: createOrderForm.control,
     name: `package_products`,
   });
 
   const scanDaysValue = useWatch({
-    control: updatePackageForm.control,
+    control: createOrderForm.control,
     name: `scan_days`,
   });
 
@@ -345,21 +315,21 @@ const ModalUpdatePackage = ({
 
   const handleSelectState = (state: TUSState) => {
     setSelectedState(`${state.label} (${state.value})`);
-    updatePackageForm.setValue("state_code", state.value);
+    createOrderForm.setValue("state_code", state.value);
     setFilteredStates([]);
   };
 
   const addProductForm = () => {
-    const currentValues = updatePackageForm.getValues();
-    updatePackageForm.setValue("package_products", [
+    const currentValues = createOrderForm.getValues();
+    createOrderForm.setValue("package_products", [
       ...currentValues.package_products!,
       {},
     ]);
   };
 
   const removeProductForm = (index: number) => {
-    const currentValues = updatePackageForm.getValues();
-    updatePackageForm.setValue(
+    const currentValues = createOrderForm.getValues();
+    createOrderForm.setValue(
       "package_products",
       currentValues.package_products?.map((product, i) =>
         i === index ? null : product
@@ -424,13 +394,21 @@ const ModalUpdatePackage = ({
     setLoading(true);
 
     try {
-      const result = await updatePackages(packageDetail.id, values);
-      console.log("Package updated successfully:", result);
-      toast.success("Order updated successfully");
+      const result = await createPackage(values);
+      console.log("Order created successfully:", result);
+      toast.success("Order created successfully");
       modalClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      const { setPackages } = usePackageStore.getState();
+      const newPackages = await getListPackages(
+        1,
+        50,
+        "",
+        "",
+        undefined,
+        undefined,
+        undefined
+      );
+      setPackages(newPackages.packages);
     } catch (error) {
       console.error("Error creating order:", error);
       //@ts-expect-error expected
@@ -441,17 +419,14 @@ const ModalUpdatePackage = ({
   };
 
   const selectedService =
-    updatePackageForm.watch("service") || listServices?.[packageListType]?.name;
+    createOrderForm.watch("service") || listServices?.[packageListType]?.name;
 
   return (
     <div className="w-full px-2">
-      <Heading
-        title={"Sửa thông tin đơn hàng"}
-        className="space-y-2 py-4 text-center"
-      />
-      <Form {...updatePackageForm}>
+      <Heading title={"Tạo đơn hàng"} className="space-y-2 py-4 text-center" />
+      <Form {...createOrderForm}>
         <form
-          onSubmit={updatePackageForm.handleSubmit(onSubmit)}
+          onSubmit={createOrderForm.handleSubmit(onSubmit)}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-x-8 max-md:grid-cols-1">
@@ -460,7 +435,7 @@ const ModalUpdatePackage = ({
               <hr className="my-4" />
               <div className="grid grid-cols-2 gap-x-5 gap-y-4 ">
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="recipient"
                   render={({ field }) => (
                     <FormItem>
@@ -479,7 +454,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
@@ -496,7 +471,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="address_1"
                   render={({ field }) => (
                     <FormItem>
@@ -516,7 +491,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="address_2"
                   render={({ field }) => (
                     <FormItem>
@@ -533,7 +508,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="city"
                   render={({ field }) => (
                     <FormItem>
@@ -552,7 +527,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="zipcode"
                   render={({ field }) => (
                     <FormItem>
@@ -608,7 +583,7 @@ const ModalUpdatePackage = ({
                 />
 
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="country_code"
                   render={({ field }) => (
                     <FormItem>
@@ -632,7 +607,7 @@ const ModalUpdatePackage = ({
               <hr className="my-4" />
               <div className="grid grid-cols-2 gap-x-5 gap-y-4">
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="detail"
                   render={({ field }) => (
                     <FormItem>
@@ -652,7 +627,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="order_number"
                   render={({ field }) => (
                     <FormItem>
@@ -671,7 +646,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="weight"
                   render={({ field }) => (
                     <FormItem>
@@ -691,7 +666,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="length"
                   render={({ field }) => (
                     <FormItem>
@@ -711,7 +686,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="width"
                   render={({ field }) => (
                     <FormItem>
@@ -731,7 +706,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="height"
                   render={({ field }) => (
                     <FormItem>
@@ -750,8 +725,9 @@ const ModalUpdatePackage = ({
                     </FormItem>
                   )}
                 />
+
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="include_battery"
                   render={({ field }) => (
                     <FormItem>
@@ -775,13 +751,22 @@ const ModalUpdatePackage = ({
                 </strong>
               </div>
               <FormField
-                control={updatePackageForm.control}
+                control={createOrderForm.control}
                 name="service"
-                disabled={true}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Select value={field.value?.toString()} disabled={true}>
+                      <Select
+                        value={
+                          field.value?.toString() ||
+                          listServices?.[packageListType]?.name
+                        }
+                        onValueChange={(value) => {
+                          if (value) {
+                            field.onChange(value);
+                          }
+                        }}
+                      >
                         <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
                           <SelectValue placeholder="Dịch vụ" />
                         </SelectTrigger>
@@ -806,7 +791,11 @@ const ModalUpdatePackage = ({
                 <>
                   <Select
                     defaultValue={cnPackageType}
-                    disabled
+                    onValueChange={(value) => {
+                      if (value) {
+                        setCnPackageType(value);
+                      }
+                    }}
                   >
                     <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
                       <SelectValue placeholder="Dịch vụ" />
@@ -832,7 +821,7 @@ const ModalUpdatePackage = ({
                         <strong className="mr-2">Link sản phẩm</strong>
                       </div>
                       <FormField
-                        control={updatePackageForm.control}
+                        control={createOrderForm.control}
                         name="cn_product_link"
                         render={({ field }) => (
                           <FormItem>
@@ -852,7 +841,7 @@ const ModalUpdatePackage = ({
                         <strong className="mr-2">Giá sản phẩm</strong>
                       </div>
                       <FormField
-                        control={updatePackageForm.control}
+                        control={createOrderForm.control}
                         name="cn_product_price"
                         render={({ field }) => (
                           <FormItem>
@@ -877,7 +866,7 @@ const ModalUpdatePackage = ({
                         <strong className="mr-2">Giá ship</strong>
                       </div>
                       <FormField
-                        control={updatePackageForm.control}
+                        control={createOrderForm.control}
                         name="cn_shipping_fee"
                         render={({ field }) => (
                           <FormItem>
@@ -897,7 +886,7 @@ const ModalUpdatePackage = ({
                         <strong className="mr-2">Ảnh biên nhận</strong>
                       </div>
                       <FormField
-                        control={updatePackageForm.control}
+                        control={createOrderForm.control}
                         name="custom_cn_barcode"
                         render={({ field }) => (
                           <FormItem>
@@ -918,7 +907,7 @@ const ModalUpdatePackage = ({
                         <strong className="mr-2">Nhãn Trung Quốc:</strong>
                       </div>
                       <FormField
-                        control={updatePackageForm.control}
+                        control={createOrderForm.control}
                         name="custom_cn_barcode"
                         render={({ field }) => (
                           <FormItem>
@@ -952,14 +941,14 @@ const ModalUpdatePackage = ({
               </div>
               <hr className="my-4" />
               <div>
-                {updatePackageForm
+                {createOrderForm
                   .watch("package_products")!
                   .map(
                     (product, index) =>
                       !!product && (
                         <ProductForm
                           key={uniqueId("PrdForm")}
-                          control={updatePackageForm.control}
+                          control={createOrderForm.control}
                           index={index}
                           product={listProducts}
                           onRemove={removeProductForm}
@@ -969,7 +958,7 @@ const ModalUpdatePackage = ({
               </div>
               <div className="flex gap-3 my-3">
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="package_name"
                   render={({ field }) => (
                     <FormItem>
@@ -998,7 +987,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="package_quantity"
                   render={({ field }) => (
                     <FormItem>
@@ -1028,7 +1017,7 @@ const ModalUpdatePackage = ({
                   )}
                 />
                 <FormField
-                  control={updatePackageForm.control}
+                  control={createOrderForm.control}
                   name="product_price"
                   render={({ field }) => (
                     <FormItem>
@@ -1066,7 +1055,7 @@ const ModalUpdatePackage = ({
               <div className="flex border p-4 shadow-sm gap-x-8">
                 <div className="flex-1 min-w-[25%]">
                   <FormField
-                    control={updatePackageForm.control}
+                    control={createOrderForm.control}
                     name={`scan_days`}
                     render={({ field }) => (
                       <FormItem>
@@ -1096,7 +1085,7 @@ const ModalUpdatePackage = ({
                 </div>
                 <div className="flex-1 min-w-[20%]">
                   <FormField
-                    control={updatePackageForm.control}
+                    control={createOrderForm.control}
                     name={`custom_url`}
                     render={({ field }) => (
                       <FormItem>
@@ -1159,4 +1148,4 @@ const ModalUpdatePackage = ({
   );
 };
 
-export default ModalUpdatePackage;
+export default OrderCreateForm;

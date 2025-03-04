@@ -10,6 +10,7 @@ interface TabProps {
 
 const initTabs = [
   "All",
+  "Purchased",
   "Pending",
   "Pre-Transit",
   "In-Transit",
@@ -75,6 +76,7 @@ const PackageTabs: React.FC<{ count: any }> = ({ count }) => {
     const statusCount = count;
     const statusMapping: Record<string, string> = {
       Pending: "pending",
+      Purchased: "purchased",
       "Pre-Transit": "pre-transit",
       "In-Transit": "in-transit",
       Delivered: "delivered",
