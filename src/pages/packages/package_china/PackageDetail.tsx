@@ -79,6 +79,7 @@ export type PackageDetail = {
   package_name: string;
   package_quantity: number;
   product_price: number;
+  is_purchased: boolean;
   cn_product_link: string;
   cn_product_price: string;
   cn_shipping_fee: string;

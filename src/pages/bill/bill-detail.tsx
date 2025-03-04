@@ -178,7 +178,7 @@ const BillDetail: React.FC = () => {
               <TableHead className="text-right">Fee extra</TableHead>
             </TableRow>
           </TableHeader>
-          {extraFee && extraFee!.length > 0 &&
+          {extraFee?.length > 0 &&
             extraFee?.map((item) => (
               <TableBody>
                 <TableRow>
