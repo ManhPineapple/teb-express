@@ -92,7 +92,7 @@ export async function getBillDetails(code: string) {
 
 export async function getBillPackages(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/${code}/packages`);
+    const res = await CustomAxios.get(`/bills/packages/${code}`);
     return res.data;
   } catch (error) {
     console.log(error);
@@ -102,7 +102,7 @@ export async function getBillPackages(code: string) {
 
 export async function getExtraFee(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/${code}/fees`);
+    const res = await CustomAxios.get(`/bills/fees/${code}`);
     return res.data;
   } catch (error) {
     console.log(error);

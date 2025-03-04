@@ -562,7 +562,7 @@ export default function PackageDetailChina() {
               <hr className="mt-5" />
               <div className="total mt-3 flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Total fee b:
+                  Total fee:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
                 ¥{sumFee().toFixed(2)}
