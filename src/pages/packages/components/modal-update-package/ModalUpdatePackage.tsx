@@ -37,59 +37,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
 
-const orderFormSchema = z.object({
-  service: z.string().optional(),
-  recipient: z
-    .string()
-    .min(5, { message: "Recipient is required, at least 5 characters" }),
-  phone: z.string().optional(),
-  address_1: z.string().min(1, { message: "Address is required" }),
-  address_2: z.string().optional(),
-  city: z.string().min(1, { message: "City is required" }),
-  state_code: z.string().min(1, { message: "State code is required" }),
-  country_code: z.string().optional(),
-  detail: z.string().min(1, { message: "Detail is required" }),
-  zipcode: z.string().min(1, { message: "Zip code is required" }),
-  order_number: z.string().min(1, { message: "Order number is required" }),
-  weight: z
-    .string()
-    .min(1, { message: "Weight is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "weight must be greater than 0",
-    }),
-  length: z
-    .string()
-    .min(1, { message: "Length is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Length must be greater than 0",
-    }),
-  width: z
-    .string()
-    .min(1, { message: "Width is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Width must be greater than 0",
-    }),
-  height: z
-    .string()
-    .min(1, { message: "Height is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Height must be greater than 0",
-    }),
-  include_battery: z.boolean().optional(),
-  package_products: z.array(z.any()).optional(),
-  scan_days: z.string().optional(),
-  custom_url: z.string().optional(),
-  package_name: z.string().optional(),
-  package_quantity: z.string().optional(),
-  product_price: z.string().optional(),
-
-  cn_package_status: z.number().optional(),
-  cn_product_link: z.string().optional(),
-  cn_product_price: z.string().optional(),
-  cn_shipping_fee: z.string().optional(),
-  custom_cn_barcode: z.string().optional(),
-});
-
 type OrderFormSchemaType = z.infer<typeof orderFormSchema>;
 
 type ProductFormProps = {
@@ -219,6 +166,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 import { useWatch } from "react-hook-form";
 import { PackageDetail } from "../../package_china/PackageDetail";
+import { orderFormSchema } from "../modal-create-package/order-form-schema";
 type PackageDetailProps = {
   modalClose: () => void;
   packageDetail: PackageDetail;
@@ -234,10 +182,12 @@ const ModalUpdatePackage = ({
   const [filteredStates, setFilteredStates] = useState<TUSState[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const defaultTab = packageDetail.status_string === "purchased" ? "Purchased" : "Pre-purchased";
-  const defaultCnPackageType = packageDetail.is_purchased == true ? "Purchased" : "Pre-purchased";
-  const [cnPackageType, ] = useState<string>(defaultCnPackageType);
-  const [cnPackageTab, ] = useState<string>(defaultTab)
+  const defaultTab =
+    packageDetail.status_string === "purchased" ? "Purchased" : "Pre-purchased";
+  const defaultCnPackageType =
+    packageDetail.is_purchased == true ? "Purchased" : "Pre-purchased";
+  const [cnPackageType] = useState<string>(defaultCnPackageType);
+  const [cnPackageTab] = useState<string>(defaultTab);
   const [listServices, setListServices] = useState<Service[] | null>([]);
   const [listProducts, setListProducts] = useState<Product[] | null>([]);
 
@@ -289,12 +239,18 @@ const ModalUpdatePackage = ({
       package_name: packageDetail.package_name,
       package_quantity: (packageDetail.package_quantity || 0).toString(),
       product_price: (packageDetail.product_price || 0).toString(),
-      custom_cn_barcode: packageDetail.custom_cn_barcode,
-      cn_product_link: packageDetail.cn_product_link,
-      cn_product_price: (packageDetail.cn_product_price)?.toString(),
-      cn_shipping_fee: (packageDetail.cn_shipping_fee)?.toString(),
+      custom_cn_barcode: packageDetail.custom_cn_barcode || "",
+      cn_product_link: packageDetail.cn_product_link || "",
+      cn_product_price: packageDetail.cn_product_price?.toString(),
+      cn_shipping_fee: packageDetail.cn_shipping_fee?.toString(),
     },
   });
+
+    useEffect(() => {
+      if (listServices && packageListType in listServices) {
+        updatePackageForm.setValue("service", listServices[packageListType].name);
+      }
+    }, [updatePackageForm, listServices, packageListType]);
 
   const productValue = useWatch({
     control: updatePackageForm.control,
@@ -388,16 +344,17 @@ const ModalUpdatePackage = ({
     //@ts-expect-error ts-such
     values.cn_shipping_fee = Number(values.cn_shipping_fee);
 
-    values.service = values.service || "Express (CN exclusive)";
+    if (values.cn_product_link == "") values.cn_product_link = undefined
+    if (values.custom_cn_barcode == "") values.custom_cn_barcode = undefined
 
     if (values.service == "Express (CN exclusive)") {
       if (cnPackageType == "Purchased") {
-        values.cn_package_status = 3;
+        values.is_purchased = true;
       } else if (cnPackageType == "Pre-purchased") {
-        values.cn_package_status = 1;
+        values.is_purchased = false;
       } else {
         // default cnPackageType value is purchased
-        values.cn_package_status = 3;
+        values.is_purchased = true;
       }
     }
 
@@ -453,7 +410,10 @@ const ModalUpdatePackage = ({
       />
       <Form {...updatePackageForm}>
         <form
-          onSubmit={updatePackageForm.handleSubmit(onSubmit)}
+          onSubmit={
+            updatePackageForm.handleSubmit(onSubmit, (err) => {console.log(err);
+            })
+          }
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-x-8 max-md:grid-cols-1">
@@ -678,7 +638,9 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Trọng lượng: <span className="text-red-500">*</span>
+                        Trọng lượng: {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -698,7 +660,9 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Dài: <span className="text-red-500">*</span>
+                        Dài: {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -718,7 +682,9 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Rộng: <span className="text-red-500">*</span>
+                        Rộng: {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -738,7 +704,9 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Cao: <span className="text-red-500">*</span>
+                        Cao: {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -806,10 +774,7 @@ const ModalUpdatePackage = ({
               />
               {selectedService === "Express (CN exclusive)" && (
                 <>
-                  <Select
-                    defaultValue={cnPackageType}
-                    disabled
-                  >
+                  <Select defaultValue={cnPackageType} disabled>
                     <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
                       <SelectValue placeholder="Dịch vụ" />
                     </SelectTrigger>

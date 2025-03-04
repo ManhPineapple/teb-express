@@ -38,59 +38,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
 
-const orderFormSchema = z.object({
-  service: z.string().optional(),
-  recipient: z
-    .string()
-    .min(5, { message: "Recipient is required, at least 5 characters" }),
-  phone: z.string().optional(),
-  address_1: z.string().min(1, { message: "Address is required" }),
-  address_2: z.string().optional(),
-  city: z.string().min(1, { message: "City is required" }),
-  state_code: z.string().min(1, { message: "State code is required" }),
-  country_code: z.string().optional(),
-  detail: z.string().min(1, { message: "Detail is required" }),
-  zipcode: z.string().min(1, { message: "Zip code is required" }),
-  order_number: z.string().min(1, { message: "Order number is required" }),
-  weight: z
-    .string()
-    .min(1, { message: "Weight is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "weight must be greater than 0",
-    }),
-  length: z
-    .string()
-    .min(1, { message: "Length is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Length must be greater than 0",
-    }),
-  width: z
-    .string()
-    .min(1, { message: "Width is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Width must be greater than 0",
-    }),
-  height: z
-    .string()
-    .min(1, { message: "Height is required" })
-    .refine((val) => parseFloat(val) > 0, {
-      message: "Height must be greater than 0",
-    }),
-  include_battery: z.boolean().optional(),
-  package_products: z.array(z.any()).optional(),
-  scan_days: z.string().optional(),
-  custom_url: z.string().optional(),
-  package_name: z.string().optional(),
-  package_quantity: z.string().optional(),
-  product_price: z.string().optional(),
-
-  is_purchased: z.boolean().optional(),
-  cn_product_link: z.string().optional(),
-  cn_product_price: z.string().optional(),
-  cn_shipping_fee: z.string().optional(),
-  custom_cn_barcode: z.string().optional(),
-});
-
 type OrderFormSchemaType = z.infer<typeof orderFormSchema>;
 
 type ProductFormProps = {
@@ -219,6 +166,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 };
 
 import { useWatch } from "react-hook-form";
+import { orderFormSchema } from "./order-form-schema";
 
 const OrderCreateForm = ({
   modalClose,
@@ -260,9 +208,17 @@ const OrderCreateForm = ({
   const createOrderForm = useForm<OrderFormSchemaType>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
+      service: listServices?.[packageListType]?.name,
       package_products: [{}],
     },
   });
+  
+  useEffect(() => {
+    if (listServices && packageListType in listServices) {
+      createOrderForm.setValue("service", listServices[packageListType].name);
+    }
+  }, [createOrderForm, listServices, packageListType]);
+
 
   const productValue = useWatch({
     control: createOrderForm.control,
@@ -355,8 +311,6 @@ const OrderCreateForm = ({
     values.cn_product_price = Number(values.cn_product_price);
     //@ts-expect-error ts-such
     values.cn_shipping_fee = Number(values.cn_shipping_fee);
-
-    values.service = values.service || "Express (CN exclusive)";
 
     if (values.service == "Express (CN exclusive)") {
       if (cnPackageType == "Purchased") {
@@ -651,7 +605,10 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Trọng lượng: <span className="text-red-500">*</span>
+                        Trọng lượng:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -671,7 +628,10 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Dài: <span className="text-red-500">*</span>
+                        Dài:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -691,7 +651,10 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Rộng: <span className="text-red-500">*</span>
+                        Rộng:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -711,7 +674,10 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Cao: <span className="text-red-500">*</span>
+                        Cao:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -758,8 +724,7 @@ const OrderCreateForm = ({
                     <FormControl>
                       <Select
                         value={
-                          field.value?.toString() ||
-                          listServices?.[packageListType]?.name
+                          field.value?.toString()
                         }
                         onValueChange={(value) => {
                           if (value) {
