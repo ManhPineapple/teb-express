@@ -48,9 +48,20 @@ const getUserInfo = async () => {
   }
 };
 
+const getUserInfoChina = async () => {
+  try {
+    const res = await CustomAxios.get(`/users-china`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 export const userService = {
   update,
   login,
   signup,
   getUserInfo,
+  getUserInfoChina
 };
