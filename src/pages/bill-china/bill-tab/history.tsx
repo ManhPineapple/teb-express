@@ -177,7 +177,7 @@ const HistoryTab: React.FC = () => {
                     ? `+ $ ${Math.abs(item.amount)
                         .toFixed(2)
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
-                    : ` ${item.type === typePay ? "-" : "+"} ¥${Math.abs(
+                    : ` ${item.type === typePay ? "-" : "+"} $${Math.abs(
                         item.amount
                       )
                         .toFixed(2)

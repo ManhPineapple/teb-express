@@ -1,14 +1,14 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TPackage } from "@/constants/data";
 import {
-  MAP_STATUS_CLASS_NAME,
-  PACKAGE_STATUS_CREATED_TEXT,
+    MAP_STATUS_CLASS_NAME,
+    PACKAGE_STATUS_CREATED_TEXT,
 } from "@/constants/packages";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -284,7 +284,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
               style={{ color: "#FA8C16" }}
             >
               <span className="pkg-exceed" title="Oversized Package">
-                {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
+                {packageListType == 0 ? '$' : "$"}{convertPrice(row.original).toFixed(2)}
               </span>
             </div>
           );
@@ -292,7 +292,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       } else {
         return (
           <div className="capitalize font-medium text-center mr-5">
-            {packageListType == 0 ? '$' : "¥"}{convertPrice(row.original).toFixed(2)}
+            {packageListType == 0 ? '$' : "$"}{convertPrice(row.original).toFixed(2)}
           </div>
         );
       }

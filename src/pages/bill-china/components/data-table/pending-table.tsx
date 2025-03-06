@@ -1,14 +1,14 @@
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+    ColumnDef,
+    ColumnFiltersState,
+    SortingState,
+    VisibilityState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import * as React from "react";
@@ -17,12 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import { getPackagesHoldingChina } from "@/services/packages";
 import { Link, useSearchParams } from "react-router-dom";
@@ -111,7 +111,7 @@ const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount_china"));
 
-      return <div className="text-right font-medium">¥{amount}</div>;
+      return <div className="text-right font-medium">${amount}</div>;
     },
   },
 ];

@@ -1,10 +1,10 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import { getBillDetails, getBillPackages, getExtraFee } from "@/services/bill";
 import { format } from "date-fns";
@@ -155,7 +155,7 @@ const BillDetail: React.FC = () => {
                   </TableCell>
                   <TableCell>{item.tracking_number}</TableCell>
                   <TableCell className="text-right">
-                    +¥{toZeroIfSmall(item.shipping_fee).toFixed(2)}
+                    +${toZeroIfSmall(item.shipping_fee).toFixed(2)}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -200,7 +200,7 @@ const BillDetail: React.FC = () => {
                   <TableCell>{item.type_name}</TableCell>
                   <TableCell>{item.description}</TableCell>
                   <TableCell className="text-right">
-                    +¥{toZeroIfSmall(item.amount).toFixed(2)}
+                    +${toZeroIfSmall(item.amount).toFixed(2)}
                   </TableCell>
                 </TableRow>
               </TableBody>

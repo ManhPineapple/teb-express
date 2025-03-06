@@ -12,40 +12,18 @@ export const navItems: NavItem[] = [
     icon: "shopping",
     href: "/packages",
     label: "Orders",
-    children: [
-      {
-        title: "Orders",
-        href: "/packages",
-        icon: "shopping",
-        label: "Orders",
-      },
-      {
-        title: "Bill",
-        href: "/bill",
-        icon: "billing",
-        label: "Bill",
-      },
-    ],
   },
   {
     title: "China Orders",
     icon: "shopping",
     href: "/packages-china",
     label: "Orders",
-    children: [
-      {
-        title: "China Orders",
-        href: "/packages-china",
-        icon: "shopping",
-        label: "China Orders",
-      },
-      {
-        title: "China Bill",
-        href: "/bill-china",
-        icon: "billing",
-        label: "China Bill",
-      },
-    ],
+  },
+  {
+    title: "Bill",
+    href: "/bill",
+    icon: "billing",
+    label: "Bill",
   },
   {
     title: "Setting",
