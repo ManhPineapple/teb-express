@@ -828,7 +828,7 @@ const OrderCreateForm = ({
                   {cnPackageType == "Purchased" && (
                     <>
                       <div className="flex mt-10">
-                        <strong className="mr-2">Giá ship</strong>
+                        <strong className="mr-2">Giá ship nội địa</strong>
                       </div>
                       <FormField
                         control={createOrderForm.control}
