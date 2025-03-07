@@ -76,7 +76,7 @@ export const cancelPackages = async (ids: any) => {
     return res.data;
   } catch (error) {
     //@ts-ignore
-    toast.error(error.response.data.error);
+    toast.error(error.response.data || error.message);
     console.error("Error creating order:", error);
     throw error;
   }
@@ -108,7 +108,7 @@ export const processPackage = async (payload: any) => {
     return res.data;
   } catch (error) {
     //@ts-ignore
-    toast.error(error.response.data.error);
+    toast.error(error.response.data || error.message);
     console.error("Error creating process:", error);
     throw error;
   }

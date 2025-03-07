@@ -107,7 +107,7 @@ const ModalAddOrUpdateProduct: React.FC<{
         }
         setTimeout(() => window.location.reload(), 1000);
       } catch (e: any) {
-        toast.error(e.response.data.error);
+        toast.error(e.response.data || e.message);
       }
     }
   };

@@ -1,6 +1,7 @@
 import DataTable from "@/components/shared/data-table";
 import {
-  PACKAGE_STATUS_CREATED_TEXT
+  PACKAGE_STATUS_CREATED_TEXT,
+  PACKAGE_STATUS_PURCHASED_TEXT
 } from "@/constants/packages";
 import {
   fetchBarcodeFile,
@@ -263,7 +264,7 @@ export default function PackagesTable({
   };
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
-      (ele) => ele.status_string !== PACKAGE_STATUS_CREATED_TEXT
+      (ele) => ele.status_string !== PACKAGE_STATUS_CREATED_TEXT && ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
     );
 
     if (selectedInvalid.length > 0) {
