@@ -31,6 +31,8 @@ export const orderFormSchema = z.object({
   cn_product_price: z.string().optional(),
   cn_shipping_fee: z.string().optional(),
   custom_cn_barcode: z.string().optional(),
+  image: z.instanceof(File).optional(),
+  cn_invoice_image: z.string().optional(),
 }).refine(
   (data) =>
     data.service === "Express (CN exclusive)" ||

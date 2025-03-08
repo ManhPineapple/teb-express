@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TUSState, US_STATES } from "@/constants/packages";
-import { createPackage, getListPackages } from "@/services/packages";
+import { createPackage, getListPackages, uploadCnInvoiceImage } from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
 import { usePackageStore } from "@/store/tableStore";
@@ -212,13 +212,12 @@ const OrderCreateForm = ({
       package_products: [{}],
     },
   });
-  
+
   useEffect(() => {
     if (listServices && packageListType in listServices) {
       createOrderForm.setValue("service", listServices[packageListType].name);
     }
   }, [createOrderForm, listServices, packageListType]);
-
 
   const productValue = useWatch({
     control: createOrderForm.control,
@@ -348,8 +347,15 @@ const OrderCreateForm = ({
     setLoading(true);
 
     try {
-      const result = await createPackage(values);
-      console.log("Order created successfully:", result);
+      if (values.image) {
+        const uploadUrl = await uploadCnInvoiceImage(values.image);
+        values = {
+          ...values,
+          cn_invoice_image: uploadUrl,
+        }
+      }
+
+      await createPackage(values);
       toast.success("Order created successfully");
       modalClose();
       const { setPackages } = usePackageStore.getState();
@@ -723,9 +729,7 @@ const OrderCreateForm = ({
                   <FormItem>
                     <FormControl>
                       <Select
-                        value={
-                          field.value?.toString()
-                        }
+                        value={field.value?.toString()}
                         onValueChange={(value) => {
                           if (value) {
                             field.onChange(value);
@@ -852,15 +856,19 @@ const OrderCreateForm = ({
                       </div>
                       <FormField
                         control={createOrderForm.control}
-                        name="custom_cn_barcode"
-                        render={({ field }) => (
+                        name="image"
+                        render={({ field: { onChange } }) => (
                           <FormItem>
                             <FormControl>
                               <Input
-                                type="text"
-                                placeholder="Ảnh biên nhận"
-                                {...field}
-                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    onChange(e.target.files[0]);
+                                  }
+                                }}
+                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
                               />
                             </FormControl>
                             <FormMessage />
