@@ -1,13 +1,12 @@
 import { navItems } from "@/constants/data";
 import { usePathname } from "@/routes/hooks";
+import { userService } from "@/services/auth";
+import { Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Heading from "./heading";
 import { ModeToggle } from "./theme-toggle";
 import UserNav from "./user-nav";
-import NotificationsNav from "./notifications-nav";
-import { useEffect, useState } from "react";
-import { userService } from "@/services/auth";
-import { Wallet } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 // Custom hook to find the matched path
 const useMatchedPath = (pathname: string) => {
@@ -66,7 +65,6 @@ export default function Header() {
           <Wallet className="text-[#13C2C2]" />
         </div>
         <strong className="ml-3 max-sm:hidden">{userInfo?.full_name}</strong>
-        <NotificationsNav />
         <UserNav />
         <ModeToggle />
       </div>
