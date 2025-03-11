@@ -1,4 +1,5 @@
 import { CustomAxios } from "@/utils/customAxios";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 interface FetchBarcodeFileParams {
@@ -132,7 +133,9 @@ export const processPackage = async (payload: any) => {
 
 export const validateAddress = async (payload: any) => {
   try {
-    const res = await CustomAxios.post(`/packages/validate-address`, payload);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || ""
+    const newUrl = baseUrl.split('/').slice(0, -2).join('/');
+    const res = await axios.post(`${newUrl}/v1/packages/address/validate`, payload)
     return res;
   } catch (error) {
     console.error("Error validate address:", error);
