@@ -1,14 +1,14 @@
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+    VisibilityState,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Copy, Download } from "lucide-react";
 import * as React from "react";
@@ -17,23 +17,23 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  getBillListChina,
-  getInvoice,
-  getInvoiceDownloadUrl
+    getBillListChina,
+    getInvoice,
+    getInvoiceDownloadUrl
 } from "@/services/bill";
 import saveAs from "file-saver";
 import { Link, useSearchParams } from "react-router-dom";
@@ -134,7 +134,7 @@ const columns: ColumnDef<Payment>[] = [
         total(row.original.shipping_fee, row.original.extra_fee)
       );
 
-      return <div className="text-right font-medium">¥{amount}</div>;
+      return <div className="text-right font-medium">${amount}</div>;
     },
   },
   {
@@ -150,7 +150,7 @@ const columns: ColumnDef<Payment>[] = [
           });
           saveAs(blob, `payment_receipt_${row.original.code}`);
         } catch (e: any) {
-          toast.error(e.response.data.error);
+          toast.error(e.response.data || e.message);
         }
       };
 

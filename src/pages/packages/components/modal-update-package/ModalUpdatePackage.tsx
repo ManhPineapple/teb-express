@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TUSState, US_STATES } from "@/constants/packages";
-import { updatePackages } from "@/services/packages";
+import { updatePackages, uploadCnInvoiceImage } from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -246,11 +246,11 @@ const ModalUpdatePackage = ({
     },
   });
 
-    useEffect(() => {
-      if (listServices && packageListType in listServices) {
-        updatePackageForm.setValue("service", listServices[packageListType].name);
-      }
-    }, [updatePackageForm, listServices, packageListType]);
+  useEffect(() => {
+    if (listServices && packageListType in listServices) {
+      updatePackageForm.setValue("service", listServices[packageListType].name);
+    }
+  }, [updatePackageForm, listServices, packageListType]);
 
   const productValue = useWatch({
     control: updatePackageForm.control,
@@ -344,8 +344,8 @@ const ModalUpdatePackage = ({
     //@ts-expect-error ts-such
     values.cn_shipping_fee = Number(values.cn_shipping_fee);
 
-    if (values.cn_product_link == "") values.cn_product_link = undefined
-    if (values.custom_cn_barcode == "") values.custom_cn_barcode = undefined
+    if (values.cn_product_link == "") values.cn_product_link = undefined;
+    if (values.custom_cn_barcode == "") values.custom_cn_barcode = undefined;
 
     if (values.service == "Express (CN exclusive)") {
       if (cnPackageType == "Purchased") {
@@ -383,8 +383,14 @@ const ModalUpdatePackage = ({
     setLoading(true);
 
     try {
-      const result = await updatePackages(packageDetail.id, values);
-      console.log("Package updated successfully:", result);
+      if (values.image) {
+        const uploadUrl = await uploadCnInvoiceImage(values.image);
+        values = {
+          ...values,
+          cn_invoice_image: uploadUrl,
+        };
+      }
+      await updatePackages(packageDetail.id, values);
       toast.success("Order updated successfully");
       modalClose();
       setTimeout(() => {
@@ -393,7 +399,7 @@ const ModalUpdatePackage = ({
     } catch (error) {
       console.error("Error creating order:", error);
       //@ts-expect-error expected
-      toast.error(error.response.data.error);
+      toast.error(error.response.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -410,10 +416,9 @@ const ModalUpdatePackage = ({
       />
       <Form {...updatePackageForm}>
         <form
-          onSubmit={
-            updatePackageForm.handleSubmit(onSubmit, (err) => {console.log(err);
-            })
-          }
+          onSubmit={updatePackageForm.handleSubmit(onSubmit, (err) => {
+            console.log(err);
+          })}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-x-8 max-md:grid-cols-1">
@@ -638,7 +643,8 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Trọng lượng: {selectedService !== "Express (CN exclusive)" && (
+                        Trọng lượng:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
                           <span className="text-red-500">*</span>
                         )}
                       </FormLabel>
@@ -660,7 +666,8 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Dài: {selectedService !== "Express (CN exclusive)" && (
+                        Dài:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
                           <span className="text-red-500">*</span>
                         )}
                       </FormLabel>
@@ -682,7 +689,8 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Rộng: {selectedService !== "Express (CN exclusive)" && (
+                        Rộng:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
                           <span className="text-red-500">*</span>
                         )}
                       </FormLabel>
@@ -704,7 +712,8 @@ const ModalUpdatePackage = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Cao: {selectedService !== "Express (CN exclusive)" && (
+                        Cao:{" "}
+                        {selectedService !== "Express (CN exclusive)" && (
                           <span className="text-red-500">*</span>
                         )}
                       </FormLabel>
@@ -865,15 +874,19 @@ const ModalUpdatePackage = ({
                       </div>
                       <FormField
                         control={updatePackageForm.control}
-                        name="custom_cn_barcode"
-                        render={({ field }) => (
+                        name="image"
+                        render={({ field: { onChange } }) => (
                           <FormItem>
                             <FormControl>
                               <Input
-                                type="text"
-                                placeholder="Ảnh biên nhận"
-                                {...field}
-                                className="px-4 py-6 shadow-inner drop-shadow-xl"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    onChange(e.target.files[0]);
+                                  }
+                                }}
+                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
                               />
                             </FormControl>
                             <FormMessage />

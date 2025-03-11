@@ -61,7 +61,7 @@ const handleCopy = (text: string) => {
 };
 
 const total = (ship: any, extra: number) => {
-  let total = ship + extra;
+  const total = ship + extra;
   return total;
 };
 
@@ -156,7 +156,7 @@ const columns: ColumnDef<Payment>[] = [
           });
           saveAs(blob, `payment_receipt_${row.original.code}`);
         } catch (e: any) {
-          toast.error(e.response.data.error);
+          toast.error(e.response.data || e.message);
         }
       };
 

@@ -60,6 +60,22 @@ export async function getPackagesDetail(package_id: string) {
   }
 }
 
+export const uploadCnInvoiceImage = async (image: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const res = await CustomAxios.post(`/packages/upload_invoice`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return res.data.url;
+  } catch (error) {
+    console.error("Error uploading invoice image:", error);
+    throw error;
+  }
+};
+
 export const createPackage = async (values: any) => {
   try {
     const res = await CustomAxios.post(`/packages/create`, values);
@@ -76,7 +92,7 @@ export const cancelPackages = async (ids: any) => {
     return res.data;
   } catch (error) {
     //@ts-ignore
-    toast.error(error.response.data.error);
+    toast.error(error.response.data || error.message);
     console.error("Error creating order:", error);
     throw error;
   }
@@ -108,7 +124,7 @@ export const processPackage = async (payload: any) => {
     return res.data;
   } catch (error) {
     //@ts-ignore
-    toast.error(error.response.data.error);
+    toast.error(error.response.data || error.message);
     console.error("Error creating process:", error);
     throw error;
   }

@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { processPackage } from "@/services/packages";
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -31,14 +30,9 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
         toast.success(
           "The order is being processed and tracking is created, processing information will be updated later"
         );
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        toast.error(err.response.data.error);
-
-        return;
-      }
-
+    } catch (err: any) {
       console.error("Error processing package:", err);
+      toast.error(err.response.data || err.message);
     }
     setOpen(false);
   };

@@ -7,7 +7,6 @@ import ListClaim from "@/pages/claim";
 import { ClaimDetail } from "@/pages/claim/ClaimDetail";
 import LandingPage from "@/pages/landing-page";
 import NotFound from "@/pages/not-found";
-import NotificationPage from "@/pages/notification";
 import Order from "@/pages/order";
 import ChinaPackage from "@/pages/packages/package_china";
 import PackageDetailChina from "@/pages/packages/package_china/PackageDetail";
@@ -137,10 +136,6 @@ export default function AppRouter() {
         {
           path: "/shipments/detail/:id",
           element: <ShipmentDetail />,
-        },
-        {
-          path: "/notifications",
-          element: <NotificationPage />,
         },
       ],
     },

@@ -5,6 +5,7 @@ import { Paperclip } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { packageListTypeChina } from "../../package_china";
 
 // Define Zod schema for form validation
 const importOrdersSchema = z.object({
@@ -15,7 +16,13 @@ const importOrdersSchema = z.object({
 
 type ImportOrdersFormData = z.infer<typeof importOrdersSchema>;
 
-const ImportOrdersForm = ({ modalClose }: { modalClose: () => void }) => {
+const ImportOrdersForm = ({
+  modalClose,
+  packageListType,
+}: {
+  modalClose: () => void;
+  packageListType: number;
+}) => {
   const [loading, setLoading] = useState(false);
   const [resultVisible, setResultVisible] = useState(false);
   const [importErrors, setImportErrors] = useState([]);
@@ -85,13 +92,23 @@ const ImportOrdersForm = ({ modalClose }: { modalClose: () => void }) => {
               <span className="text-gray-700 text-sm font-bold">
                 Download file
               </span>
-              <a
-                href="../../../../../Ananbay_template.xlsx"
-                download="Ananbay_template.xlsx"
-                className="download-link text-blue-700 text-sm font-bold ml-1"
-              >
-                Ananbay template XLSX
-              </a>
+              {packageListType === packageListTypeChina ? (
+                <a
+                  href="../../../../../Ananbay_CN_template.xlsx"
+                  download="Ananbay_template.xlsx"
+                  className="download-link text-blue-700 text-sm font-bold ml-1"
+                >
+                  Ananbay CN template XLSX
+                </a>
+              ) : (
+                <a
+                  href="../../../../../Ananbay_template.xlsx"
+                  download="Ananbay_template.xlsx"
+                  className="download-link text-blue-700 text-sm font-bold ml-1"
+                >
+                  Ananbay template XLSX
+                </a>
+              )}
             </div>
           </div>
           <div className="flex">

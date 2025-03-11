@@ -99,7 +99,7 @@ export default function PackageTableActions({
 
               <ImportModal
                 renderModal={(onClose) => (
-                  <ImportOrdersForm modalClose={onClose} />
+                  <ImportOrdersForm modalClose={onClose} packageListType={packageListType}/>
                 )}
               />
               <PopupModal
