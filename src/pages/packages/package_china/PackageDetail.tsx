@@ -468,10 +468,11 @@ export default function PackageDetailChina() {
                   Ảnh biên nhận:
                 </div>
                 <button
-                  className="col-span-2 text-blue-500 underline cursor-pointer bg-transparent border-none p-0"
+                  className={`bg-transparent border-none p-0 ${packageDetail?.cn_invoice_image ? "col-span-2 text-blue-500 underline cursor-pointer" : "col-span-1 text-bl"}`}
+                  disabled={!packageDetail?.cn_invoice_image}
                   onClick={handleViewImage}
                 >
-                  Xem ảnh
+                  {packageDetail?.cn_invoice_image ? "Xem ảnh" : "None"}
                 </button>
               </div>
             </div>
