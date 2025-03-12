@@ -24,7 +24,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TUSState, US_STATES } from "@/constants/packages";
-import { createPackage, getListPackages, uploadCnInvoiceImage } from "@/services/packages";
+import {
+  createPackage,
+  getListPackages,
+  uploadCnInvoiceImage,
+} from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
 import { usePackageStore } from "@/store/tableStore";
@@ -165,6 +169,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   );
 };
 
+import axios from "axios";
 import { useWatch } from "react-hook-form";
 import { orderFormSchema } from "./order-form-schema";
 
@@ -181,6 +186,15 @@ const OrderCreateForm = ({
   const [cnPackageType, setCnPackageType] = useState<string>("Purchased");
   const [listServices, setListServices] = useState<Service[] | null>([]);
   const [listProducts, setListProducts] = useState<Product[] | null>([]);
+  const [productPriceInput, setProductPriceInput] = useState("");
+  const [shippingFeeInput, setShippingFee] = useState("");
+  const [currency, setCurrency] = useState("CNY");
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout>();
+  const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({
+    VND: 0.000039,
+    CNY: 0.14,
+    USD: 1,
+  }); // default value
 
   useEffect(() => {
     const fetchPackageService = async () => {
@@ -201,8 +215,31 @@ const OrderCreateForm = ({
       }
     };
 
+    const getCurrencyRate = async () => {
+      const today = new Date().toISOString().split("T")[0];
+      axios
+        .get(`https://www.vietcombank.com.vn/api/exchangerates?date=${today}`)
+        .then((response) => {
+          const data = response.data.Data;
+          const usdRate =
+            data.find((item: any) => item.currencyCode === "USD")?.sell ?? 1;
+          const cnyRate =
+            data.find((item: any) => item.currencyCode === "CNY")?.sell ?? 1;
+
+          setCurrencyRates({
+            VND: 1 / usdRate,
+            CNY: cnyRate / usdRate,
+            USD: 1,
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching exchange rate:", error);
+        });
+    };
+
     fetchPackageService();
     fetchProduct();
+    getCurrencyRate();
   }, []);
 
   const createOrderForm = useForm<OrderFormSchemaType>({
@@ -352,7 +389,7 @@ const OrderCreateForm = ({
         values = {
           ...values,
           cn_invoice_image: uploadUrl,
-        }
+        };
       }
 
       await createPackage(values);
@@ -380,6 +417,58 @@ const OrderCreateForm = ({
 
   const selectedService =
     createOrderForm.watch("service") || listServices?.[packageListType]?.name;
+
+  useEffect(() => {
+    if (!isNaN(Number(shippingFeeInput)) && shippingFeeInput !== "") {
+      createOrderForm.setValue(
+        "cn_shipping_fee",
+        (Number(shippingFeeInput) * currencyRates[currency]).toFixed(2)
+      );
+    } else {
+      createOrderForm.setValue("cn_shipping_fee", "");
+    }
+  }, [shippingFeeInput, currency]);
+
+  useEffect(() => {
+    if (!isNaN(Number(productPriceInput)) && productPriceInput !== "") {
+      createOrderForm.setValue(
+        "cn_product_price",
+        (Number(productPriceInput) * currencyRates[currency]).toFixed(2)
+      );
+    } else {
+      createOrderForm.setValue("cn_product_price", "");
+    }
+  }, [productPriceInput, currency]);
+
+  const handleAmountChange = (e: any, type: string) => {
+    const value = e.target.value;
+    if (type === "productPrice") {
+      setProductPriceInput(value);
+    } else if (type === "shippingFee") {
+      setShippingFee(value);
+    }
+    setLoading(true);
+
+    if (debounceTimer) clearTimeout(debounceTimer);
+
+    const newTimer = setTimeout(() => {
+      if (type === "productPrice") {
+        createOrderForm.setValue(
+          "cn_product_price",
+          (value * currencyRates[currency]).toFixed(2)
+        );
+      } else if (type === "shippingFee") {
+        createOrderForm.setValue(
+          "cn_shipping_fee",
+          (value * currencyRates[currency]).toFixed(2)
+        );
+      }
+
+      setLoading(false);
+    }, 1000);
+
+    setDebounceTimer(newTimer);
+  };
 
   return (
     <div className="w-full px-2">
@@ -809,48 +898,110 @@ const OrderCreateForm = ({
                       <div className="flex mt-10">
                         <strong className="mr-2">Giá sản phẩm</strong>
                       </div>
-                      <FormField
-                        control={createOrderForm.control}
-                        name="cn_product_price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="Giá sản phẩm trên web"
-                                {...field}
-                                className="px-4 py-6 shadow-inner drop-shadow-xl"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Currency Selection & Input */}
+                        <div className="relative flex">
+                          <select
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            className="mr-2 px-2 py-2 border rounded bg-white shadow-inner"
+                          >
+                            <option value="VND">₫</option>
+                            <option value="CNY">¥</option>
+                            <option value="USD">$</option>
+                          </select>
+                          <input
+                            type="number"
+                            value={productPriceInput}
+                            onChange={(e) =>
+                              handleAmountChange(e, "productPrice")
+                            }
+                            placeholder="Giá sản phẩm trên web"
+                            className="w-full px-4 py-2 border rounded shadow-inner"
+                          />
+                        </div>
+
+                        <FormField
+                          control={createOrderForm.control}
+                          name="cn_product_price"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                    $
+                                  </span>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    placeholder="USD tự động cập nhật"
+                                    disabled
+                                    className="w-full pl-7 pr-4 py-2 border rounded shadow-inner bg-gray-200 cursor-not-allowed"
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </>
                   )}
 
                   {cnPackageType == "Purchased" && (
                     <>
                       <div className="flex mt-10">
-                        <strong className="mr-2">Giá ship nội địa</strong>
+                        <strong className="mr-2">
+                          Giá ship nội địa (nhờ trả)
+                        </strong>
                       </div>
-                      <FormField
-                        control={createOrderForm.control}
-                        name="cn_shipping_fee"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="Giá ship nhờ trả, bỏ qua nếu đã tự trả"
-                                {...field}
-                                className="px-4 py-6 shadow-inner drop-shadow-xl"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Currency Selection & Input */}
+                        <div className="relative flex">
+                          <select
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            className="mr-2 px-2 py-2 border rounded bg-white shadow-inner"
+                          >
+                            <option value="VND">₫</option>
+                            <option value="CNY">¥</option>
+                            <option value="USD">$</option>
+                          </select>
+                          <input
+                            type="number"
+                            value={shippingFeeInput}
+                            onChange={(e) =>
+                              handleAmountChange(e, "shippingFee")
+                            }
+                            placeholder="Nhập số tiền"
+                            className="w-full px-4 py-2 border rounded shadow-inner"
+                          />
+                        </div>
+
+                        <FormField
+                          control={createOrderForm.control}
+                          name="cn_shipping_fee"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                    $
+                                  </span>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    placeholder="USD tự động cập nhật"
+                                    disabled
+                                    className="w-full pl-7 pr-4 py-2 border rounded shadow-inner bg-gray-200 cursor-not-allowed"
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                       <div className="flex mt-10">
                         <strong className="mr-2">Ảnh biên nhận</strong>
                       </div>
@@ -1111,7 +1262,7 @@ const OrderCreateForm = ({
                 className="rounded-full"
                 size="lg"
               >
-                {loading ? "Submitting..." : "Submit"}
+                {loading ? "Processing..." : "Submit"}
               </Button>
             </div>
           </div>

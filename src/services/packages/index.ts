@@ -1,4 +1,5 @@
 import { CustomAxios } from "@/utils/customAxios";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 interface FetchBarcodeFileParams {
@@ -53,6 +54,19 @@ export async function getPackagesHoldingChina(
 export async function getPackagesDetail(package_id: string) {
   try {
     const res = await CustomAxios.get(`/packages/${package_id}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+export async function downloadCNInvoiceImage(url: string) {
+  try {
+    const res = await CustomAxios.get(
+      `/uploads/file-export/download?type=export_packages&url=${url}`,
+      { responseType: "blob" }
+    );
     return res.data;
   } catch (error) {
     console.log(error);
@@ -132,7 +146,9 @@ export const processPackage = async (payload: any) => {
 
 export const validateAddress = async (payload: any) => {
   try {
-    const res = await CustomAxios.post(`/packages/validate-address`, payload);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || ""
+    const newUrl = baseUrl.split('/').slice(0, -2).join('/');
+    const res = await axios.post(`${newUrl}/v1/packages/address/validate`, payload)
     return res;
   } catch (error) {
     console.error("Error validate address:", error);

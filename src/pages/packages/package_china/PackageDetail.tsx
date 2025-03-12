@@ -2,29 +2,30 @@ import ModalUpdatePackage from "@/components/shared/popup-modal-update";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-    EXTRA_FEE_CANCEL_LABEL,
-    EXTRA_FEE_TYPE_DISCOUNT,
-    MAP_STATUS_CLASS_NAME,
-    PACKAGE_REFUND_COMPLETE,
-    PACKAGE_STATUS_CREATED_TEXT,
-    PACKAGE_STATUS_PENDING_PICKUP_TEXT,
-    PACKAGE_STATUS_PURCHASED_TEXT,
+  EXTRA_FEE_CANCEL_LABEL,
+  EXTRA_FEE_TYPE_DISCOUNT,
+  MAP_STATUS_CLASS_NAME,
+  PACKAGE_REFUND_COMPLETE,
+  PACKAGE_STATUS_CREATED_TEXT,
+  PACKAGE_STATUS_PENDING_PICKUP_TEXT,
+  PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
-import { getPackagesDetail } from "@/services/packages";
+import { downloadCNInvoiceImage, getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
+import saveAs from "file-saver";
 import JsBarcode from "jsbarcode";
 import {
-    ArrowUpRight,
-    Barcode,
-    CircleArrowLeft,
-    Info,
-    PackageOpen,
+  ArrowUpRight,
+  Barcode,
+  CircleArrowLeft,
+  Info,
+  PackageOpen,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -82,6 +83,7 @@ export type PackageDetail = {
   is_purchased: boolean;
   cn_product_link: string;
   cn_product_price: string;
+  cn_invoice_image: string;
   cn_shipping_fee: string;
   custom_cn_barcode: string;
 };
@@ -258,6 +260,18 @@ export default function PackageDetailChina() {
     }
   };
 
+  const handleViewImage = async () => {
+    try {
+      const imageBlob = await downloadCNInvoiceImage(
+        packageDetail?.cn_invoice_image || ""
+      );
+      const blob = new Blob([imageBlob], { type: "image/png" });
+      saveAs(blob, `Image ${packageDetail?.order_number}`);
+    } catch (error) {
+      toast.error("Download image failed");
+    }
+  };
+
   return (
     <div className="max-w-full rounded-lg h-full">
       <div className="p-3 px-6">
@@ -380,7 +394,7 @@ export default function PackageDetailChina() {
       <div className="grid grid-cols-12 max-xl:grid-cols-1">
         <div className="grid grid-cols-2 xl:col-span-7 max-sm:grid-cols-1">
           <div className="">
-            <div className=" sm:h-[200px] items-center justify-center p-6">
+            <div className=" sm:h-[450px] items-center justify-center p-6">
               <div className="border-b pb-3 font-bold ">Order Details:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
@@ -448,6 +462,18 @@ export default function PackageDetailChina() {
                 <div className="col-span-8">
                   {packageDetail?.custom_cn_barcode || "N/A"}
                 </div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Ảnh biên nhận:
+                </div>
+                <button
+                  className={`bg-transparent border-none p-0 ${packageDetail?.cn_invoice_image ? "col-span-2 text-blue-500 underline cursor-pointer" : "col-span-1 text-bl"}`}
+                  disabled={!packageDetail?.cn_invoice_image}
+                  onClick={handleViewImage}
+                >
+                  {packageDetail?.cn_invoice_image ? "Xem ảnh" : "None"}
+                </button>
               </div>
             </div>
           </div>
@@ -525,7 +551,7 @@ export default function PackageDetailChina() {
                   Additional charges:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                ${sumExtraFee().toFixed(2)}
+                  ${sumExtraFee().toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between mt-3">
@@ -544,7 +570,7 @@ export default function PackageDetailChina() {
                     </Tooltip>
                   </TooltipProvider>
                   <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                  ${discount().toFixed(2)}
+                    ${discount().toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -555,7 +581,7 @@ export default function PackageDetailChina() {
                       Refund fee:
                     </div>
                     <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
-                    ${sumRefundFee()}
+                      ${sumRefundFee()}
                     </div>
                   </div>
                 </div>
@@ -566,7 +592,7 @@ export default function PackageDetailChina() {
                   Total fee:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
-                ${sumFee().toFixed(2)}
+                  ${sumFee().toFixed(2)}
                 </span>
               </div>
             </CardContent>
