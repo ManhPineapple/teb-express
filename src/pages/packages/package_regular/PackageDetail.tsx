@@ -81,6 +81,7 @@ export type PackageDetail = {
   is_purchased: boolean;
   cn_product_link: string;
   cn_product_price: string;
+  cn_invoice_image: string;
   cn_shipping_fee: string;
   custom_cn_barcode: string;
 };

@@ -61,6 +61,19 @@ export async function getPackagesDetail(package_id: string) {
   }
 }
 
+export async function downloadCNInvoiceImage(url: string) {
+  try {
+    const res = await CustomAxios.get(
+      `/uploads/file-export/download?type=export_packages&url=${url}`,
+      { responseType: "blob" }
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export const uploadCnInvoiceImage = async (image: File) => {
   try {
     const formData = new FormData();
