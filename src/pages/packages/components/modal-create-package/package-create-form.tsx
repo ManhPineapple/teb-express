@@ -171,7 +171,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 import axios from "axios";
 import { useWatch } from "react-hook-form";
-import { orderFormSchema } from "./order-form-schema";
+import { orderFormSchema } from "../package_schema";
 
 const OrderCreateForm = ({
   modalClose,
@@ -1051,6 +1051,55 @@ const OrderCreateForm = ({
                   )}
                 </>
               )}
+              {selectedService === "Tiktok" && (
+                <>
+                  <div className="flex justify-between">
+                    <strong className="mr-2">
+                      Mã nhãn Tiktok <span className="text-red-500">*</span>
+                    </strong>
+                  </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name={`custom_url`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            required={!!scanDaysValue}
+                            placeholder="Mã nhãn"
+                            {...field}
+                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
+                            style={{
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={createOrderForm.control}
+                    name="include_battery"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            <FormLabel>Scan tiktok sớm</FormLabel>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
             </div>
             <div className="mt-5 border p-4 shadow-md">
               <div className="flex justify-between">
@@ -1169,68 +1218,6 @@ const OrderCreateForm = ({
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Custom Label</strong>
-              </div>
-              <hr className="my-4" />
-              <div className="flex border p-4 shadow-sm gap-x-8">
-                <div className="flex-1 min-w-[25%]">
-                  <FormField
-                    control={createOrderForm.control}
-                    name={`scan_days`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) =>
-                              handleSKUChange(field, value)
-                            }
-                          >
-                            <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                              <SelectValue placeholder="Scan days" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <ScrollArea type="always" className="max-h-64">
-                                <SelectItem value="1">1 day</SelectItem>
-                                <SelectItem value="2">2 days</SelectItem>
-                                <SelectItem value="3">3 days</SelectItem>
-                              </ScrollArea>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-[20%]">
-                  <FormField
-                    control={createOrderForm.control}
-                    name={`custom_url`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            required={!!scanDaysValue}
-                            placeholder="url"
-                            {...field}
-                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
-                            style={{
-                              textOverflow: "ellipsis",
-                              overflow: "hidden",
-                              whiteSpace: "nowrap",
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
             </div>
           </div>

@@ -166,8 +166,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 import axios from "axios";
 import { useWatch } from "react-hook-form";
-import { PackageDetail } from "../../package_china/PackageDetail";
-import { orderFormSchema } from "../modal-create-package/order-form-schema";
+import { orderFormSchema, PackageDetail } from "../package_schema";
 type PackageDetailProps = {
   modalClose: () => void;
   packageDetail: PackageDetail;
