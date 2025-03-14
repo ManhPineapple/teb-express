@@ -454,6 +454,16 @@ export function PackageDetailRegular() {
                   {packageDetail?.include_battery ? "Yes" : "No"}
                 </div>
               </div>
+              {packageDetail?.service_name === "Tiktok" && (
+                <div className="grid grid-cols-12 mb-2">
+                  <div className="col-span-4 font-normal text-[#626363]">
+                    Nhãn Tiktok:
+                  </div>
+                  <div className="col-span-8">
+                    {packageDetail?.custom_tiktok_barcode}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="">

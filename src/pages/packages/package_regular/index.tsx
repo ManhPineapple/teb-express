@@ -9,13 +9,27 @@ import { useGetListPackages } from "../queries/queries";
 
 export const packageListTypeRegular = 0;
 export default function PackagePage() {
-  const [count, setCount] = useState<any>({ count: 0 });
   const setPackages = usePackageStore((state) => state.setPackages);
-  // const [showBanner, setShowBanner] = useState<boolean>(false);
-  // const bannerRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") || 1);
+  const pageLimit = Number(searchParams.get("limit") || 50);
+  const order_number = searchParams.get("code") || null;
+  const searchStatus = searchParams.get("status") || undefined;
+  const startDate = searchParams.get("start_date") || undefined;
+  const endDate = searchParams.get("end_date") || undefined;
+  const byDate = searchParams.get("by_date") || undefined;
+  const { data: packageData, isLoading } = useGetListPackages(
+    page,
+    pageLimit,
+    order_number,
+    searchStatus,
+    startDate,
+    endDate,
+    byDate
+  );
+  const [count, setCount] = useState<any>({ count: 0 });
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         const status = searchStatus?.toLowerCase();
@@ -29,7 +43,6 @@ export default function PackagePage() {
           startDate,
           endDate,
           byDate,
-          "Express"
         );
         setCount(countResponse);
       } catch (error) {
@@ -40,42 +53,14 @@ export default function PackagePage() {
     fetchData();
   }, []);
 
-  const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get("page") || 1);
-  const pageLimit = Number(searchParams.get("limit") || 50);
-  const order_number = searchParams.get("code") || null;
-  const searchStatus = searchParams.get("status") || undefined;
-  const startDate = searchParams.get("start_date") || undefined;
-  const endDate = searchParams.get("end_date") || undefined;
-  const byDate = searchParams.get("by_date") || undefined;
-  const { data, isLoading } = useGetListPackages(
-    page,
-    pageLimit,
-    order_number,
-    searchStatus,
-    startDate,
-    endDate,
-    byDate,
-    "Express"
-  );
-
   useEffect(() => {
-    if (data?.packages) {
-      setPackages(data.packages);
+    if (packageData?.packages) {
+      setPackages(packageData.packages);
     }
-  }, [data, setPackages]);
+  }, [packageData, setPackages]);
 
-  // const packages = data?.packages;
   const packages = usePackageStore((state) => state.packages);
   const pageCount = Math.ceil(count.count / pageLimit);
-
-  // useEffect(() => {
-  //   const hasVisited = document.cookie.split('; ').find(row => row.startsWith('hasVisited='));
-  //   if (!hasVisited) {
-  //     setShowBanner(true);
-  //     document.cookie = "hasVisited=true; max-age=" + 3 * 24 * 60 * 60; // Set cookie to expire in 3 days
-  //   }
-  // }, []);
 
   if (isLoading) {
     return (
@@ -90,19 +75,6 @@ export default function PackagePage() {
   }
 
   return (
-    // {showBanner && (
-    //   <div ref={bannerRef} className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black bg-opacity-50">
-    //     <div className="relative">
-    //       <button
-    //         onClick={() => setShowBanner(false)}
-    //         className="absolute top-2 right-2 text-white text-[40px] cursor-pointer"
-    //       >
-    //         &times; {/* This represents the close "X" */}
-    //       </button>
-    //       <img src="https://i.ibb.co/7W3k6b7/Thu-ngo-ANan-Bay-ba-n-final-2.png" alt="Banner" className="h-[80vh] w-auto" />
-    //     </div>
-    //   </div>
-    // )}
     <div className="p-5">
       <PageHead title="Orders | Ananbay" />
       <PackageTable

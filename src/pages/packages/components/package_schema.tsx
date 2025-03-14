@@ -20,8 +20,6 @@ export const orderFormSchema = z.object({
   height: z.string().optional(),
   include_battery: z.boolean().optional(),
   package_products: z.array(z.any()).optional(),
-  scan_days: z.string().optional(),
-  custom_url: z.string().optional(),
   package_name: z.string().optional(),
   package_quantity: z.string().optional(),
   product_price: z.string().optional(),
@@ -33,6 +31,9 @@ export const orderFormSchema = z.object({
   custom_cn_barcode: z.string().optional(),
   image: z.instanceof(File).optional(),
   cn_invoice_image: z.string().optional(),
+
+  custom_tiktok_barcode: z.string().min(1, { message: "Nhãn Tiktok là bắt buộc" }),
+  is_early_scan: z.boolean().optional(),
 }).refine(
   (data) =>
     data.service === "Express (CN exclusive)" ||
@@ -107,8 +108,7 @@ export type PackageDetail = {
   is_package_exceed: boolean;
   include_battery: boolean;
   package_products: any[];
-  scan_days: string;
-  custom_url: string;
+
   package_name: string;
   package_quantity: number;
   product_price: number;
@@ -118,4 +118,7 @@ export type PackageDetail = {
   cn_invoice_image: string;
   cn_shipping_fee: string;
   custom_cn_barcode: string;
+
+  custom_tiktok_barcode: string;
+  is_early_scan: boolean
 };

@@ -261,15 +261,6 @@ const OrderCreateForm = ({
     name: `package_products`,
   });
 
-  const scanDaysValue = useWatch({
-    control: createOrderForm.control,
-    name: `scan_days`,
-  });
-
-  const handleSKUChange = (field: any, value: string) => {
-    field.onChange(value);
-  };
-
   const handleChooseStateInputChange = (event: any) => {
     const value = event.target.value;
     setSelectedState(value);
@@ -1060,12 +1051,11 @@ const OrderCreateForm = ({
                   </div>
                   <FormField
                     control={createOrderForm.control}
-                    name={`custom_url`}
+                    name={`custom_tiktok_barcode`}
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Input
-                            required={!!scanDaysValue}
                             placeholder="Mã nhãn"
                             {...field}
                             className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
@@ -1082,7 +1072,7 @@ const OrderCreateForm = ({
                   />
                   <FormField
                     control={createOrderForm.control}
-                    name="include_battery"
+                    name="is_early_scan"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
