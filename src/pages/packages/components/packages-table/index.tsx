@@ -156,7 +156,7 @@ export default function PackagesTable({
     const allUrlsEmpty = selectedItems.every((element) => element.url === "");
 
     if (allUrlsEmpty) {
-      toast.error("The selected order has no label!", {
+      toast.error("Đơn hàng đã chọn không có nhãn!", {
         autoClose: 3000,
       });
       return;
@@ -171,7 +171,7 @@ export default function PackagesTable({
         });
 
         if (!res || res.error) {
-          toast.error(res?.errorMessage || "Error fetching file", {
+          toast.error(res?.errorMessage || "Lỗi khi lấy tệp", {
             autoClose: 3000,
           });
           continue;
@@ -179,7 +179,7 @@ export default function PackagesTable({
 
         files.push(res);
       } catch (error) {
-        toast.error("Error fetching file", {
+        toast.error("Lỗi khi lấy tệp", {
           autoClose: 3000,
         });
       }
@@ -203,7 +203,7 @@ export default function PackagesTable({
     );
 
     if (allTrackingNumbersEmpty) {
-      toast.error("The selected order has no barcode!", {
+      toast.error("Đơn hàng đã chọn không có mã vạch!", {
         autoClose: 3000,
       });
       return;
@@ -244,7 +244,7 @@ export default function PackagesTable({
         currentY += lineHeight; // Move to the next line for the next barcode
       } catch (error) {
         console.error("Error generating barcode:", error);
-        toast.error("Error generating barcode", {
+        toast.error("Lỗi tạo mã vạch", {
           autoClose: 3000,
         });
       }
@@ -253,11 +253,11 @@ export default function PackagesTable({
     // Save the PDF if barcodes were added
     if (currentY > 10) {
       pdf.save("barcodes.pdf");
-      toast.success("Barcodes PDF downloaded successfully!", {
+      toast.success("Tệp PDF mã vạch đã được tải xuống thành công!", {
         autoClose: 3000,
       });
     } else {
-      toast.error("No barcodes generated!", {
+      toast.error("Không có mã vạch nào được tạo!", {
         autoClose: 3000,
       });
     }
@@ -275,7 +275,7 @@ export default function PackagesTable({
       }
 
       toast.error(
-        `Package ${codeSelectedInvalid.join(", ")} can not create tracking.`,
+        `Đơn hàng ${codeSelectedInvalid.join(", ")} không thể tạo mã theo dõi.`,
         {
           autoClose: 5000,
         }
@@ -300,10 +300,10 @@ export default function PackagesTable({
       return;
     }
 
-    let msg = "Create tracking successfully";
+    let msg = "Tạo mã theo dõi thành công";
     if (result.promotion_label) {
       msg =
-        "The order is being processed and tracking is created, processing information will be updated later";
+        "Đơn hàng đang được xử lý và mã theo dõi đã được tạo, thông tin xử lý sẽ được cập nhật sau.";
     }
 
     toast.success(msg, {

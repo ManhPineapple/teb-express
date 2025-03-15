@@ -11,7 +11,7 @@ import { packageListTypeChina } from "../../package_china";
 const importOrdersSchema = z.object({
   file: z
     .instanceof(FileList)
-    .refine((files) => files.length > 0, "File is required"),
+    .refine((files) => files.length > 0, "Yêu cầu chọn file !"),
 });
 
 type ImportOrdersFormData = z.infer<typeof importOrdersSchema>;
@@ -78,7 +78,7 @@ const ImportOrdersForm = ({
 
   return (
     <div className="p-4 bg-white rounded shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Import Orders</h2>
+      <h2 className="text-xl font-bold mb-4">Nhập đơn hàng</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <div className="flex justify-between">
@@ -86,11 +86,11 @@ const ImportOrdersForm = ({
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="file"
             >
-              File to import
+              File để nhập
             </label>
             <div className="">
               <span className="text-gray-700 text-sm font-bold">
-                Download file
+                Tải xuống file
               </span>
               {packageListType === packageListTypeChina ? (
                 <a
@@ -98,7 +98,7 @@ const ImportOrdersForm = ({
                   download="Ananbay_template.xlsx"
                   className="download-link text-blue-700 text-sm font-bold ml-1"
                 >
-                  Ananbay CN template XLSX
+                  Mẫu Ananbay CN XLSX
                 </a>
               ) : (
                 <a
@@ -106,7 +106,7 @@ const ImportOrdersForm = ({
                   download="Ananbay_template.xlsx"
                   className="download-link text-blue-700 text-sm font-bold ml-1"
                 >
-                  Ananbay template XLSX
+                  Mẫu Ananbay XLSX
                 </a>
               )}
             </div>
@@ -132,13 +132,13 @@ const ImportOrdersForm = ({
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
             onClick={modalClose}
           >
-            Cancel
+            Hủy
           </button>
           <button
             type="submit"
             className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
           >
-            Submit
+            Lưu lại
           </button>
         </div>
       </form>

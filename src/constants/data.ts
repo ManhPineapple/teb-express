@@ -8,46 +8,46 @@ export const navItems: NavItem[] = [
     label: "Dashboard",
   },
   {
-    title: "Orders",
+    title: "Đơn hàng",
     icon: "shopping",
     href: "/packages",
-    label: "Orders",
+    label: "Đơn hàng",
     children: [
       {
-        title: "Orders",
+        title: "Đơn hàng",
         href: "/packages",
         icon: "shopping",
-        label: "Orders",
+        label: "Đơn hàng",
       },
       {
-        title: "China Orders",
+        title: "Đơn hàng Trung Quốc",
         href: "/packages-china",
         icon: "shopping",
-        label: "China Orders",
+        label: "Đơn hàng Trung Quốc",
       },
     ],
   },
   {
-    title: "Bill",
+    title: "Hóa đơn",
     icon: "billing",
     href: "/bill",
-    label: "Bill"
+    label: "Hóa đơn"
   },
   {
-    title: "Setting",
+    title: "Cài đặt",
     icon: "setting",
     href: "/404/1",
-    label: "Setting",
+    label: "Cài đặt",
     children: [
       {
-        title: "Account",
+        title: "Tài khoản",
         href: "/setting/account",
-        label: "Account",
+        label: "Tài khoản",
       },
       {
-        title: "Products",
+        title: "Sản phẩm",
         href: "/setting/products",
-        label: "Products",
+        label: "Sản phẩm",
       },
       // {
       //   title: "Templates",
@@ -55,9 +55,9 @@ export const navItems: NavItem[] = [
       //   label: "Templates",
       // },
       {
-        title: "Service prices",
+        title: "Giá dịch vụ",
         href: "/setting/prices",
-        label: "Prices",
+        label: "Giá dịch vụ",
       },
       // {
       //   title: "Coupons",

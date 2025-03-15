@@ -1087,7 +1087,7 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Package name: <span className="text-red-500">*</span>
+                        Tên đơn hàng: <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -1101,7 +1101,7 @@ const OrderCreateForm = ({
                             )
                           }
                           type="text"
-                          placeholder="Package name"
+                          placeholder="Tên đơn hàng"
                           {...field}
                           className=" px-4 py-6 shadow-inner drop-shadow-xl"
                         />
@@ -1116,7 +1116,7 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Package quantity:{" "}
+                        Số lượng đơn:{" "}
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -1131,7 +1131,7 @@ const OrderCreateForm = ({
                             )
                           }
                           type="number"
-                          placeholder="Package quantity"
+                          placeholder="Số lượng đơn"
                           {...field}
                           className=" px-4 py-6 shadow-inner drop-shadow-xl"
                         />
@@ -1146,7 +1146,7 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Product price: <span className="text-red-500">*</span>
+                        Giá sản phẩm: <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -1160,7 +1160,7 @@ const OrderCreateForm = ({
                             )
                           }
                           type="number"
-                          placeholder="Product price"
+                          placeholder="Giá sản phẩm"
                           {...field}
                           className=" px-4 py-6 shadow-inner drop-shadow-xl"
                         />
@@ -1173,7 +1173,7 @@ const OrderCreateForm = ({
             </div>
             <div className="mt-5 border p-4 shadow-md">
               <div className="flex justify-between">
-                <strong className="mr-2">Custom Label</strong>
+                <strong className="mr-2">Nhãn tùy chỉnh</strong>
               </div>
               <hr className="my-4" />
               <div className="flex border p-4 shadow-sm gap-x-8">
@@ -1191,13 +1191,13 @@ const OrderCreateForm = ({
                             }
                           >
                             <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                              <SelectValue placeholder="Scan days" />
+                              <SelectValue placeholder="Số ngày quét" />
                             </SelectTrigger>
                             <SelectContent>
                               <ScrollArea type="always" className="max-h-64">
-                                <SelectItem value="1">1 day</SelectItem>
-                                <SelectItem value="2">2 days</SelectItem>
-                                <SelectItem value="3">3 days</SelectItem>
+                                <SelectItem value="1">1 ngày</SelectItem>
+                                <SelectItem value="2">2 ngày</SelectItem>
+                                <SelectItem value="3">3 ngày</SelectItem>
                               </ScrollArea>
                             </SelectContent>
                           </Select>
@@ -1254,7 +1254,7 @@ const OrderCreateForm = ({
                 size="lg"
                 onClick={modalClose}
               >
-                Cancel
+                Hủy
               </Button>
               <Button
                 type="submit"
@@ -1262,7 +1262,7 @@ const OrderCreateForm = ({
                 className="rounded-full"
                 size="lg"
               >
-                {loading ? "Processing..." : "Submit"}
+                {loading ? "Đang xử lý..." : "Lưu"}
               </Button>
             </div>
           </div>

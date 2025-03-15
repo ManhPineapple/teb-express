@@ -27,18 +27,18 @@ import {
 
 const chartConfig = {
   views: {
-    label: "Page Views",
+    label: "Lượt truy cập trang",
   },
   intransit: {
-    label: "In-Transit",
+    label: "Đang vận chuyển",
     color: "#02baba",
   },
   delivered: {
-    label: "Delivered",
+    label: "Đã giao hàng",
     color: "#48be78",
   },
   pretransit: {
-    label: "Pre-Transit",
+    label: "Chờ vận chuyển",
     color: "#3f51b5",
   },
 } satisfies ChartConfig;
@@ -77,9 +77,9 @@ export function ChartBackUp({
     <Card className="mt-20">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Bar Chart - Interactive</CardTitle>
+          <CardTitle>Biểu đồ cột tương tác</CardTitle>
           <CardDescription>
-            Showing order statistics for the past 1 month
+            Hiển thị thống kê đơn hàng trong 1 tháng gần đây
           </CardDescription>
         </div>
         <div className="flex">
@@ -107,7 +107,7 @@ export function ChartBackUp({
                           <ArrowUpRight className="w-4 h-4" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="text-sm">Go to list packages</p>
+                          <p className="text-sm">Đi tới danh sách đơn hàng</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

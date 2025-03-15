@@ -22,7 +22,7 @@ export default function TableSearchInput({
       setSearchParams(searchParams);
       return;
     }
-  setSearchParams({
+    setSearchParams({
       ...Object.fromEntries(searchParams),
       page: "1",
       code: newCodeValue,
@@ -31,7 +31,7 @@ export default function TableSearchInput({
   });
   return (
     <Input
-      placeholder={placeholder || `Search order number...`}
+      placeholder={placeholder || `Tìm mã đơn hàng...`}
       value={searchTerm}
       onChange={(event) => setSearchTerm(event.target.value)}
       onKeyDown={(event) => event.key == "Enter" && handleSettingSearchParams(searchTerm)}

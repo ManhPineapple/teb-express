@@ -21,9 +21,8 @@ const TopupTabButton: React.FC<TopupTabButtonProps> = ({
 }) => {
   return (
     <button
-      className={`mb-5 h-12 border rounded-xl flex items-center justify-center ${
-        isActive ? "shadow-lg shadow-cyan-500/50" : ""
-      }`}
+      className={`mb-5 h-12 border rounded-xl flex items-center justify-center ${isActive ? "shadow-lg shadow-cyan-500/50" : ""
+        }`}
       onClick={onClick}
     >
       {children}
@@ -46,7 +45,7 @@ const Topup: React.FC = () => {
           isActive={tab === "banking"}
         >
           <BsCreditCard2BackFill />
-          <span className="font-bold ml-2">Banking</span>
+          <span className="font-bold ml-2">Ngân hàng</span>
         </TopupTabButton>
         <TopupTabButton
           onClick={() => handleTabChange("payoneer")}

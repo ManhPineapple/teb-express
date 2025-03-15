@@ -42,7 +42,7 @@ type AuditLog = {
 const columns: ColumnDef<AuditLog>[] = [
   {
     accessorKey: "created_at",
-    header: "Date",
+    header: "Ngày tạo",
     cell: ({ row }) => (
       <div className="capitalize">
         {row.original.created_at
@@ -53,14 +53,14 @@ const columns: ColumnDef<AuditLog>[] = [
   },
   {
     accessorKey: "updated_user_name",
-    header: "Name",
+    header: "Tên",
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("updated_user_name")}</div>
     ),
   },
   {
     accessorKey: "type",
-    header: "Type",
+    header: "Loại",
     cell: ({ row }) => (
       <div className="w-[100px]">
         {CHANGE_PACKAGE_TYPE[row.original.type] || "N/A"}
@@ -70,21 +70,21 @@ const columns: ColumnDef<AuditLog>[] = [
 
   {
     accessorKey: "old_value",
-    header: "Old value",
+    header: "Giá trị cũ",
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("old_value")}</div>
     ),
   },
   {
     accessorKey: "value",
-    header: "Value",
+    header: "Giá trị",
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("value")}</div>
     ),
   },
   {
     accessorKey: "fee",
-    header: () => <div className="text-right">Fee</div>,
+    header: () => <div className="text-right">Chi phí</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("fee"));
 
@@ -156,9 +156,9 @@ export function AuditLog() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -191,7 +191,7 @@ export function AuditLog() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Không có kết quả.
                 </TableCell>
               </TableRow>
             )}
@@ -200,8 +200,8 @@ export function AuditLog() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length}  trong {" "}
+          {table.getFilteredRowModel().rows.length} dòng được chọn.
         </div>
         <div className="space-x-2">
           <Button
@@ -210,7 +210,7 @@ export function AuditLog() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Trước
           </Button>
           <Button
             variant="outline"
@@ -218,7 +218,7 @@ export function AuditLog() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Sau
           </Button>
         </div>
       </div>

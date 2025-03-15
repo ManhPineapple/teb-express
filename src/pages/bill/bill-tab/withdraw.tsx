@@ -20,20 +20,20 @@ const Withdraw: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="space-y-1">
-          <Label htmlFor="current">Bank name</Label>
+          <Label htmlFor="current">Tên ngân hàng</Label>
           <Input id="current" type="text" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="new">Bank number</Label>
+          <Label htmlFor="new">Số ngân hàng</Label>
           <Input id="new" type="text" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="money">Amount</Label>
+          <Label htmlFor="money">Số tiền</Label>
           <Input id="" type="number" />
         </div>
       </CardContent>
       <CardFooter>
-        <Button>Submit</Button>
+        <Button>Lưu lại</Button>
       </CardFooter>
     </Card>
   );

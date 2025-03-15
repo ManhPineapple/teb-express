@@ -20,7 +20,7 @@ export default function PopupModal({ renderModal }: TPopupModalProps) {
         className="text-xs md:text-sm bg-[#9e7bb5]"
         onClick={() => setIsAddNewModalOpen(true)}
       >
-        <Plus className="mr-2 h-4 w-4" /> Add Order
+        <Plus className="mr-2 h-4 w-4" /> Tạo đơn hàng
       </Button>
 
       <Modal

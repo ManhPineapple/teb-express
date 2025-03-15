@@ -37,7 +37,7 @@ const PackageTracking: React.FC<PackageTrackingProps> = ({ current }) => {
     >
       <div>
         <div className="text-sm font-normal text-[#626363]">
-          Last mile tracking:
+          Theo dõi chặng cuối:
         </div>
         <div className="flex hover:text-[#13c2c2]">
           <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">

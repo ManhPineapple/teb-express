@@ -61,7 +61,7 @@ const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "code",
-    header: "Tracking code",
+    header: "Mã theo dõi",
     cell: ({ row }) => {
       return (
         <div className="capitalize text-[#006a5e] font-medium">
@@ -85,7 +85,7 @@ const columns: ColumnDef<Payment>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Created date
+          Ngày tạo
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -97,7 +97,7 @@ const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "date_process",
-    header: () => <div className="text-center">Date process</div>,
+    header: () => <div className="text-center">Ngày xử lý</div>,
     cell: ({ row }) => {
       const date = new Date(row.getValue("created_at"));
       return (
@@ -107,7 +107,7 @@ const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Total fee</div>,
+    header: () => <div className="text-right">Tổng chi phí</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
@@ -182,7 +182,7 @@ export function PendingTable() {
       <div className="sm:flex gap-3 mt-5">
         <div className="mb-4 w-full col-span-2">
           <Input
-            placeholder="Filter tracking code or bill code..."
+            placeholder="Lọc mã theo dõi hoặc mã hóa đơn..."
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyUp={(e) => e.key === "Enter" && handleSearch()}
             className="w-full h-[44px]"
@@ -203,9 +203,9 @@ export function PendingTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -235,7 +235,7 @@ export function PendingTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Không kết quả.
                 </TableCell>
               </TableRow>
             )}
@@ -244,8 +244,8 @@ export function PendingTable() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} trong {" "}
+          {table.getFilteredRowModel().rows.length} dòng được chọn .
         </div>
         <div className="space-x-2">
           <Button
@@ -254,7 +254,7 @@ export function PendingTable() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Trước
           </Button>
           <Button
             variant="outline"
@@ -262,7 +262,7 @@ export function PendingTable() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Sau
           </Button>
         </div>
       </div>

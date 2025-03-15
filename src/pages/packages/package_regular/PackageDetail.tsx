@@ -317,7 +317,7 @@ export function PackageDetailRegular() {
       });
     } catch (error) {
       console.error("Error generating barcode:", error);
-      toast.error("Error generating barcode", {
+      toast.error("Lỗi tạo mã vạch", {
         autoClose: 3000,
       });
     }
@@ -330,11 +330,11 @@ export function PackageDetailRegular() {
     });
 
     if (files.length > 0) {
-      toast.success("Barcodes downloaded successfully!", {
+      toast.success("Mã vạch đã được tải xuống thành công!", {
         autoClose: 3000,
       });
     } else {
-      toast.error("No barcodes generated!", {
+      toast.error("Không có mã vạch nào được tạo!", {
         autoClose: 3000,
       });
     }
@@ -352,7 +352,7 @@ export function PackageDetailRegular() {
               />
               <div className="ml-[30px]">
                 <div className="text-sm font-normal text-[#626363]">
-                  Code package:
+                  Mã đơn hàng:
                 </div>
                 <span className="text-base font-bold">
                   {packageDetail?.code_package
@@ -362,7 +362,7 @@ export function PackageDetailRegular() {
               </div>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Service:</div>
+              <div className="text-sm font-normal text-[#626363]">Dịch vụ:</div>
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.service_name === "Saver"
                   ? "Standard"
@@ -374,7 +374,7 @@ export function PackageDetailRegular() {
             ) : (
               <div>
                 <div className="text-sm font-normal text-[#626363]">
-                  Last mile tracking:
+                  Theo dõi chặng cuối:
                 </div>
                 <div className="flex hover:text-[#13c2c2]">
                   <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
@@ -388,26 +388,25 @@ export function PackageDetailRegular() {
             )}
             <div>
               <div className="text-sm font-normal text-[#626363]">
-                Created date:
+                Ngày tạo:
               </div>
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.created_at
                   ? format(
-                      new Date(packageDetail.created_at),
-                      "dd/MM/yyyy - HH:mm:ss"
-                    )
+                    new Date(packageDetail.created_at),
+                    "dd/MM/yyyy - HH:mm:ss"
+                  )
                   : "N/A"}
               </span>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Status:</div>
+              <div className="text-sm font-normal text-[#626363]">Trạng thái:</div>
               <span
-                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${
-                  packageDetail?.status_string
+                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${packageDetail?.status_string
                     ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
-                        .className
+                      .className
                     : "N/A"
-                }`}
+                  }`}
               >
                 {packageDetail?.status_string}
               </span>
@@ -416,11 +415,11 @@ export function PackageDetailRegular() {
           <div className="flex gap-2">
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string ===
-                PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
-              <div className="">
-                <ModalCancel ids={[ids]} />
-              </div>
-            )}
+              PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
+                <div className="">
+                  <ModalCancel ids={[ids]} />
+                </div>
+              )}
 
             {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
               <div className="">
@@ -441,7 +440,7 @@ export function PackageDetailRegular() {
               onClick={() => handleDownloadBarcode()}
               disabled={!packageDetail?.tracking_number}
             >
-              <Barcode className="mr-2 h-4 w-4" /> Download Barcode
+              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>
 
             {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
@@ -458,46 +457,46 @@ export function PackageDetailRegular() {
         <div className="grid grid-cols-2 xl:col-span-7 max-sm:grid-cols-1">
           <div className="">
             <div className=" sm:h-[200px] items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold ">Order Details:</div>
+              <div className="border-b pb-3 font-bold ">Chi tiết đơn hàng:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Detail:
+                  Chi tiết:
                 </div>
                 <div className="col-span-8"> {packageDetail?.detail}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Order number:
+                  Số đơn hàng:
                 </div>
                 <div className="col-span-8">{packageDetail?.order_number}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Weight:
+                  Cân nặng:
                 </div>
                 <div className="col-span-8">{packageDetail?.weight} gram</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Length:
+                  Chiều dài:
                 </div>
                 <div className="col-span-8"> {packageDetail?.length} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Width:
+                  Chiểu rộng:
                 </div>
                 <div className="col-span-8"> {packageDetail?.width} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Height:
+                  Chiều cao:
                 </div>
                 <div className="col-span-8"> {packageDetail?.height} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Battery:
+                  Pin:
                 </div>
                 <div className="col-span-8">
                   {packageDetail?.include_battery ? "Yes" : "No"}
@@ -507,52 +506,52 @@ export function PackageDetailRegular() {
           </div>
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">Recipient:</div>
+              <div className="border-b pb-3 font-bold">Người nhận:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Full Name:
+                  Họ tên:
                 </div>
                 <div className="col-span-8"> {packageDetail?.recipient}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Phone:
+                  Số điện thoại:
                 </div>
                 <div className="col-span-8"> {packageDetail?.phone_number}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Address:
+                  Địa chỉ:
                 </div>
                 <div className="col-span-8"> {packageDetail?.address_1}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Address 2:
+                  Địa chỉ 2:
                 </div>
                 <div className="col-span-8"> {packageDetail?.address_2}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  City:
+                  Thành phố:
                 </div>
                 <div className="col-span-8"> {packageDetail?.city}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  State Code:
+                  Mã bang:
                 </div>
                 <div className="col-span-8"> {packageDetail?.state_code}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Zip Code:
+                  Mã bưu điện:
                 </div>
                 <div className="col-span-8"> {packageDetail?.zipcode}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Country Code:
+                  Mã quốc gia:
                 </div>
                 <div className="col-span-8">{packageDetail?.country_code}</div>
               </div>
@@ -568,7 +567,7 @@ export function PackageDetailRegular() {
             <CardContent>
               <div className="flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Delivery fee:
+                  Phí vận chuyển:
                 </div>
                 <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${packageDetail?.shipping_fee}
@@ -576,7 +575,7 @@ export function PackageDetailRegular() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Peak season fees (Phí mùa cao điểm):
+                  Phí mùa cao điểm:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${sumExtraFee().toFixed(2)}
@@ -584,7 +583,7 @@ export function PackageDetailRegular() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Discounts:
+                  Giảm giá:
                 </div>
                 <div className="flex">
                   <TooltipProvider>
@@ -593,7 +592,7 @@ export function PackageDetailRegular() {
                         <Info className="pt-1.5" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="text-sm">Discount by weight</p>
+                        <p className="text-sm">Giảm giá trên cân nặng</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -606,7 +605,7 @@ export function PackageDetailRegular() {
                 <div className=" mt-[15px]">
                   <div className="flex justify-between">
                     <div className="total-title font-medium text-[#aaabab]">
-                      Refund fee:
+                      Phí hoàn trả:
                     </div>
                     <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                       ${sumRefundFee()}
@@ -636,7 +635,7 @@ export function PackageDetailRegular() {
               <hr className="mt-5" />
               <div className="total mt-3 flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Total fee:
+                  Tổng chi phí:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
                   ${sumFee().toFixed(2)}
@@ -658,13 +657,13 @@ export function PackageDetailRegular() {
                         className={`pb-3 ${!displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
                         onClick={() => setDisplayDeliverDetail(false)}
                       >
-                        Deliver order
+                        Giao đơn hàng
                       </button>
                       <button
                         className={`pb-3 ${displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
                         onClick={() => setDisplayDeliverDetail(true)}
                       >
-                        Order history
+                        Lịch sử đơn hàng
                       </button>
                     </div>
                   </div>
@@ -681,15 +680,15 @@ export function PackageDetailRegular() {
           <div className="">
             <div className=" h-full items-center justify-center p-6">
               <div className="border-b pb-3 font-bold">
-                Product Information:
+                Thông tin sản phẩm
               </div>
               {packageDetail?.package_products &&
-              packageDetail?.package_products?.length > 0 ? (
+                packageDetail?.package_products?.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
                     <div className="col-span-5 text-[#626363]">SKU</div>
-                    <div className="col-span-5 text-[#37393e]">Name</div>
-                    <div className="col-span-2">Quantity</div>
+                    <div className="col-span-5 text-[#37393e]">Tên</div>
+                    <div className="col-span-2">Số lượng</div>
                   </div>
                   {packageDetail?.package_products.map((product, index) => (
                     <div className="grid grid-cols-12" key={index}>
@@ -713,7 +712,7 @@ export function PackageDetailRegular() {
                     className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
                   />
                   <p className="text-[#aaabab] mt-3">
-                    No product information yet.
+                    Chưa có thông tin sản phẩm.
                   </p>
                 </div>
               )}
@@ -721,7 +720,7 @@ export function PackageDetailRegular() {
           </div>
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">Help & Claims:</div>
+              <div className="border-b pb-3 font-bold">Hỗ trợ & Khiếu nại:</div>
               <div>
                 <div className="text-center">
                   <PackageOpen
@@ -729,7 +728,7 @@ export function PackageDetailRegular() {
                     className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
                   />
                   <p className="text-[#aaabab] mt-3">
-                    No help and claims information yet.
+                    Chưa có thông tin hỗ trợ và khiếu nại.
                   </p>
                 </div>
               </div>

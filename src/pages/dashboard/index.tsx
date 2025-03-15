@@ -50,11 +50,11 @@ const DashboardPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const startDate = searchParams.get("start_date")
     ? //@ts-ignore
-      new Date(searchParams.get("start_date"))
+    new Date(searchParams.get("start_date"))
     : new Date(new Date().getTime() - 14 * 86400 * 1000);
   const endDate = searchParams.get("end_date")
     ? //@ts-ignore
-      new Date(searchParams.get("end_date"))
+    new Date(searchParams.get("end_date"))
     : new Date();
 
   const formattedStartDate = startDate.toISOString().split("T")[0];
@@ -147,7 +147,7 @@ const DashboardPage: React.FC = () => {
     const num =
       (endDate.getTime() -
         (startDate ? startDate.getTime() : endDate.getTime())) /
-        (1000 * 3600 * 24) +
+      (1000 * 3600 * 24) +
       1;
     const result: string[] = [];
     const date = new Date(endDate);
@@ -360,7 +360,7 @@ const DashboardPage: React.FC = () => {
         <div className="p-4 pt-6 md:p-8 max-w-full mx-auto">
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">
-              Hi, Welcome back 👋
+              Chào mừng quay trở lại 👋
             </h2>
             <div className="actions">
               <select

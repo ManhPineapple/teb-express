@@ -138,11 +138,11 @@ const HistoryTab: React.FC = () => {
                   <div className="flex gap-2 font-medium">
                     <div>
                       {item.type === typeTopup ||
-                      item.type === typePayoneer ||
-                      item.type === typePingPong
+                        item.type === typePayoneer ||
+                        item.type === typePingPong
                         ? "Nạp tiền vào ví"
                         : item.type === typeRefund ||
-                            item.type === typeAffiliate
+                          item.type === typeAffiliate
                           ? "Hoàn tiền cho hóa đơn"
                           : "Thanh toán hóa đơn"}
                     </div>
@@ -175,13 +175,13 @@ const HistoryTab: React.FC = () => {
                 <div className="text-sm font-bold">
                   {item.type === typePayoneer || item.type === typePingPong
                     ? `+ $ ${Math.abs(item.amount)
-                        .toFixed(2)
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
                     : ` ${item.type === typePay ? "-" : "+"} $${Math.abs(
-                        item.amount
-                      )
-                        .toFixed(2)
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                      item.amount
+                    )
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
                 </div>
                 <span
                   className={`float-right ${statusText[item.status].className} text-sm`}
@@ -192,7 +192,7 @@ const HistoryTab: React.FC = () => {
             </div>
           ))
         ) : (
-          <p>No transactions available</p>
+          <p>Không có giao dịch nào.</p>
         )}
       </CardContent>
     </Card>

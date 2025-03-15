@@ -23,7 +23,7 @@ const LoginPage = () => {
       const loginResponse = await userService.login(email, password);
 
       if (!loginResponse.access_token) {
-        toast.error("Login failed");
+        toast.error("Đăng nhập thất bại");
         return;
       }
       setIsLogin(true);
@@ -35,7 +35,7 @@ const LoginPage = () => {
       window.location.reload();
     } catch (err) {
       console.log(err);
-      toast.error("Server error");
+      toast.error("Lỗi server");
     }
   };
 
@@ -78,7 +78,7 @@ const LoginPage = () => {
                 />
               </div>
               <div className="py-6">
-                <label className="text-sm font-bold leading-5">Password</label>
+                <label className="text-sm font-bold leading-5">Mật khẩu</label>
                 <div className="relative">
                   <Input
                     type={shouldShowPassword ? "text" : "password"}
@@ -98,13 +98,13 @@ const LoginPage = () => {
                 onClick={() => handleLoginBtnClick()}
                 disabled={isLogin}
               >
-                Login
+                Đăng nhập
               </Button>
               <div>
                 <p className="mt-4 text-center">
-                  New to Ananbay??
+                  Tạo một tài khoản mới Ananbay??
                   <span className="px-2 text-[#8d181b]">
-                    <a href="/signup">Sign Up</a>
+                    <a href="/signup">Đăng kí</a>
                   </span>
                 </p>
               </div>

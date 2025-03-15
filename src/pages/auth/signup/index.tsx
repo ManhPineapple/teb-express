@@ -43,17 +43,17 @@ const SignUp: React.FC = () => {
         toast.error(res.errors[0]);
       } else {
         setIsSuccess(true);
-        toast.success("Successfully");
+        toast.success("Đăng ký thành công");
       }
     } catch (error) {
-      console.error("Error creating order:", error);
-      toast.error("Error ");
+      console.error("Lỗi khi đăng ký:", error);
+      toast.error("Đã xảy ra lỗi, vui lòng thử lại");
     }
   };
 
   return (
     <>
-      <PageHead title="Signup | Ananbay" />
+      <PageHead title="Đăng ký | Ananbay" />
       {!isSuccess && (
         <div className="">
           <div>
@@ -68,14 +68,14 @@ const SignUp: React.FC = () => {
               className="lg:w-1/3 rounded-2xl bg-white p-8 shadow-md shadow-[#8d181b]"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <h2 className="mb-6 text-center text-2xl">Sign up</h2>
+              <h2 className="mb-6 text-center text-2xl">Đăng ký</h2>
 
               <div className="mb-4">
-                <label className="mb-1 block">Full name:</label>
+                <label className="mb-1 block">Họ và tên:</label>
                 <input
                   {...register("full_name")}
                   className="w-full rounded border px-3 py-2"
-                  placeholder="Nhập tên tài khoản"
+                  placeholder="Nhập họ và tên"
                 />
                 {errors.full_name && (
                   <p className="text-sm text-red-500">
@@ -85,12 +85,12 @@ const SignUp: React.FC = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-1 block">Package:</label>
+                <label className="mb-1 block">Gói dịch vụ:</label>
                 <select
                   {...register("package")}
                   className="w-full rounded border px-3 py-2"
                 >
-                  <option value="">Select package</option>
+                  <option value="">Chọn gói dịch vụ</option>
                   {OPTIONS_PACKAGES.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.name}
@@ -105,11 +105,11 @@ const SignUp: React.FC = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-1 block">Phone number:</label>
+                <label className="mb-1 block">Số điện thoại:</label>
                 <input
                   {...register("phone_number")}
                   className="w-full rounded border px-3 py-2"
-                  placeholder="Nhập số điện thoại của bạn"
+                  placeholder="Nhập số điện thoại"
                 />
                 {errors.phone_number && (
                   <p className="text-sm text-red-500">
@@ -123,7 +123,7 @@ const SignUp: React.FC = () => {
                 <input
                   {...register("email")}
                   className="w-full rounded border px-3 py-2"
-                  placeholder="Nhập email của bạn"
+                  placeholder="Nhập email"
                 />
                 {errors.email && (
                   <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -131,7 +131,7 @@ const SignUp: React.FC = () => {
               </div>
 
               <div className="mb-4 relative">
-                <label className="mb-1 block">Password:</label>
+                <label className="mb-1 block">Mật khẩu:</label>
                 <input
                   type={shouldShowPassword ? "text" : "password"}
                   {...register("password")}
@@ -153,12 +153,12 @@ const SignUp: React.FC = () => {
                 type="submit"
                 className="w-full rounded-md bg-black py-3 text-white hover:bg-[#8d181b] font-bold"
               >
-                Sign up
+                Đăng ký
               </button>
               <div className="mt-5">
-                Do you already have an account?
+                Bạn đã có tài khoản?
                 <a href="/login" className="text-[#8d181b] ml-2">
-                  Login
+                  Đăng nhập
                 </a>
               </div>
             </form>
@@ -194,11 +194,11 @@ const SignUp: React.FC = () => {
           </div>
           <div className="request-content">
             <div className="text-center text-[#008A7F] font-bold">
-              Your request has been sent
+              Yêu cầu của bạn đã được gửi
             </div>
             <p className="text-center thank_use_sevice">
-              Thank you for using Ananbay's services. We'll contact you soon to
-              set up your account.
+              Cảm ơn bạn đã sử dụng dịch vụ của Ananbay. Chúng tôi sẽ liên hệ với
+              bạn sớm để thiết lập tài khoản.
             </p>
           </div>
         </div>

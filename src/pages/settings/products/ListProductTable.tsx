@@ -54,7 +54,7 @@ export type Payment = {
 const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: "Tên",
     cell: ({ row }) => (
       <div className="capitalize text-base">{row.getValue("name")}</div>
     ),
@@ -68,28 +68,28 @@ const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "detail",
-    header: "Detail",
+    header: "Chi tiết",
     cell: ({ row }) => (
       <div className="capitalize text-base">{row.getValue("detail")}</div>
     ),
   },
   {
     accessorKey: "material",
-    header: "Material",
+    header: "Chất liệu",
     cell: ({ row }) => (
       <div className="capitalize text-base">{row.getValue("material")}</div>
     ),
   },
   {
     accessorKey: "weight",
-    header: "Weight(gram)",
+    header: "Cân nặng(gram)",
     cell: ({ row }) => (
       <div className="capitalize text-base">{row.getValue("weight")}</div>
     ),
   },
   {
     accessorKey: "weight",
-    header: "Size(cm)",
+    header: "Kích thước (cm)",
     cell: ({ row }) => (
       <div className="capitalize text-base">
         {row.original.length}x{row.original.width}x{row.original.height}
@@ -98,7 +98,7 @@ const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "country",
-    header: "Country",
+    header: "Quốc gia",
     cell: ({ row }) => (
       <div className="text-base">{row.getValue("country")}</div>
     ),
@@ -152,7 +152,7 @@ export function ListProductTable() {
     <div className="max-w-full mx-5">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter sku..."
+          placeholder="Lọc sku..."
           value={(table.getColumn("sku")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("sku")?.setFilterValue(event.target.value)
@@ -171,9 +171,9 @@ export function ListProductTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -203,7 +203,7 @@ export function ListProductTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Không kết quả.
                 </TableCell>
               </TableRow>
             )}
@@ -212,8 +212,8 @@ export function ListProductTable() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} trong {" "}
+          {table.getFilteredRowModel().rows.length} dòng được chọn.
         </div>
         <div className="space-x-2">
           <Button
@@ -222,7 +222,7 @@ export function ListProductTable() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Trước
           </Button>
           <Button
             variant="outline"
@@ -230,7 +230,7 @@ export function ListProductTable() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Sau
           </Button>
         </div>
       </div>

@@ -4,16 +4,16 @@ export const orderFormSchema = z.object({
   service: z.string().optional(),
   recipient: z
     .string()
-    .min(5, { message: "Recipient is required, at least 5 characters" }),
+    .min(5, { message: "Người nhận là bắt buộc, ít nhất 5 ký tự" }),
   phone: z.string().optional(),
-  address_1: z.string().min(1, { message: "Address is required" }),
+  address_1: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
   address_2: z.string().optional(),
-  city: z.string().min(1, { message: "City is required" }),
-  state_code: z.string().min(1, { message: "State code is required" }),
+  city: z.string().min(1, { message: "Thành phố là bắt bộc" }),
+  state_code: z.string().min(1, { message: "Bang là bắt buộc" }),
   country_code: z.string().optional(),
-  detail: z.string().min(1, { message: "Detail is required" }),
-  zipcode: z.string().min(1, { message: "Zip code is required" }),
-  order_number: z.string().min(1, { message: "Order number is required" }),
+  detail: z.string().min(1, { message: "Chi tiết là bắt buộc" }),
+  zipcode: z.string().min(1, { message: "Mã bưu điện là bắt buộc" }),
+  order_number: z.string().min(1, { message: "Mã đơn hàng là bắt buộc" }),
   weight: z.string().optional(),
   length: z.string().optional(),
   width: z.string().optional(),
@@ -38,34 +38,34 @@ export const orderFormSchema = z.object({
     data.service === "Express (CN exclusive)" ||
     (data.weight && parseFloat(data.weight) > 0),
   {
-    message: "Weight is required and must be greater than 0",
+    message: "rọng lượng là bắt buộc và phải lớn hơn 0",
     path: ["weight"],
   }
 )
-.refine(
-  (data) =>
-    data.service === "Express (CN exclusive)" ||
-    (data.length && parseFloat(data.length) > 0),
-  {
-    message: "Length is required and must be greater than 0",
-    path: ["length"],
-  }
-)
-.refine(
-  (data) =>
-    data.service === "Express (CN exclusive)" ||
-    (data.width && parseFloat(data.width) > 0),
-  {
-    message: "Width is required and must be greater than 0",
-    path: ["width"],
-  }
-)
-.refine(
-  (data) =>
-    data.service === "Express (CN exclusive)" ||
-    (data.height && parseFloat(data.height) > 0),
-  {
-    message: "Height is required and must be greater than 0",
-    path: ["height"],
-  }
-);
+  .refine(
+    (data) =>
+      data.service === "Express (CN exclusive)" ||
+      (data.length && parseFloat(data.length) > 0),
+    {
+      message: "Chiều dài là bắt buộc và phải lớn hơn 0",
+      path: ["length"],
+    }
+  )
+  .refine(
+    (data) =>
+      data.service === "Express (CN exclusive)" ||
+      (data.width && parseFloat(data.width) > 0),
+    {
+      message: "Chiều rộng là bắt buộc và phải lớn hơn 0",
+      path: ["width"],
+    }
+  )
+  .refine(
+    (data) =>
+      data.service === "Express (CN exclusive)" ||
+      (data.height && parseFloat(data.height) > 0),
+    {
+      message: "Chiều cao là bắt buộc và phải lớn hơn 0",
+      path: ["height"],
+    }
+  );

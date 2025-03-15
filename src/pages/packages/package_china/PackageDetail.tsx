@@ -284,7 +284,7 @@ export default function PackageDetailChina() {
               />
               <div className="ml-[30px]">
                 <div className="text-sm font-normal text-[#626363]">
-                  Code package:
+                  Mã đơn hang:
                 </div>
                 <span className="text-base font-bold">
                   {packageDetail?.code_package
@@ -294,7 +294,7 @@ export default function PackageDetailChina() {
               </div>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Service:</div>
+              <div className="text-sm font-normal text-[#626363]">Dịch vụ:</div>
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.service_name === "Saver"
                   ? "Standard"
@@ -306,7 +306,7 @@ export default function PackageDetailChina() {
             ) : (
               <div>
                 <div className="text-sm font-normal text-[#626363]">
-                  Last mile tracking:
+                  Theo dõi chặng cuối:
                 </div>
                 <div className="flex hover:text-[#13c2c2]">
                   <span className="font-medium text-sm tracking-[.2px] text-[#111212] hover:text-[#13c2c2]">
@@ -322,26 +322,25 @@ export default function PackageDetailChina() {
             )}
             <div>
               <div className="text-sm font-normal text-[#626363]">
-                Created date:
+                Ngày tạo:
               </div>
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.created_at
                   ? format(
-                      new Date(packageDetail.created_at),
-                      "dd/MM/yyyy - HH:mm:ss"
-                    )
+                    new Date(packageDetail.created_at),
+                    "dd/MM/yyyy - HH:mm:ss"
+                  )
                   : "N/A"}
               </span>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Status:</div>
+              <div className="text-sm font-normal text-[#626363]">Trạng thái:</div>
               <span
-                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${
-                  packageDetail?.status_string
-                    ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
-                        .className
-                    : "N/A"
-                }`}
+                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${packageDetail?.status_string
+                  ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
+                    .className
+                  : "N/A"
+                  }`}
               >
                 {packageDetail?.status_string}
               </span>
@@ -351,34 +350,34 @@ export default function PackageDetailChina() {
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ||
               packageDetail?.status_string ===
-                PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
-              <div className="">
-                <ModalCancel ids={[ids]} />
-              </div>
-            )}
+              PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
+                <div className="">
+                  <ModalCancel ids={[ids]} />
+                </div>
+              )}
 
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string ===
-                PACKAGE_STATUS_PURCHASED_TEXT) && (
-              <div className="">
-                <ModalUpdatePackage
-                  renderModal={(onClose) => (
-                    <ModalUpdatePackages
-                      modalClose={onClose}
-                      packageDetail={packageDetail}
-                      packageListType={packageListTypeChina}
-                    />
-                  )}
-                />
-              </div>
-            )}
+              PACKAGE_STATUS_PURCHASED_TEXT) && (
+                <div className="">
+                  <ModalUpdatePackage
+                    renderModal={(onClose) => (
+                      <ModalUpdatePackages
+                        modalClose={onClose}
+                        packageDetail={packageDetail}
+                        packageListType={packageListTypeChina}
+                      />
+                    )}
+                  />
+                </div>
+              )}
 
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
               onClick={() => handleDownloadBarcode()}
               disabled={!packageDetail?.tracking_number}
             >
-              <Barcode className="mr-2 h-4 w-4" /> Download Barcode
+              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>
 
             {packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT && (
@@ -398,43 +397,43 @@ export default function PackageDetailChina() {
               <div className="border-b pb-3 font-bold ">Order Details:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Detail:
+                  Chi tiết:
                 </div>
                 <div className="col-span-8"> {packageDetail?.detail}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Order number:
+                  Số đơn hàng:
                 </div>
                 <div className="col-span-8">{packageDetail?.order_number}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Weight:
+                  Cân nặng:
                 </div>
                 <div className="col-span-8">{packageDetail?.weight} gram</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Length:
+                  Chiều dài:
                 </div>
                 <div className="col-span-8"> {packageDetail?.length} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Width:
+                  Chiều rộng:
                 </div>
                 <div className="col-span-8"> {packageDetail?.width} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Height:
+                  Chiều cao:
                 </div>
                 <div className="col-span-8"> {packageDetail?.height} cm</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Battery:
+                  Pin:
                 </div>
                 <div className="col-span-8">
                   {packageDetail?.include_battery ? "Yes" : "No"}
@@ -442,7 +441,7 @@ export default function PackageDetailChina() {
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Product link:
+                  Link sản phẩm:
                 </div>
                 <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
                   <a
@@ -457,7 +456,7 @@ export default function PackageDetailChina() {
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Custom barcode:
+                  Tùy chỉnh mã vạch:
                 </div>
                 <div className="col-span-8">
                   {packageDetail?.custom_cn_barcode || "N/A"}
@@ -482,49 +481,49 @@ export default function PackageDetailChina() {
               <div className="border-b pb-3 font-bold">Recipient:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Full Name:
+                  Họ tên:
                 </div>
                 <div className="col-span-8"> {packageDetail?.recipient}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Phone:
+                  Số điện thoại:
                 </div>
                 <div className="col-span-8"> {packageDetail?.phone_number}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Address:
+                  Địa chỉ:
                 </div>
                 <div className="col-span-8"> {packageDetail?.address_1}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Address 2:
+                  Địa chỉ 2:
                 </div>
                 <div className="col-span-8"> {packageDetail?.address_2}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  City:
+                  Thành phố:
                 </div>
                 <div className="col-span-8"> {packageDetail?.city}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  State Code:
+                  Mã bang:
                 </div>
                 <div className="col-span-8"> {packageDetail?.state_code}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Zip Code:
+                  Mã bưu điện:
                 </div>
                 <div className="col-span-8"> {packageDetail?.zipcode}</div>
               </div>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Country Code:
+                  Mã quốc gia:
                 </div>
                 <div className="col-span-8">{packageDetail?.country_code}</div>
               </div>
@@ -540,7 +539,7 @@ export default function PackageDetailChina() {
             <CardContent>
               <div className="flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Delivery fee:
+                  Phí vận chuyển:
                 </div>
                 <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${packageDetail?.shipping_fee}
@@ -548,7 +547,7 @@ export default function PackageDetailChina() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Additional charges:
+                  Phụ phí:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${sumExtraFee().toFixed(2)}
@@ -556,7 +555,7 @@ export default function PackageDetailChina() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Discounts:
+                  Giảm giá:
                 </div>
                 <div className="flex">
                   <TooltipProvider>
@@ -565,7 +564,7 @@ export default function PackageDetailChina() {
                         <Info className="pt-1.5" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="text-sm">Discount by weight</p>
+                        <p className="text-sm">Giảm giá trên cân nặng</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -578,7 +577,7 @@ export default function PackageDetailChina() {
                 <div className=" mt-[15px]">
                   <div className="flex justify-between">
                     <div className="total-title font-medium text-[#aaabab]">
-                      Refund fee:
+                      Phí hoàn tiền:
                     </div>
                     <div className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                       ${sumRefundFee()}
@@ -589,7 +588,7 @@ export default function PackageDetailChina() {
               <hr className="mt-5" />
               <div className="total mt-3 flex justify-between">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Total fee:
+                  Tổng chi phí:
                 </div>
                 <span className="total-number text-[28px] font-semibold leading-[34px] text-[#111212]">
                   ${sumFee().toFixed(2)}
@@ -611,13 +610,13 @@ export default function PackageDetailChina() {
                         className={`pb-3 ${!displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
                         onClick={() => setDisplayDeliverDetail(false)}
                       >
-                        Deliver order
+                        Giao đơn hàng"
                       </button>
                       <button
                         className={`pb-3 ${displayDeliverDetail ? "font-bold border-b border-[#006a5e]" : ""}`}
                         onClick={() => setDisplayDeliverDetail(true)}
                       >
-                        Order history
+                        Lịch sử đơn hàng
                       </button>
                     </div>
                   </div>
@@ -634,13 +633,13 @@ export default function PackageDetailChina() {
           <div className="">
             <div className=" h-full items-center justify-center p-6">
               <div className="border-b pb-3 font-bold">
-                Additional charges Information:
+                Thông tin phụ phí:
               </div>
               {extraFee && extraFee.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
                     <div className="col-span-10 text-[#626363]">
-                      Service name
+                      Tên dịch vụ
                     </div>
                     <div className="col-span-2 text-center">Fee</div>
                   </div>
@@ -662,7 +661,7 @@ export default function PackageDetailChina() {
                     className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
                   />
                   <p className="text-[#aaabab] mt-3">
-                    No product information yet.
+                    Chưa có thông tin sản phẩm.
                   </p>
                 </div>
               )}
@@ -671,15 +670,15 @@ export default function PackageDetailChina() {
           <div className="">
             <div className=" h-full items-center justify-center p-6">
               <div className="border-b pb-3 font-bold">
-                Product Information:
+                Thông tin sản phẩm:
               </div>
               {packageDetail?.package_products &&
-              packageDetail?.package_products?.length > 0 ? (
+                packageDetail?.package_products?.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
                     <div className="col-span-5 text-[#626363]">SKU</div>
-                    <div className="col-span-5 text-[#37393e]">Name</div>
-                    <div className="col-span-2">Quantity</div>
+                    <div className="col-span-5 text-[#37393e]">Tên</div>
+                    <div className="col-span-2">Số lượng</div>
                   </div>
                   {packageDetail?.package_products.map((product, index) => (
                     <div className="grid grid-cols-12" key={index}>
@@ -703,7 +702,7 @@ export default function PackageDetailChina() {
                     className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
                   />
                   <p className="text-[#aaabab] mt-3">
-                    No product information yet.
+                    Chưa có thông tin sản phẩm.
                   </p>
                 </div>
               )}
@@ -711,7 +710,7 @@ export default function PackageDetailChina() {
           </div>
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">Help & Claims:</div>
+              <div className="border-b pb-3 font-bold">Hỗ trợ & Khiếu nại:</div>
               <div>
                 <div className="text-center">
                   <PackageOpen
@@ -719,7 +718,7 @@ export default function PackageDetailChina() {
                     className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
                   />
                   <p className="text-[#aaabab] mt-3">
-                    No help and claims information yet.
+                    Chưa có thông tin hỗ trợ và khiếu nại.
                   </p>
                 </div>
               </div>

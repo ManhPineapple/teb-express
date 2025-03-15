@@ -100,11 +100,11 @@ const BillDetail: React.FC = () => {
     <>
       <div className="grid grid-cols-4 gap-5 bg-[#ddf3f4] p-4 rounded-lg xl:mx-40 mt-10 max-sm:grid-cols-1 max-sm:text-center max-sm:mx-10 sm:mx-5">
         <div>
-          <div className="text-[#626363]">Bill code:</div>
+          <div className="text-[#626363]">Mã hóa đơn:</div>
           <span className="text-[#007e78]">{code}</span>
         </div>
         <div>
-          <div className="text-[#626363]">Created at:</div>
+          <div className="text-[#626363]">Ngày tạo:</div>
           <span className="text-[#007e78]">
             {billDetail?.created_at
               ? format(new Date(billDetail.created_at), "dd/MM/yyyy - HH:mm:ss")
@@ -112,7 +112,7 @@ const BillDetail: React.FC = () => {
           </span>
         </div>
         <div>
-          <div className="text-[#626363]">Total bill:</div>
+          <div className="text-[#626363]">Tổng hóa đơn:</div>
           <span className="text-[#007e78] font-semibold text-2xl">
             $
             {billDetail
@@ -124,15 +124,15 @@ const BillDetail: React.FC = () => {
 
       <div className="xl:mx-40 mt-10 border shadow-sm p-4 rounded-md max-sm:mx-10 sm:mx-5">
         <div className="font-medium text-lg tracking-[.2px] text-[#111212]">
-          Fee create
+          Phí tạo
         </div>
         <Table className="">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px]">Tracking</TableHead>
-              <TableHead className="w-[250px]">Time</TableHead>
-              <TableHead className="w-[200px]">Last mile tracking</TableHead>
-              <TableHead className="text-right">Fee create</TableHead>
+              <TableHead className="w-[250px]">Theo dõi</TableHead>
+              <TableHead className="w-[250px]">Thời gian</TableHead>
+              <TableHead className="w-[200px]">Chặng theo dõi cuối</TableHead>
+              <TableHead className="text-right">Phí tạo</TableHead>
             </TableRow>
           </TableHeader>
           {billPackage && billPackage.length > 0 &&
@@ -148,9 +148,9 @@ const BillDetail: React.FC = () => {
                   <TableCell>
                     {item.created_at
                       ? format(
-                          new Date(item.created_at),
-                          "dd/MM/yyyy - HH:mm:ss"
-                        )
+                        new Date(item.created_at),
+                        "dd/MM/yyyy - HH:mm:ss"
+                      )
                       : "N/A"}
                   </TableCell>
                   <TableCell>{item.tracking_number}</TableCell>
@@ -165,17 +165,17 @@ const BillDetail: React.FC = () => {
 
       <div className="xl:mx-40 mt-10 border shadow-sm p-4 rounded-md max-sm:mx-10 max-sm:mb-5 sm:mx-5 mb-5">
         <div className="font-medium text-lg tracking-[.2px] text-[#111212]">
-          Fee extra
+          Phí bổ sung
         </div>
         <Table className="">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px]">Tracking</TableHead>
-              <TableHead className="">FBA code</TableHead>
-              <TableHead className="w-[200px]">Time</TableHead>
-              <TableHead className="w-[200px]">Type fee</TableHead>
-              <TableHead className="">Description</TableHead>
-              <TableHead className="text-right">Fee extra</TableHead>
+              <TableHead className="w-[250px]">Theo dõi</TableHead>
+              <TableHead className="">Mã FBA</TableHead>
+              <TableHead className="w-[200px]">Thời gian</TableHead>
+              <TableHead className="w-[200px]">Loại phí</TableHead>
+              <TableHead className="">Mô tả</TableHead>
+              <TableHead className="text-right">Phí bổ sung</TableHead>
             </TableRow>
           </TableHeader>
           {extraFee?.length > 0 &&
@@ -192,9 +192,9 @@ const BillDetail: React.FC = () => {
                   <TableCell>
                     {item.created_at
                       ? format(
-                          new Date(item.created_at),
-                          "dd/MM/yyyy - HH:mm:ss"
-                        )
+                        new Date(item.created_at),
+                        "dd/MM/yyyy - HH:mm:ss"
+                      )
                       : "N/A"}
                   </TableCell>
                   <TableCell>{item.type_name}</TableCell>

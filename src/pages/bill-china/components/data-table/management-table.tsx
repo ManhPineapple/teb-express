@@ -1,14 +1,14 @@
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-    VisibilityState,
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Copy, Download } from "lucide-react";
 import * as React from "react";
@@ -17,23 +17,23 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-    getBillListChina,
-    getInvoice,
-    getInvoiceDownloadUrl
+  getBillListChina,
+  getInvoice,
+  getInvoiceDownloadUrl
 } from "@/services/bill";
 import saveAs from "file-saver";
 import { Link, useSearchParams } from "react-router-dom";
@@ -235,7 +235,7 @@ export function ManagementTable() {
       <div className="grid grid-cols-3 mt-5 max-sm:grid max-sm:grid-cols-1">
         <div className="mb-4 col-span-2">
           <Input
-            placeholder="Filter tracking code or bill code..."
+            placeholder="Lọc mã theo dõi hoặc mã hóa đơn..."
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyUp={(e) => e.key === "Enter" && handleSearch()}
             className="w-full h-[44px]"
@@ -256,9 +256,9 @@ export function ManagementTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

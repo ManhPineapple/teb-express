@@ -72,19 +72,19 @@ const Bill: React.FC = () => {
           <TabsList className="grid grid-cols-4">
             <TabsTrigger value="topUp">
               <Landmark />
-              <div className="max-sm:hidden">Top up</div>
+              <div className="max-sm:hidden">Nạp tiền</div>
             </TabsTrigger>
             <TabsTrigger value="management">
               <FileCog />
-              <div className="max-sm:hidden">Management</div>
+              <div className="max-sm:hidden">Quản lý</div>
             </TabsTrigger>
             <TabsTrigger value="history">
               <ArrowRightLeft />
-              <div className="max-sm:hidden"> Transaction history</div>
+              <div className="max-sm:hidden"> Lịch sử giao dịch</div>
             </TabsTrigger>
             <TabsTrigger value="pending">
               <FileClock />
-              <div className="max-sm:hidden"> Pending bill</div>
+              <div className="max-sm:hidden"> Hóa đơn chờ xử lý</div>
             </TabsTrigger>
             {/* <TabsTrigger value="exchange">
             <CandlestickChart />

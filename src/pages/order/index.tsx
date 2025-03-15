@@ -43,7 +43,7 @@ function DatePickerWithRange({
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Chọn ngày</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -77,7 +77,7 @@ export default function Order() {
           <div className="items-center mb-4 flex gap-3">
             <DatePickerWithRange />
             <Button className="h-[40px]">
-              <FileDown /> Import excel
+              <FileDown /> Nhập excel
             </Button>
           </div>
         </div>

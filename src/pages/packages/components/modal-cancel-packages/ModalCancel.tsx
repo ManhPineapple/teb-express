@@ -22,7 +22,7 @@ export function ModalCancel(ids: ModalCancelProps) {
     try {
       const result = await cancelPackages(ids);
       console.log("Packages cancelled successfully", result);
-      toast.success("Packages cancelled successfully");
+      toast.success("Hủy đơn hàng thành công");
       setOpen(false);
       setTimeout(() => {
         window.location.reload();
@@ -39,22 +39,22 @@ export function ModalCancel(ids: ModalCancelProps) {
           variant="outline"
           className="bg-[#fff] text-black border-[#e1e2e2] hover:text-[#00978c] hover:bg-[#fff] border"
         >
-          Cancel
+          Hủy
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Confirm cancel</DialogTitle>
+          <DialogTitle>Xác nhận hủy</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <div className="grid flex-1 gap-2">
-            Are you sure you want to cancel your order?
+            Bạn có chắc muốn hủy đơn hàng này?
           </div>
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Cancel
+              Hủy
             </Button>
           </DialogClose>
           <Button
@@ -62,7 +62,7 @@ export function ModalCancel(ids: ModalCancelProps) {
             className="bg-[#00978c] text-[#fff]"
             onClick={handleConfirm}
           >
-            Confirm
+            Xác nhận
           </Button>
         </DialogFooter>
       </DialogContent>

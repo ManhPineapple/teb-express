@@ -51,12 +51,12 @@ export default function PackageTableActions({
   return (
     <div className="xl:flex items-center justify-between py-5 max-xl:flex-wrap">
       <div className="flex flex-1 gap-4 max-xl:mb-3">
-        <TableSearchInput placeholder="Search Order Number" />
+        <TableSearchInput placeholder="Tìm mã đơn hàng" />
         {selectedRow.length > 0 && (
           <div className="mt-1.5">
             <p>
-              You have <b>{countSelectedRows}</b> order being selected. Total
-              fee: <b>${feeSelectedRows}</b>
+              Bạn có <b>{countSelectedRows}</b> đơn hàng đang được chọn.Tổng
+              Chi phí: <b>${feeSelectedRows}</b>
             </p>
           </div>
         )}
@@ -68,26 +68,26 @@ export default function PackageTableActions({
               className="text-xs md:text-sm bg-[#00978c]"
               onClick={() => handleTracking()}
             >
-              <Send className="mr-2 h-4 w-4" /> Create Tracking
+              <Send className="mr-2 h-4 w-4" /> Tạo theo dõi đơn
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#1f8e23]"
               onClick={() => handleDownloadLabel()}
             >
-              <Printer className="mr-2 h-4 w-4" /> Download Label
+              <Printer className="mr-2 h-4 w-4" /> Tải xuống nhãn
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
               onClick={() => handleDownloadBarcode()}
             >
-              <Barcode className="mr-2 h-4 w-4" /> Download Barcode
+              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>
             <ModalConfirmAddresses selectedRowsLabel={selectedRowsLabel} />
             <Button
               className="text-xs md:text-sm bg-[#a84a77]"
               onClick={() => handleExport()}
             >
-              <FolderUp className="mr-2 h-4 w-4" /> Export
+              <FolderUp className="mr-2 h-4 w-4" /> Xuất
             </Button>
             <ModalCancelPackages selectedRowsLabel={selectedRowsLabel} />
           </div>
@@ -99,12 +99,12 @@ export default function PackageTableActions({
 
               <ImportModal
                 renderModal={(onClose) => (
-                  <ImportOrdersForm modalClose={onClose} packageListType={packageListType}/>
+                  <ImportOrdersForm modalClose={onClose} packageListType={packageListType} />
                 )}
               />
               <PopupModal
                 renderModal={(onClose) => (
-                  <OrderCreateForm modalClose={onClose} packageListType={packageListType}/>
+                  <OrderCreateForm modalClose={onClose} packageListType={packageListType} />
                 )}
               />
             </div>
@@ -196,7 +196,7 @@ function PackageDatePickerWithRange({
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Chọn ngày</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -210,9 +210,9 @@ function PackageDatePickerWithRange({
             numberOfMonths={2}
           />
           <div className="flex justify-end gap-2 my-2 r-0">
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel}>Hủy</Button>
             <Button className="bg-green-400" onClick={handleCreateDate}>
-              Apply
+              Chọn
             </Button>
             {/* <Button className="bg-green-400" onClick={handleAcceptDate}>
               AcceptDate

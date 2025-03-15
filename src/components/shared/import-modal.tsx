@@ -20,7 +20,7 @@ export default function ImportModal({ renderModal }: TPopupModalProps) {
         className="text-xs md:text-sm bg-[#776ca8]"
         onClick={() => setIsImportModalOpen(true)}
       >
-        <FolderDown className="mr-2 h-4 w-4" /> Import
+        <FolderDown className="mr-2 h-4 w-4" /> Nhập dữ liệu
       </Button>
 
       <Modal

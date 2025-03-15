@@ -1,14 +1,14 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TPackage } from "@/constants/data";
 import {
-    MAP_STATUS_CLASS_NAME,
-    PACKAGE_STATUS_CREATED_TEXT,
+  MAP_STATUS_CLASS_NAME,
+  PACKAGE_STATUS_CREATED_TEXT,
 } from "@/constants/packages";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -69,7 +69,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "order_number",
-    header: "ORDER NO.",
+    header: "Số đơn hàng",
     cell: ({ row }) => {
       return (
         <div className="flex gap-10 justify-between">
@@ -141,7 +141,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   // },
   {
     accessorKey: "tracking_number",
-    header: "TRACKING",
+    header: "Mã theo dõi",
     cell: ({ row }) => {
       const packageCode: string = row.getValue("tracking_number") || "N/A";
 
@@ -195,7 +195,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "service_name",
-    header: "SERVICE",
+    header: "Dịch vụ",
     cell: ({ row }) => {
       return (
         <div className="capitalize font-medium">
@@ -208,7 +208,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "created_at",
-    header: "CREATED DATE",
+    header: "Ngày tạo",
     cell: ({ row }) => {
       return (
         <div className="capitalize font-medium">
@@ -221,7 +221,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "accepted_at",
-    header: "ACCEPTED DATE",
+    header: "Ngày chấp nhận",
     cell: ({ row }) => {
       return (
         <div className="capitalize font-medium">
@@ -234,16 +234,15 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "status_string",
-    header: "STATUS",
+    header: "Trạng thái",
     cell: ({ row }) => {
       return (
         <div className="flex justify-between">
           <span
-            className={`text-base capitalize p-0.5 px-1 rounded-full font-medium whitespace-nowrap ${
-              row.original?.status_string
-                ? MAP_STATUS_CLASS_NAME[row.original?.status_string].className
-                : "N/A"
-            }`}
+            className={`text-base capitalize p-0.5 px-1 rounded-full font-medium whitespace-nowrap ${row.original?.status_string
+              ? MAP_STATUS_CLASS_NAME[row.original?.status_string].className
+              : "N/A"
+              }`}
           >
             {row.original.status_string}
           </span>
@@ -254,7 +253,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
                   <img src={Warning} alt="Warning" className="cursor-pointer" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p className="text-sm">Package return</p>
+                  <p className="text-sm">Quay lại đơn hàng</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -265,7 +264,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "shipping_fee",
-    header: "TOTAL FEE",
+    header: "Tổng chi phí",
     cell: ({ row }) => {
       if (row.original.is_package_exceed) {
         if (!row.original.shipping_fee) {

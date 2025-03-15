@@ -47,14 +47,14 @@ export default function Header() {
       <div className="ml-4 flex items-center md:ml-6">
         <div className="mr-3">
           <strong className="mr-2">
-            Balance: $
+            Số dư: $
             {(Math.trunc(userInfo?.balance * 100) / 100)
               .toFixed(2)
               .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </strong>
           {userInfo?.user_info?.debt_max_amount != null && (
             <div className="text-sm text-red-500">
-              Debit max amount: ${userInfo?.user_info?.debt_max_amount}
+              Hạn mức ghi nợ tối đa: ${userInfo?.user_info?.debt_max_amount}
             </div>
           )}
         </div>

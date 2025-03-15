@@ -48,7 +48,7 @@ const PayoneerTopup: React.FC = () => {
       }
       toast.success("Yêu cầu của bạn đang được xử lý");
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Đã có lỗi xảy ra");
       console.error(error);
     }
   };
@@ -104,7 +104,7 @@ const PayoneerTopup: React.FC = () => {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button onClick={handleSubmit}>Submit</Button>
+        <Button onClick={handleSubmit}>Lưu</Button>
         <div className="w-2/3 ml-auto text-xs text-right italic">
           Thời gian xử lý khoảng 15 phút. Nếu tiền không được chuyển vào topup
           sau thời gian này, vui lòng liên hệ bộ phận support của AnanBay để

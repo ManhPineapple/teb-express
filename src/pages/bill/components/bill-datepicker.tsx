@@ -73,7 +73,7 @@ export function BillDatePickerWithRange({
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Chọn ngày</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -87,9 +87,9 @@ export function BillDatePickerWithRange({
             numberOfMonths={2}
           />
           <div className="flex justify-end gap-2 my-2 r-0">
-            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleCancel}>Hủy</Button>
             <Button className="bg-green-400" onClick={handleCreateDate}>
-              Apply
+              Chọn
             </Button>
           </div>
         </PopoverContent>

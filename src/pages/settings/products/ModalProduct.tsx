@@ -14,15 +14,15 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const productSchema = z.object({
-  name: z.string().nonempty("Product name is required"),
-  sku: z.string().nonempty("SKU is required"),
-  detail: z.string().nonempty("Detail is required"),
+  name: z.string().nonempty("Tên sản phẩm là bắt buộc"),
+  sku: z.string().nonempty("SKU là bắt buộc"),
+  detail: z.string().nonempty("Chi tiết là bắt buộc"),
   material: z.string().optional(),
-  weight: z.number().min(1, "Weight must be greater than 0"),
-  country: z.string().nonempty("Country is required"),
-  length: z.number().min(1, "Length must be greater than 0"),
-  width: z.number().min(1, "Width must be greater than 0"),
-  height: z.number().min(1, "Height must be greater than 0"),
+  weight: z.number().min(1, "Trọng lượng phải lớn hơn 0"),
+  country: z.string().nonempty("Quốc gia là bắt buộc"),
+  length: z.number().min(1, "Chiều dài phải lớn hơn 0"),
+  width: z.number().min(1, "Chiều rộng phải lớn hơn 0"),
+  height: z.number().min(1, "Chiều cao phải lớn hơn 0"),
 });
 
 type ProductEdit = z.infer<typeof productSchema>;
@@ -75,9 +75,9 @@ const ModalAddOrUpdateProduct: React.FC<{
       ...prev,
       [name]:
         name === "weight" ||
-        name === "length" ||
-        name === "width" ||
-        name === "height"
+          name === "length" ||
+          name === "width" ||
+          name === "height"
           ? parseFloat(value)
           : value,
     }));
@@ -118,12 +118,12 @@ const ModalAddOrUpdateProduct: React.FC<{
         <div className="p-modal-body">
           <div className="mb-4">
             <label className="modal__add-claim-label">
-              Product Name: <span className="text-red-500">*</span>
+              Tên sản phẩm: <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
               className={`form-control ${errors.name ? "error-color" : ""}`}
-              placeholder="Enter product name"
+              placeholder="Nhập tên sản phẩm"
               name="name"
               value={productEdit.name}
               onChange={handleChange}
@@ -135,12 +135,12 @@ const ModalAddOrUpdateProduct: React.FC<{
 
           <div className="mb-4">
             <label className="modal__add-claim-label">
-              SKU: <span className="text-red-500">*</span>
+              Mã SKU: <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
               className={`form-control ${errors.sku ? "error-color" : ""}`}
-              placeholder="Enter SKU"
+              placeholder="Nhập mã SKU"
               name="sku"
               value={productEdit.sku}
               onChange={handleChange}
@@ -152,12 +152,12 @@ const ModalAddOrUpdateProduct: React.FC<{
 
           <div className="mb-4">
             <label className="modal__add-claim-label">
-              Product Type: <span className="text-red-500">*</span>
+              Loại sản phẩm: <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
               className="form-control"
-              placeholder="Enter product type"
+              placeholder="Nhập loại sản phẩm"
               name="detail"
               value={productEdit.detail}
               onChange={handleChange}
@@ -168,11 +168,11 @@ const ModalAddOrUpdateProduct: React.FC<{
           </div>
 
           <div className="mb-4">
-            <label className="modal__add-claim-label">Product Material:</label>
+            <label className="modal__add-claim-label">Chất liệu sản phẩm:</label>
             <Input
               type="text"
               className="form-control"
-              placeholder="Enter product material"
+              placeholder="Nhập chất liệu sản phẩm"
               name="material"
               value={productEdit.material}
               onChange={handleChange}
@@ -181,7 +181,7 @@ const ModalAddOrUpdateProduct: React.FC<{
 
           <div className="mb-4">
             <label className="modal__add-claim-label">
-              Weight: <span className="text-red-500">*</span>
+              Trọng lượng: <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
@@ -202,13 +202,13 @@ const ModalAddOrUpdateProduct: React.FC<{
 
           <div className="mb-4">
             <label className="modal__add-claim-label">
-              Country: <span className="text-red-500">*</span>
+              Quốc gia: <span className="text-red-500">*</span>
             </label>
             <Select
               onValueChange={(value) => handleSelectChange("country", value)}
             >
               <SelectTrigger className="w-full border p-2 rounded-md">
-                <SelectValue placeholder="Select country" />
+                <SelectValue placeholder="Chọn quốc gia" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -228,7 +228,7 @@ const ModalAddOrUpdateProduct: React.FC<{
           <div className="mb-4 grid grid-cols-3 gap-4">
             <div>
               <label className="modal__add-claim-label">
-                Length: <span className="text-red-500">*</span>
+                Chiều dài: <span className="text-red-500">*</span>
               </label>
               <Input
                 type="number"
@@ -249,11 +249,11 @@ const ModalAddOrUpdateProduct: React.FC<{
 
             <div>
               <label className="modal__add-claim-label">
-                Width: <span className="text-red-500">*</span>
+                Chiều rộng: <span className="text-red-500">*</span>
               </label>
               <Input
                 type="number"
-                className={`form-control ${errors.width ? "error-color" : "red"}`}
+                className={`form-control ${errors.width ? "error-color" : ""}`}
                 placeholder="cm"
                 name="width"
                 value={
@@ -270,7 +270,7 @@ const ModalAddOrUpdateProduct: React.FC<{
 
             <div>
               <label className="modal__add-claim-label">
-                Height: <span className="text-red-500">*</span>
+                Chiều cao: <span className="text-red-500">*</span>
               </label>
               <Input
                 type="number"
@@ -292,15 +292,16 @@ const ModalAddOrUpdateProduct: React.FC<{
         </div>
         <div className="p-modal-footer flex justify-end space-x-4">
           <Button className="btn btn-default" variant="outline">
-            Cancel
+            Hủy
           </Button>
           <Button onClick={onSave} className="btn btn-primary">
-            Save
+            Lưu
           </Button>
         </div>
       </div>
     </div>
   );
+
 };
 
 export default ModalAddOrUpdateProduct;

@@ -63,7 +63,7 @@ const ListProductPage: React.FC = () => {
           <Search className="absolute top-[0.5rem] mx-2 pl-2" />
           <input
             type="search"
-            placeholder="Search by product name or SKU"
+            placeholder="Tìm kiếm theo tên sản phẩm hoặc SKU"
             className="mb-2 border border-gray-300 p-2 rounded w-full ml-2 px-6"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -77,13 +77,13 @@ const ListProductPage: React.FC = () => {
                 type="button"
                 className="btn btn-primary flex items-center bg-blue-500 text-white p-2 rounded-xl px-4"
               >
-                <Plus /> Add Product
+                <Plus /> Thêm sản phẩm
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle className="border-b pb-4 border-slate-500">
-                  Add product
+                  Thêm sản phẩm
                 </DialogTitle>
               </DialogHeader>
 
@@ -107,7 +107,7 @@ const ListProductPage: React.FC = () => {
 const tableColumns: ColumnDef<TProduct>[] = [
   {
     accessorKey: "name",
-    header: "Product name",
+    header: "Tên sản phẩm",
     cell: ({ row }) => {
       return (
         <div className="flex gap-10 justify-between">
@@ -135,14 +135,14 @@ const tableColumns: ColumnDef<TProduct>[] = [
   },
   {
     accessorKey: "detail",
-    header: "Product type",
+    header: "Loại sản phẩm",
     cell: ({ row }) => {
       return <div>{row.original.detail}</div>;
     },
   },
   {
     accessorKey: "weight",
-    header: "Weight (gram)",
+    header: "Cân nặng (gram)",
     cell: ({ row }) => {
       return <div>{row.original.weight}</div>;
     },
@@ -156,7 +156,7 @@ const tableColumns: ColumnDef<TProduct>[] = [
   },
   {
     accessorKey: "country",
-    header: "Country",
+    header: "Quốc gia",
     cell: ({ row }) => {
       return <div>{row.original.country}</div>;
     },
@@ -206,7 +206,7 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
               `/products/delete/${row.id}`
             );
             if (response.status === 200)
-              toast.success("Delete product successfully");
+              toast.success("Xóa sản phẩm thành công!");
             setTimeout(() => window.location.reload(), 1000);
             setIsShowDeleteModal(false);
           }}

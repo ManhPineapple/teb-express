@@ -55,7 +55,7 @@ export default function UserAuthForm() {
       if (response.success) {
         router.push("/");
       } else {
-        setError(response.message || "Login failed");
+        setError(response.message || "Đăng nhập thất bại!");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -81,7 +81,7 @@ export default function UserAuthForm() {
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="Enter your email..."
+                    placeholder="Nhập email của bạn..."
                     disabled={loading}
                     {...field}
                   />
@@ -95,11 +95,11 @@ export default function UserAuthForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Enter your password..."
+                    placeholder="Nhập mật khẩu của bạn..."
                     disabled={loading}
                     {...field}
                   />
@@ -110,17 +110,17 @@ export default function UserAuthForm() {
           />
 
           <Button disabled={loading} className="ml-auto w-full" type="submit">
-            Sign in
+            Đăng nhập
           </Button>
           <p className="font-normal text-sm mb-2">
-            <span className="text-[#626363]">Are you new member? </span>
+            <span className="text-[#626363]">Bạn có phải thành viên mới ? </span>
             <a href="/signup" className="text-[#D5B263] font-semibold">
-              Sign up
+              Đăng kí
             </a>
           </p>
           <p className="font-normal text-sm mb-2">
             <a href="/forgot-password" className="text-[#D5B263] font-semibold">
-              Forgot password?
+              Quên mật khẩu ?
             </a>
           </p>
         </form>
@@ -131,7 +131,7 @@ export default function UserAuthForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Hoặc tiếp tục với
           </span>
         </div>
       </div>

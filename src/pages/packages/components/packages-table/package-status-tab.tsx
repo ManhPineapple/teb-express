@@ -7,19 +7,44 @@ interface TabProps {
   setSelectedIndex: (index: number) => void;
   selectedIndex: number;
 }
-
+const convertValue: { [key: string]: string } = {
+  "all": "tất cả",
+  "pending": "đang chờ xử lý",
+  "purchased": "đã mua",
+  "pre-Transit": "chờ vận chuyển",
+  "in-Transit": "đang vận chuyển",
+  "delivered": "đã giao hàng",
+  "alert": "cảnh báo",
+  "canceled": "đã hủy",
+  "expired": "hết hạn",
+  "undelivered": "không giao được",
+  "archived": "đã lưu trữ",
+};
+const convertValueIntoEnglish: { [key: string]: string } = {
+  "tất cả": "all",
+  "Đang chờ xử lý": "pending",
+  "Đã mua": "purchased",
+  "Chờ vận chuyển": "pre-Transit",
+  "Đang vận chuyển": "in-Transit",
+  "Đã giao hàng": "delivered",
+  "Cảnh báo": "alert",
+  "Đã hủy": "canceled",
+  "Hết hạn": "expired",
+  "Không giao được": "undelivered",
+  "Đã lưu trữ": "archived",
+};
 const initTabs = [
-  "All",
-  "Purchased",
-  "Pending",
-  "Pre-Transit",
-  "In-Transit",
-  "Delivered",
-  "Alert",
-  "Canceled",
-  "Expired",
-  "Undelivered",
-  "Archived",
+  "Tất cả",
+  "Đã mua",
+  "Đang chờ xử lý",
+  "Chờ vận chuyển",
+  "Đang vận chuyển",
+  "Đã giao hàng",
+  "Cảnh báo",
+  "Đã hủy",
+  "Hết hạn",
+  "Không giao được",
+  "Đã lưu trữ",
 ];
 
 const Tab: React.FC<TabProps> = ({
@@ -38,7 +63,7 @@ const Tab: React.FC<TabProps> = ({
     } else {
       searchParams.set(
         "status",
-        initTabs[index] === "All" ? "" : initTabs[index]
+        initTabs[index] === "Tất cả" ? "" : convertValueIntoEnglish[initTabs[index]]
       );
       searchParams.set("page", "1");
     }
@@ -48,11 +73,10 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <button
-      className={`px-2 py-4 focus:outline-none text-sm font-medium whitespace-nowrap ${
-        isSelected
-          ? "text-blue-500 border-b-2 border-blue-500"
-          : "text-gray-500"
-      }`}
+      className={`px-2 py-4 focus:outline-none text-sm font-medium whitespace-nowrap ${isSelected
+        ? "text-blue-500 border-b-2 border-blue-500"
+        : "text-gray-500"
+        }`}
       onClick={handleClick}
     >
       {label}
@@ -75,16 +99,17 @@ const PackageTabs: React.FC<{ count: any }> = ({ count }) => {
     if (!count.status_count) return;
     const statusCount = count;
     const statusMapping: Record<string, string> = {
-      Pending: "pending",
-      Purchased: "purchased",
-      "Pre-Transit": "pre-transit",
-      "In-Transit": "in-transit",
-      Delivered: "delivered",
-      Alert: "alert",
-      Canceled: "canceled",
-      Expired: "expired",
-      Undelivered: "undelivered",
-      Archived: "archived",
+      "Tất cả": "tất cả",
+      "Đang chờ xử lý": "đang chờ xử lý",
+      "Đã mua": "đã mua",
+      "Chờ vận chuyển": "chờ vận chuyển",
+      "Đang vận chuyển": "đang vận chuyển",
+      "Đã giao hàng": "đã giao hàng",
+      "Cảnh báo": "cảnh báo",
+      "Đã hủy": "đã hủy",
+      "Hết hạn": "hết hạn",
+      "Không giao được": "không giao được",
+      "Đã lưu trữ": "đã lưu trữ",
     };
 
     const totalCount = statusCount.status_count.reduce(
@@ -98,11 +123,11 @@ const PackageTabs: React.FC<{ count: any }> = ({ count }) => {
       tab = removeCount(tab);
       const mappedStatus = statusMapping[tab] || tab.toLowerCase();
       const foundStatus = statusCount.status_count.find(
-        (statusObj: { status: string }) => statusObj.status === mappedStatus
+        (statusObj: { status: string }) => convertValue[statusObj.status] === mappedStatus
       );
       let count = foundStatus ? foundStatus.count : 0;
 
-      if (tab === "All") count = totalCount;
+      if (tab === "Tất cả") count = totalCount;
       return `${tab} (${count})`;
     });
 

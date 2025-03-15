@@ -53,14 +53,14 @@ export default function UserNav() {
           <DropdownMenuItem
             onClick={() => (window.location.href = "/setting/account")}
           >
-            Profile
+            Hồ sơ
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => (window.location.href = "/claim")}>
-            Claims
+            Cam kết
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Đăng xuất</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

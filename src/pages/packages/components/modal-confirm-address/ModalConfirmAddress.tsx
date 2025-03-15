@@ -30,14 +30,14 @@ export function ModalConfirmAddress({ add, id }: AddressProps) {
     try {
       const res = await validateAddress(params);
       if (res.data.success) {
-        toast.success("Validate address successfully");
+        toast.success("Xác thực địa chỉ thành công");
       }
       setOpen(false);
       setTimeout(() => {
         window.location.reload();
       }, 3000);
     } catch (err) {
-      console.error("Error processing package:", err);
+      console.error("Lỗi xử lý kiện hàng:", err);
       setOpen(false);
     }
   };
@@ -53,19 +53,19 @@ export function ModalConfirmAddress({ add, id }: AddressProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Check address</DialogTitle>
+          <DialogTitle>Kiểm tra địa chỉ</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2 bg-[#f6f7f7] p-4 text-[#17191d] font-bold">
-          <div className="grid flex-1 gap-2">Address:</div>
+          <div className="grid flex-1 gap-2">Địa chỉ:</div>
           <div>{add}</div>
         </div>
         <div className="text-sm">
-          Are you sure this is a valid address? Please kindly confirm!
+          Bạn có chắc đây là địa chỉ hợp lệ không? Vui lòng xác nhận!
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose>
             <Button type="button" variant="secondary">
-              Close
+              Đóng
             </Button>
           </DialogClose>
           <Button
@@ -73,7 +73,7 @@ export function ModalConfirmAddress({ add, id }: AddressProps) {
             onClick={handleConfirmAddress}
             className="bg-[#00978c]"
           >
-            Confirm
+            Xác nhận
           </Button>
         </DialogFooter>
       </DialogContent>

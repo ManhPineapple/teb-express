@@ -106,24 +106,23 @@ export function ModalCancelPackages({ selectedRowsLabel }: ModalCancelProps) {
           className="text-xs md:text-sm bg-[#fff1f0] text-[#f5222d] hover:bg-[#fff]"
         >
           <CircleX className="mr-2 h-4 w-4" />
-          Cancel
+          Hủy
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Confirm cancel</DialogTitle>
+          <DialogTitle>Xác nhận hủy</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <div className="grid flex-1 gap-2">
-            The total number of orders currently selected is{" "}
-            {selectedRowsLabel.length}. Are you sure you want to cancel the
-            order?
+            Tổng số đơn hàng hiện tại được chọn là {" "}
+            {selectedRowsLabel.length}. Bạn có chắc chắn muốn hủy các đơn hàng này ?
           </div>
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Cancel
+              Hủy
             </Button>
           </DialogClose>
           <Button
@@ -131,7 +130,7 @@ export function ModalCancelPackages({ selectedRowsLabel }: ModalCancelProps) {
             className="bg-[#00978c] text-[#fff]"
             onClick={handleCancel}
           >
-            Confirm
+            Xác nhận
           </Button>
         </DialogFooter>
       </DialogContent>

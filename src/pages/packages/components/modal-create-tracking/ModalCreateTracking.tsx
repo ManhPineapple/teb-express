@@ -41,22 +41,22 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="bg-[#00978c] text-[#fff]">
-          Create tracking
+          Tạo theo dõi đơn
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Confirm create tracking</DialogTitle>
+          <DialogTitle>Xác nhận tạo theo dõi đơn</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <div className="grid flex-1 gap-2">
-            You have 1 order being selected. Total amount is ${sumFee()}
+            Bạn có 1 đơn hàng đang được chọn. Tổng số lượng là: ${sumFee()}
           </div>
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Cancel
+              Hủy
             </Button>
           </DialogClose>
           <Button
@@ -64,7 +64,7 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
             className="bg-[#00978c] text-[#fff]"
             onClick={handleActionWayBill}
           >
-            Create tracking
+            Tạo theo dõi đơn
           </Button>
         </DialogFooter>
       </DialogContent>

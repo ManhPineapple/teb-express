@@ -1,14 +1,14 @@
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import * as React from "react";
@@ -17,12 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { getPackagesHoldingChina } from "@/services/packages";
 import { Link, useSearchParams } from "react-router-dom";
@@ -176,7 +176,7 @@ export function PendingTable() {
       <div className="sm:flex gap-3 mt-5">
         <div className="mb-4 w-full col-span-2">
           <Input
-            placeholder="Filter tracking code or bill code..."
+            placeholder="Lọc mã theo dõi hoặc mã hóa đơn..."
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyUp={(e) => e.key === "Enter" && handleSearch()}
             className="w-full h-[44px]"
@@ -197,9 +197,9 @@ export function PendingTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

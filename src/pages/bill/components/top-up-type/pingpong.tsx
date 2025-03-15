@@ -104,7 +104,7 @@ const PingpongTopup: React.FC = () => {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button onClick={handleSubmit}>Submit</Button>
+        <Button onClick={handleSubmit}>Lưu</Button>
         <div className="w-2/3 ml-auto text-xs text-right italic">
           Thời gian xử lý khoảng 15 phút. Nếu tiền không được chuyển vào topup
           sau thời gian này, vui lòng liên hệ bộ phận support của AnanBay để

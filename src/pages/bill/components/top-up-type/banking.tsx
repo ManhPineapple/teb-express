@@ -93,7 +93,7 @@ const BankingTopup: React.FC = () => {
         else toast.error("Something went wrong");
       })
       .catch(() => {
-        toast.error("Something went wrong");
+        toast.error("Đã có lỗi xảy ra");
       });
   };
 
@@ -132,7 +132,7 @@ const BankingTopup: React.FC = () => {
       // console.log("data:", data.data.data.qrDataURL);
       setQRCode(data.data.data.qrDataURL);
     })
-    .catch((err: any) => {});
+    .catch((err: any) => { });
 
   return (
     <Card>
@@ -231,7 +231,7 @@ const BankingTopup: React.FC = () => {
         <img src={qrCode} className="w-[200px]" />
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button onClick={handleSubmit}>Submit</Button>
+        <Button onClick={handleSubmit}>Lưu</Button>
         <div className="ml-auto text-xs text-right italic">
           <div>{`Tỉ giá chuyển đổi: 1 USD = ${new Intl.NumberFormat("en-US", {
             minimumFractionDigits: 2,
