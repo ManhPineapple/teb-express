@@ -15,7 +15,7 @@ const Footer = () => {
         {/* Logo and social links container */}
         <div className="flex flex-col-reverse items-center justify-between space-y-12 md:flex-col md:space-y-0 md:items-start">
           <div className="mx-auto my-6 text-center text-white md:hidden">
-            Copyright © 2024, All Rights Reserved
+            Bản quyền © 2024, Đã đăng ký mọi quyền.
           </div>
           {/* Logo */}
           <div>
@@ -73,27 +73,27 @@ const Footer = () => {
         <div className="flex justify-around space-x-32">
           <div className="flex flex-col space-y-3 text-white">
             <Link to="#" className="hover:text-brightRed">
-              Home
+              Trang chủ
             </Link>
             <Link to="#" className="hover:text-brightRed">
-              Pricing
+              Định giá
             </Link>
             <Link to="#" className="hover:text-brightRed">
-              Products
+              Sản phẩm
             </Link>
             <Link to="#" className="hover:text-brightRed">
-              About
+              Giới thiệu
             </Link>
           </div>
           <div className="flex flex-col space-y-3 text-white">
             <Link to="#" className="hover:text-brightRed">
-              Careers
+              Nghề nghiệp
             </Link>
             <Link to="#" className="hover:text-brightRed">
-              Community
+              Cộng đồng
             </Link>
             <Link to="#" className="hover:text-brightRed">
-              Privacy Policy
+              Chính sách bảo mật
             </Link>
           </div>
         </div>
@@ -105,15 +105,15 @@ const Footer = () => {
               <input
                 type="text"
                 className="flex-1 px-4 rounded-full focus:outline-none"
-                placeholder="Updated in your inbox"
+                placeholder="Đã cập nhật trong hộp thư đến của bạn"
               />
               <button className="px-6 py-2 text-white rounded-full bg-brightRed hover:bg-brightRedLight focus:outline-none">
-                Go
+                Chạy
               </button>
             </div>
           </form>
           <div className="hidden text-white md:block">
-            Copyright © 2024, All Rights Reserved
+            Bản quyền © 2024, Đã đăng ký mọi quyền.
           </div>
         </div>
       </div>

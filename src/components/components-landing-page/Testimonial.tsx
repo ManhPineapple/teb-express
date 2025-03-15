@@ -10,7 +10,7 @@ const Testimonial = () => {
       {/* Container to heading and testm blocks */}
       <div className="max-w-6xl px-5 mx-auto mt-32 text-center">
         {/* Heading */}
-        <h2 className="text-4xl font-bold text-center">Customer review</h2>
+        <h2 className="text-4xl font-bold text-center">Đánh giá từ khách hàng</h2>
         {/* Testimonials Container */}
         <div className="flex flex-col mt-24 md:flex-row md:space-x-6">
           {/* Testimonial 1 */}

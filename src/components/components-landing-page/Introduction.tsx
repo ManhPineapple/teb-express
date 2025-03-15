@@ -16,9 +16,7 @@ const Introduction = () => {
           ANANBAY - Giải pháp toàn diện cho ngành POD
         </h1>
         <p className="mt-2 text-gray-700">
-          Ra đời từ 2019 với tôn chỉ mang đến những phương thức và sản phẩm tối
-          ưu cho các sellers trong ngành POD và Dropshipping, Ananbay tự hào
-          bởi: Chất lượng tốt nhất - Base cost thấp nhất - Hệ thống tối ưu nhất.
+          Ra đời từ năm 2019 với sứ mệnh mang đến những phương thức và sản phẩm tối ưu cho người mua trong ngành POD và Dropshipping, Ananbay tự hào với: Chất lượng tốt nhất - Chi phí gốc thấp nhất - Hệ thống tối ưu nhất.
         </p>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className=" p-3 rounded">

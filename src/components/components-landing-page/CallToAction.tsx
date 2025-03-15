@@ -23,7 +23,7 @@ const CallToAction = () => {
             rel="noopener noreferrer"
             className="p-3 px-6 pt-2 text-brightRed bg-white rounded-full shadow-2xl baseline hover:bg-gray-900"
           >
-            Get Started
+            Bắt đầu
           </a>
         </div>
       </div>
