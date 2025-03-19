@@ -66,7 +66,7 @@ const BankingTopup: React.FC = () => {
     setFirstInput(value);
     setSecondInput(
       value
-        ? String(Intl.NumberFormat("en-US").format(exchangeRate * value))
+        ? String(Intl.NumberFormat("en-US").format(Math.round(exchangeRate * value)))
         : ""
     );
   };
@@ -119,20 +119,23 @@ const BankingTopup: React.FC = () => {
   //   .catch((err: any) => {});
 
   // create QR code from data
-  vietQR
-    .genQRCodeBase64({
-      bank: "970436",
-      accountName: "DO VAN CHIEN",
-      accountNumber: "0021002006288",
-      amount: `${Number(firstInput) * exchangeRate}`,
-      // memo: `Nap topup ${topupId}`, // remove message
-      template: "compact",
-    })
-    .then((data: any) => {
-      // console.log("data:", data.data.data.qrDataURL);
-      setQRCode(data.data.data.qrDataURL);
-    })
-    .catch((err: any) => { });
+  useEffect(() => {
+    vietQR
+      .genQRCodeBase64({
+        bank: "970436",
+        accountName: "DO VAN CHIEN",
+        accountNumber: "0021002006288",
+        amount: `${Math.round(Number(firstInput) * exchangeRate)}`,
+        // memo: `Nap topup ${topupId}`, // remove message
+        template: "compact",
+      })
+      .then((data: any) => {
+        setQRCode(data.data.data.qrDataURL);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  }, [firstInput, exchangeRate, vietQR]);
 
   return (
     <Card>
