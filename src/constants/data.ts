@@ -201,6 +201,7 @@ export type TProduct = {
   id: number;
   name: string;
   sku: string;
+  stock: number;
   detail: string;
   country: string;
   status: number;
