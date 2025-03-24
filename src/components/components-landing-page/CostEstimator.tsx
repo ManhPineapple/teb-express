@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
 import { z } from "zod";
 
 // Define Zod schema for validation with string inputs and custom refinement
@@ -98,13 +98,12 @@ const CostEstimator = () => {
       };
 
       // Make the API request
-      const response = await axios.post(
-        "https://api.ananbay.com/v1/shipment/packages/public-package-fee",
-        payload
-      );
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      const newUrl = baseUrl.split("/").slice(0, -2).join("/");
+      const response = await axios.post(`${newUrl}/v1/prices`, payload);
 
       // Update the fee
-      setCalculatedFee(response.data.shipping_fee);
+      setCalculatedFee(response.data.price);
     } catch (err) {
       setFormErrors({
         ...formErrors,
