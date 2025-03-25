@@ -49,8 +49,7 @@ type Product = {
 
 import axios from "axios";
 import { useWatch } from "react-hook-form";
-import { PackageDetail } from "../../package_china/PackageDetail";
-import { orderFormSchema } from "../modal-create-package/order-form-schema";
+import { orderFormSchema, PackageDetail } from "../package_schema";
 type PackageDetailProps = {
   modalClose: () => void;
   packageDetail: PackageDetail;
@@ -150,8 +149,6 @@ const ModalUpdatePackage = ({
       height: packageDetail.height.toString(),
       include_battery: packageDetail.include_battery || false,
       package_products: packageDetail.package_products || [{}],
-      scan_days: packageDetail.scan_days,
-      custom_url: packageDetail.custom_url,
       package_name: packageDetail.package_name,
       package_quantity: (packageDetail.package_quantity || 0).toString(),
       product_price: (packageDetail.product_price || 0).toString(),
@@ -159,28 +156,15 @@ const ModalUpdatePackage = ({
       cn_product_link: packageDetail.cn_product_link || "",
       cn_product_price: packageDetail.cn_product_price?.toString(),
       cn_shipping_fee: packageDetail.cn_shipping_fee?.toString(),
+      custom_tiktok_barcode: packageDetail.custom_tiktok_barcode?.toString(),
+      is_early_scan: packageDetail.is_early_scan,
     },
   });
-
-  useEffect(() => {
-    if (listServices && packageListType in listServices) {
-      updatePackageForm.setValue("service", listServices[packageListType].name);
-    }
-  }, [updatePackageForm, listServices, packageListType]);
 
   const productValue = useWatch({
     control: updatePackageForm.control,
     name: `package_products`,
   });
-
-  const scanDaysValue = useWatch({
-    control: updatePackageForm.control,
-    name: `scan_days`,
-  });
-
-  const handleSKUChange = (field: any, value: string) => {
-    field.onChange(value);
-  };
 
   const handleChooseStateInputChange = (event: any) => {
     const value = event.target.value;
@@ -304,7 +288,18 @@ const ModalUpdatePackage = ({
   };
 
   const selectedService =
-    updatePackageForm.watch("service") || listServices?.[packageListType]?.name;
+    updatePackageForm.watch("service") || packageDetail.service_name;
+
+  useEffect(() => {
+    if (!isNaN(Number(shippingFeeInput)) && shippingFeeInput !== "") {
+      updatePackageForm.setValue(
+        "cn_shipping_fee",
+        (Number(shippingFeeInput) * currencyRates[currency]).toFixed(2)
+      );
+    } else {
+      updatePackageForm.setValue("cn_shipping_fee", "");
+    }
+  }, [shippingFeeInput, currency]);
 
   useEffect(() => {
     if (!isNaN(Number(productPriceInput)) && productPriceInput !== "") {
@@ -1010,68 +1005,6 @@ const ModalUpdatePackage = ({
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Tùy chỉnh nhãn</strong>
-              </div>
-              <hr className="my-4" />
-              <div className="flex border p-4 shadow-sm gap-x-8">
-                <div className="flex-1 min-w-[25%]">
-                  <FormField
-                    control={updatePackageForm.control}
-                    name={`scan_days`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) =>
-                              handleSKUChange(field, value)
-                            }
-                          >
-                            <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                              <SelectValue placeholder="Ngày quét" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <ScrollArea type="always" className="max-h-64">
-                                <SelectItem value="1">1 ngày</SelectItem>
-                                <SelectItem value="2">2 ngày</SelectItem>
-                                <SelectItem value="3">3 ngày</SelectItem>
-                              </ScrollArea>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-[20%]">
-                  <FormField
-                    control={updatePackageForm.control}
-                    name={`custom_url`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            required={!!scanDaysValue}
-                            placeholder="url"
-                            {...field}
-                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
-                            style={{
-                              textOverflow: "ellipsis",
-                              overflow: "hidden",
-                              whiteSpace: "nowrap",
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
             </div>
           </div>

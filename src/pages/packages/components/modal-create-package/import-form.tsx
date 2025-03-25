@@ -186,7 +186,7 @@ const ImportOrdersForm = ({
             </table>
 
             {/* Error Details */}
-            {importErrors === undefined && <div>File upload sai format!</div>}
+            {importErrors === undefined && <div>File upload sai format hoặc trùng mã nhãn!</div>}
 
             {importErrors && importErrors.length !== 0 && (
               <div className="p-4 bg-white rounded shadow">
