@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -29,8 +28,6 @@ import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { uniqueId } from "lodash";
-import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -38,13 +35,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
 
 type OrderFormSchemaType = z.infer<typeof orderFormSchema>;
-
-type ProductFormProps = {
-  control: any;
-  index: number;
-  product: Product[] | null;
-  onRemove: (arg0: number) => void;
-};
 
 type Service = {
   id: number;
@@ -55,113 +45,6 @@ type Product = {
   id: number;
   sku: string;
   name: string;
-};
-
-const ProductForm: React.FC<ProductFormProps> = ({
-  control,
-  index,
-  product,
-  onRemove,
-}) => {
-  const [productName, setProductName] = useState("");
-
-  const handleSKUChange = (field: any, value: string) => {
-    const selectedProduct = product?.find((pd) => pd.sku === value);
-    setProductName(selectedProduct?.name || "");
-    field.onChange(value);
-  };
-
-  return (
-    <div className="flex border p-4 shadow-sm">
-      <div className="flex-1 min-w-[25%]">
-        <FormField
-          control={control}
-          name={`package_products[${index}].sku`}
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Select
-                  value={field.value?.toString()}
-                  onValueChange={(value) => handleSKUChange(field, value)}
-                >
-                  <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                    <SelectValue placeholder="Chọn SKU" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <ScrollArea type="always" className="max-h-64">
-                      {product?.map((pd) => (
-                        <SelectItem key={pd.id} value={pd.sku}>
-                          {pd.sku}
-                        </SelectItem>
-                      ))}
-                    </ScrollArea>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="flex-1 min-w-[45%]">
-        <FormField
-          control={control}
-          name={`package_products[${index}].name`}
-          render={() => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  disabled
-                  value={productName}
-                  placeholder="Tên sản phẩm"
-                  className="px-4 py-6 shadow-inner drop-shadow-xl bg-gray-300 w-full"
-                  style={{
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="flex-1 min-w-[20%]">
-        <FormField
-          control={control}
-          name={`package_products[${index}].quantity`}
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  required={false}
-                  defaultValue={1}
-                  placeholder="Số lượng"
-                  type="number"
-                  {...field}
-                  className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
-                  style={{
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <button
-        type="button"
-        onClick={() => onRemove(index)}
-        className="w-8 h-8 ml-2 mt-2 bg-gray-300 text-white rounded-xl hover:bg-red-500"
-      >
-        X
-      </button>
-    </div>
-  );
 };
 
 import axios from "axios";
@@ -338,24 +221,6 @@ const ModalUpdatePackage = ({
     setSelectedState(`${state.label} (${state.value})`);
     updatePackageForm.setValue("state_code", state.value);
     setFilteredStates([]);
-  };
-
-  const addProductForm = () => {
-    const currentValues = updatePackageForm.getValues();
-    updatePackageForm.setValue("package_products", [
-      ...currentValues.package_products!,
-      {},
-    ]);
-  };
-
-  const removeProductForm = (index: number) => {
-    const currentValues = updatePackageForm.getValues();
-    updatePackageForm.setValue(
-      "package_products",
-      currentValues.package_products?.map((product, i) =>
-        i === index ? null : product
-      )
-    );
   };
 
   const onSubmit = async (values: OrderFormSchemaType) => {
@@ -1056,33 +921,6 @@ const ModalUpdatePackage = ({
               )}
             </div>
             <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Sản phẩm</strong>
-                <button
-                  type="button"
-                  onClick={addProductForm}
-                  className="p-2 bg-green-500 text-white rounded-full"
-                >
-                  <Plus />
-                </button>
-              </div>
-              <hr className="my-4" />
-              <div>
-                {updatePackageForm
-                  .watch("package_products")!
-                  .map(
-                    (product, index) =>
-                      !!product && (
-                        <ProductForm
-                          key={uniqueId("PrdForm")}
-                          control={updatePackageForm.control}
-                          index={index}
-                          product={listProducts}
-                          onRemove={removeProductForm}
-                        />
-                      )
-                  )}
-              </div>
               <div className="flex gap-3 my-3">
                 <FormField
                   control={updatePackageForm.control}

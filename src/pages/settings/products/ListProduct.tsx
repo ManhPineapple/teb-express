@@ -75,9 +75,7 @@ const ListProductPage: React.FC = () => {
         <div className="w-1/2 flex sm:justify-end">
           <ImportModal
             renderModal={(onClose) => (
-              <ImportProductForm
-                modalClose={onClose}
-              />
+              <ImportProductForm modalClose={onClose} />
             )}
           />
           <Dialog>
@@ -150,6 +148,13 @@ const tableColumns: ColumnDef<TProduct>[] = [
     },
   },
   {
+    accessorKey: "price",
+    header: "Giá sản phẩm",
+    cell: ({ row }) => {
+      return <div>${parseFloat(row.original.price.toFixed(2))}</div>;
+    },
+  },
+  {
     accessorKey: "detail",
     header: "Loại sản phẩm",
     cell: ({ row }) => {
@@ -194,6 +199,7 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
     name: row.name,
     sku: row.sku,
     stock: row.stock,
+    price: row.price,
     detail: row.detail,
     material: row.material,
     weight: row.weight,
@@ -207,6 +213,7 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
     <div className="flex">
       <div className="border rounded-md mx-1 cursor-pointer">
         <Modal
+          className="sm:max-w-[425px]"
           isOpen={isShowUpdateModal}
           onClose={() => setIsShowUpdateModal(false)}
         >
@@ -221,8 +228,8 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
             setIsShowDeleteModal(false);
           }}
           onConfirm={async () => {
-            const response = await CustomAxios.put(
-              `/products/delete/${row.id}`
+            const response = await CustomAxios.delete(
+              `/products/${row.id}`
             );
             if (response.status === 200)
               toast.success("Xóa sản phẩm thành công!");
@@ -235,9 +242,9 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
       </div>
       <div className="border rounded-md mx-1 cursor-pointer">
         <ModalProductLog
-          product={{ sku: row.sku, id: row.id }}
-          isOpen={isShowProductLogModal}
           onClose={() => setIsShowProductLogModal(false)}
+          isOpen={isShowProductLogModal}
+          product={{ sku: row.sku, id: row.id }}
         />
         <BiTime size={20} onClick={() => setIsShowProductLogModal(true)} />
       </div>
