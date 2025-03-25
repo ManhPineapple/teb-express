@@ -1,6 +1,5 @@
 "use client";
 
-
 import { Button } from "@/components/ui/button";
 
 import Heading from "@/components/shared/heading";
@@ -915,98 +914,106 @@ const ModalUpdatePackage = ({
                 </>
               )}
             </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex gap-3 my-3">
-                <FormField
-                  control={updatePackageForm.control}
-                  name="package_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Tên đơn hàng: <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="text"
-                          placeholder="Tên đơn hàng"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={updatePackageForm.control}
-                  name="package_quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Số lượng đơn hàng:{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="number"
-                          placeholder="Số lượng đơn hàng"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={updatePackageForm.control}
-                  name="product_price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Giá sản phẩm: <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="number"
-                          placeholder="Giá sản phẩm"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            {selectedService !== "Warehouse Stock" && (
+              <div className="mt-5 border p-4 shadow-md">
+                <div className="flex gap-3 my-3">
+                  <FormField
+                    control={updatePackageForm.control}
+                    name="package_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Tên đơn hàng: <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            required={
+                              !productValue ||
+                              productValue.every(
+                                (item) =>
+                                  !item ||
+                                  (typeof item === "object" &&
+                                    Object.values(item).every(
+                                      (value) => !value
+                                    ))
+                              )
+                            }
+                            type="text"
+                            placeholder="Tên đơn hàng"
+                            {...field}
+                            className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={updatePackageForm.control}
+                    name="package_quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Số lượng đơn hàng:{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            required={
+                              !productValue ||
+                              productValue.every(
+                                (item) =>
+                                  !item ||
+                                  (typeof item === "object" &&
+                                    Object.values(item).every(
+                                      (value) => !value
+                                    ))
+                              )
+                            }
+                            type="number"
+                            placeholder="Số lượng đơn hàng"
+                            {...field}
+                            className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={updatePackageForm.control}
+                    name="product_price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Giá sản phẩm: <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            required={
+                              !productValue ||
+                              productValue.every(
+                                (item) =>
+                                  !item ||
+                                  (typeof item === "object" &&
+                                    Object.values(item).every(
+                                      (value) => !value
+                                    ))
+                              )
+                            }
+                            type="number"
+                            placeholder="Giá sản phẩm"
+                            {...field}
+                            className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex justify-between">

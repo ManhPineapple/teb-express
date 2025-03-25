@@ -37,6 +37,8 @@ export const orderFormSchema = z
       .string()
       .min(1, { message: "Nhãn Tiktok là bắt buộc" }),
     is_early_scan: z.boolean().optional(),
+
+    is_tiktok_warehouse: z.boolean().optional(),
   })
   .refine(
     (data) =>

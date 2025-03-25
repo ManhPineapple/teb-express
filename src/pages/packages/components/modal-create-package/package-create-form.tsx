@@ -353,8 +353,8 @@ const OrderCreateForm = ({
     }
     if (selectedService === "Warehouse Stock") {
       if (packageQuantity == 0) {
-        toast.error("Cần bổ sung ít nhất 1 sản phẩm")
-        return
+        toast.error("Cần bổ sung ít nhất 1 sản phẩm");
+        return;
       }
       values = {
         ...values,
@@ -374,7 +374,7 @@ const OrderCreateForm = ({
         const uploadUrl = await uploadCnInvoiceImage(values.image);
         values = {
           ...values,
-          cn_invoice_image: uploadUrl,
+          image_upload: uploadUrl,
         };
       }
 
@@ -403,6 +403,7 @@ const OrderCreateForm = ({
 
   const selectedService =
     createOrderForm.watch("service") || listServices?.[packageListType]?.name;
+  const isTiktokWarehouse = createOrderForm.watch("is_tiktok_warehouse");
 
   useEffect(() => {
     if (!isNaN(Number(shippingFeeInput)) && shippingFeeInput !== "") {
@@ -1083,6 +1084,53 @@ const OrderCreateForm = ({
                       </FormItem>
                     )}
                   />
+                </>
+              )}
+              {selectedService === "Warehouse Stock" && (
+                <>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="is_tiktok_warehouse"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            <FormLabel>Dùng mã tiktok riêng</FormLabel>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {isTiktokWarehouse == true && (
+                    <>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="image"
+                        render={({ field: { onChange } }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    onChange(e.target.files[0]);
+                                  }
+                                }}
+                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
                 </>
               )}
             </div>
