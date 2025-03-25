@@ -9,13 +9,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CustomAxios } from "@/utils/customAxios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
 const productSchema = z.object({
   name: z.string().nonempty("Tên sản phẩm là bắt buộc"),
   sku: z.string().nonempty("SKU là bắt buộc"),
+  stock: z.number(),
+  price: z.number().nonnegative("Giá sản phẩm là bắt buộc, lớn hơn 0"),
   detail: z.string().nonempty("Chi tiết là bắt buộc"),
   material: z.string().optional(),
   weight: z.number().min(1, "Trọng lượng phải lớn hơn 0"),
@@ -36,6 +39,8 @@ const ModalAddOrUpdateProduct: React.FC<{
     initProduct = {
       name: "",
       sku: "",
+      stock: 0,
+      price: 0,
       detail: "",
       material: "",
       weight: 0,
@@ -75,9 +80,11 @@ const ModalAddOrUpdateProduct: React.FC<{
       ...prev,
       [name]:
         name === "weight" ||
-          name === "length" ||
-          name === "width" ||
-          name === "height"
+        name === "length" ||
+        name === "width" ||
+        name === "height" ||
+        name === "stock" ||
+        name === "price"
           ? parseFloat(value)
           : value,
     }));
@@ -152,6 +159,40 @@ const ModalAddOrUpdateProduct: React.FC<{
 
           <div className="mb-4">
             <label className="modal__add-claim-label">
+              Số lượng: <span className="text-red-500">*</span>
+            </label>
+            <Input
+              type="number"
+              className={`form-control ${errors.sku ? "error-color" : ""}`}
+              placeholder="Nhập số lượng"
+              name="stock"
+              value={productEdit.stock}
+              onChange={handleChange}
+            />
+            {errors.stock && (
+              <span className="err-span text-red-500">{errors.stock}</span>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="modal__add-claim-label">
+              Giá sản phẩm: <span className="text-red-500">*</span>
+            </label>
+            <Input
+              type="number"
+              className={`form-control ${errors.sku ? "error-color" : ""}`}
+              placeholder="Nhập giá sản phẩm (không ảnh hưởng đến giá vận đơn)"
+              name="price"
+              value={productEdit.price}
+              onChange={handleChange}
+            />
+            {errors.price && (
+              <span className="err-span text-red-500">{errors.price}</span>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="modal__add-claim-label">
               Loại sản phẩm: <span className="text-red-500">*</span>
             </label>
             <Input
@@ -168,7 +209,9 @@ const ModalAddOrUpdateProduct: React.FC<{
           </div>
 
           <div className="mb-4">
-            <label className="modal__add-claim-label">Chất liệu sản phẩm:</label>
+            <label className="modal__add-claim-label">
+              Chất liệu sản phẩm:
+            </label>
             <Input
               type="text"
               className="form-control"
@@ -301,7 +344,116 @@ const ModalAddOrUpdateProduct: React.FC<{
       </div>
     </div>
   );
+};
 
+interface ProductLog {
+  updated_at: string;
+  quantity: number;
+  package_id: number;
+}
+
+interface ModalProductLogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: {
+    id: number;
+    sku: string;
+  };
+}
+
+export const ModalProductLog: React.FC<ModalProductLogProps> = ({
+  isOpen,
+  onClose,
+  product,
+}) => {
+  const [logs, setLogs] = useState<ProductLog[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchLogs();
+    }
+  }, [isOpen]);
+
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      const response = await CustomAxios.get(`/products/log/${product.id}`);
+      if (response.status === 200) {
+        setLogs(response.data);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data || "Failed to fetch logs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
+          <h2 className="text-lg font-semibold mb-4">Lịch sử sản phẩm</h2>
+          <div className="overflow-auto max-h-60">
+            {loading ? (
+              <p>Loading...</p>
+            ) : logs.length > 0 ? (
+              <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border p-2">SKU</th>
+                    <th className="border p-2">Ngày cập nhật</th>
+                    <th className="border p-2">Số lượng</th>
+                    <th className="border p-2">Hình thức</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {logs.map((log, index) => (
+                    <tr key={index} className="text-center">
+                      <td className="border p-2">{product.sku}</td>
+                      <td className="border p-2">
+                        {new Date(log.updated_at).toLocaleDateString("en-GB")}
+                      </td>
+                      <td className="border p-2">{log.quantity}</td>
+                      <td className="border p-2">
+                        {log.package_id > 0 ? (
+                          <>
+                            <span className="mx-1">Đơn</span>
+                            <Link
+                              to={`/package/details/${log.package_id}`}
+                              className="text-blue-500 underline"
+                            >
+                              {log.package_id}
+                            </Link>
+                          </>
+                        ) : log.package_id === -1 ? (
+                          "Sửa trực tiếp"
+                        ) : (
+                          "Nhập hàng"
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No logs available.</p>
+            )}
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-md"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default ModalAddOrUpdateProduct;

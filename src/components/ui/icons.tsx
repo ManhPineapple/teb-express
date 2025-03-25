@@ -21,6 +21,7 @@ import {
   MapPinned,
   Moon,
   MoreVertical,
+  Package,
   Pizza,
   Plus,
   Settings,
@@ -88,4 +89,5 @@ export const Icons = {
   ),
   twitter: Twitter,
   check: Check,
+  package: Package,
 };

@@ -34,6 +34,12 @@ export const navItems: NavItem[] = [
     label: "Hóa đơn"
   },
   {
+    title: "Kho sản phẩm",
+    icon: "package",
+    href: "/setting/products",
+    label: "Sản phẩm",
+  },
+  {
     title: "Cài đặt",
     icon: "setting",
     href: "/404/1",
@@ -44,16 +50,6 @@ export const navItems: NavItem[] = [
         href: "/setting/account",
         label: "Tài khoản",
       },
-      {
-        title: "Sản phẩm",
-        href: "/setting/products",
-        label: "Sản phẩm",
-      },
-      // {
-      //   title: "Templates",
-      //   href: "/setting/templates",
-      //   label: "Templates",
-      // },
       {
         title: "Giá dịch vụ",
         href: "/setting/prices",
@@ -201,6 +197,8 @@ export type TProduct = {
   id: number;
   name: string;
   sku: string;
+  stock: number;
+  price: number;
   detail: string;
   country: string;
   status: number;

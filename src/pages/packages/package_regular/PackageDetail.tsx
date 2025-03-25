@@ -34,57 +34,8 @@ import DeliveryLog from "../components/deliver-logs";
 import { ModalCancel } from "../components/modal-cancel-packages/ModalCancel";
 import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
 import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
+import { PackageDetail } from "../components/package_schema";
 import PackageTracking from "../components/track";
-
-export type PackageDetail = {
-  id: number;
-  order_number: string;
-  label: string;
-  recipient: string;
-  company: string;
-  phone_number: string;
-  address_1: string;
-  address_2: string;
-  city: string;
-  state_code: string;
-  zipcode: string;
-  country_code: string;
-  detail: string;
-  weight: number;
-  width: number;
-  length: number;
-  height: number;
-  actual_weight: number;
-  actual_width: number;
-  actual_length: number;
-  actual_height: number;
-  status_string: string;
-  service_id: number;
-  note: string;
-  service_name: string;
-  service_code: string;
-  tracking_number: string;
-  code_package: string;
-  shipping_fee: number;
-  created_at: string;
-  alert: number;
-  is_insured: boolean;
-  estimate_date_process: string;
-  is_package_exceed: boolean;
-  include_battery: boolean;
-  package_products: any[];
-  scan_days: string;
-  custom_url: string;
-  package_name: string;
-  package_quantity: number;
-  product_price: number;
-  is_purchased: boolean;
-  cn_product_link: string;
-  cn_product_price: string;
-  cn_invoice_image: string;
-  cn_shipping_fee: string;
-  custom_cn_barcode: string;
-};
 
 type RefundFee = {
   id: number;
@@ -265,13 +216,6 @@ export function PackageDetailRegular() {
     return (packageDetail?.shipping_fee ?? 0) + sumExtraFee() + discount();
   };
 
-  const getDateDiff = (t: any) => {
-    const today = new Date();
-    const dateToReply = new Date(t);
-    const timeInMillisec = dateToReply.getTime() - today.getTime();
-    return Math.ceil(timeInMillisec / (1000 * 60 * 60 * 24));
-  };
-
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -393,20 +337,23 @@ export function PackageDetailRegular() {
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.created_at
                   ? format(
-                    new Date(packageDetail.created_at),
-                    "dd/MM/yyyy - HH:mm:ss"
-                  )
+                      new Date(packageDetail.created_at),
+                      "dd/MM/yyyy - HH:mm:ss"
+                    )
                   : "N/A"}
               </span>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Trạng thái:</div>
+              <div className="text-sm font-normal text-[#626363]">
+                Trạng thái:
+              </div>
               <span
-                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${packageDetail?.status_string
+                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${
+                  packageDetail?.status_string
                     ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
-                      .className
+                        .className
                     : "N/A"
-                  }`}
+                }`}
               >
                 {packageDetail?.status_string}
               </span>
@@ -415,11 +362,11 @@ export function PackageDetailRegular() {
           <div className="flex gap-2">
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string ===
-              PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
-                <div className="">
-                  <ModalCancel ids={[ids]} />
-                </div>
-              )}
+                PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
+              <div className="">
+                <ModalCancel ids={[ids]} />
+              </div>
+            )}
 
             {packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT && (
               <div className="">
@@ -502,6 +449,16 @@ export function PackageDetailRegular() {
                   {packageDetail?.include_battery ? "Yes" : "No"}
                 </div>
               </div>
+              {packageDetail?.service_name === "Tiktok" && (
+                <div className="grid grid-cols-12 mb-2">
+                  <div className="col-span-4 font-normal text-[#626363]">
+                    Nhãn Tiktok:
+                  </div>
+                  <div className="col-span-8">
+                    {packageDetail?.custom_tiktok_barcode}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="">
@@ -679,11 +636,42 @@ export function PackageDetailRegular() {
         <div className="col-span-5">
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">
-                Thông tin sản phẩm
-              </div>
+              <div className="border-b pb-3 font-bold">Thông tin phụ phí:</div>
+              {extraFee && extraFee.length > 0 ? (
+                <div className="mt-3">
+                  <div className="grid grid-cols-12 mb-5">
+                    <div className="col-span-10 text-[#626363]">
+                      Tên dịch vụ
+                    </div>
+                    <div className="col-span-2 text-center">Fee</div>
+                  </div>
+                  {extraFee.map((extraFee, index) => (
+                    <div className="grid grid-cols-12" key={index}>
+                      <div className="col-span-10">
+                        {extraFee.extra_fee_types?.name}
+                      </div>
+                      <div className="col-span-2 text-center">
+                        ${extraFee.amount}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center">
+                  <PackageOpen
+                    strokeWidth={0.5}
+                    className="w-[106px] h-[84px] mx-auto mt-[80px] text-[#aaabab]"
+                  />
+                  <p className="text-[#aaabab] mt-3">
+                    Chưa có thông tin phụ phí.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className=" h-full items-center justify-center p-6">
+              <div className="border-b pb-3 font-bold">Thông tin sản phẩm</div>
               {packageDetail?.package_products &&
-                packageDetail?.package_products?.length > 0 ? (
+              packageDetail?.package_products?.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
                     <div className="col-span-5 text-[#626363]">SKU</div>

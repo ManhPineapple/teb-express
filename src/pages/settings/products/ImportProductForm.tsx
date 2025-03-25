@@ -1,28 +1,19 @@
-import { getListPackages, importXlsx } from "@/services/packages";
-import { usePackageStore } from "@/store/tableStore";
+import { importXlsx } from "@/services/settings/products";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Paperclip } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { packageListTypeChina } from "../../package_china";
 
-// Define Zod schema for form validation
-const importOrdersSchema = z.object({
+const importSchema = z.object({
   file: z
     .instanceof(FileList)
     .refine((files) => files.length > 0, "Yêu cầu chọn file !"),
 });
 
-type ImportOrdersFormData = z.infer<typeof importOrdersSchema>;
+type ImportFormData = z.infer<typeof importSchema>;
 
-const ImportOrdersForm = ({
-  modalClose,
-  packageListType,
-}: {
-  modalClose: () => void;
-  packageListType: number;
-}) => {
+const ImportProductForm = ({ modalClose }: { modalClose: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [resultVisible, setResultVisible] = useState(false);
   const [importErrors, setImportErrors] = useState([]);
@@ -32,26 +23,22 @@ const ImportOrdersForm = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ImportOrdersFormData>({
-    resolver: zodResolver(importOrdersSchema),
+  } = useForm<ImportFormData>({
+    resolver: zodResolver(importSchema),
   });
 
-  const onSubmit = async (data: ImportOrdersFormData) => {
+  const onSubmit = async (data: ImportFormData) => {
     const formData = new FormData();
     formData.append("file", data.file[0]);
     setLoading(true);
 
     try {
       const importXlsxResponse = await importXlsx(formData);
-
+    
       setTotal(importXlsxResponse.total);
-      setImportSuccess(importXlsxResponse.import_sucess);
+      setImportSuccess(importXlsxResponse.import_success);
       setImportErrors(importXlsxResponse.errors);
       setResultVisible(true);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
-      // toast.success("Import orders successfully");
     } catch (error) {
       console.error("Error importing packages:", error);
     } finally {
@@ -63,22 +50,11 @@ const ImportOrdersForm = ({
   const handleClose = async () => {
     setResultVisible(false);
     modalClose();
-    const { setPackages } = usePackageStore.getState();
-    const newPackages = await getListPackages(
-      1,
-      50,
-      "",
-      "",
-      undefined,
-      undefined,
-      undefined
-    );
-    setPackages(newPackages.packages);
   };
 
   return (
     <div className="p-4 bg-white rounded shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Nhập đơn hàng</h2>
+      <h2 className="text-xl font-bold mb-4">Nhập Sản phẩm</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <div className="flex justify-between">
@@ -92,23 +68,14 @@ const ImportOrdersForm = ({
               <span className="text-gray-700 text-sm font-bold">
                 Tải xuống file
               </span>
-              {packageListType === packageListTypeChina ? (
-                <a
-                  href="../../../../../Ananbay_CN_template.xlsx"
-                  download="Ananbay_template.xlsx"
-                  className="download-link text-blue-700 text-sm font-bold ml-1"
-                >
-                  Mẫu Ananbay CN XLSX
-                </a>
-              ) : (
-                <a
-                  href="../../../../../Ananbay_template.xlsx"
-                  download="Ananbay_template.xlsx"
-                  className="download-link text-blue-700 text-sm font-bold ml-1"
-                >
-                  Mẫu Ananbay XLSX
-                </a>
-              )}
+
+              <a
+                href="../../../../../Import_product_template.xlsx"
+                download="ImportProduct.xlsx"
+                className="download-link text-blue-700 text-sm font-bold ml-1"
+              >
+                Mẫu nhập dữ liệu Sản phẩm XLSX
+              </a>
             </div>
           </div>
           <div className="flex">
@@ -160,7 +127,7 @@ const ImportOrdersForm = ({
                 <tr>
                   <td>Kết quả:</td>
                   <td>
-                    {importErrors && importErrors.length === 0 ? (
+                    {importErrors ? (
                       <div>
                         <i className="success-import"></i>
                         <span>Thành công</span>
@@ -175,18 +142,18 @@ const ImportOrdersForm = ({
                 </tr>
 
                 <tr>
-                  <td>Tổng số đơn:</td>
-                  <td>{total} đơn</td>
+                  <td>Tổng số Sản phẩm:</td>
+                  <td>{total} Sản phẩm</td>
                 </tr>
                 <tr>
-                  <td>Đơn thành công:</td>
-                  <td>{importSuccess} đơn</td>
+                  <td>Sản phẩm thành công:</td>
+                  <td>{importSuccess} Sản phẩm</td>
                 </tr>
               </tbody>
             </table>
 
             {/* Error Details */}
-            {importErrors === undefined && <div>File upload sai format hoặc trùng mã nhãn!</div>}
+            {importErrors === undefined && <div>File upload sai format!</div>}
 
             {importErrors && importErrors.length !== 0 && (
               <div className="p-4 bg-white rounded shadow">
@@ -228,4 +195,4 @@ const ImportOrdersForm = ({
   );
 };
 
-export default ImportOrdersForm;
+export default ImportProductForm;

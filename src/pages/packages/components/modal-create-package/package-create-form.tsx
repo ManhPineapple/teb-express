@@ -45,7 +45,7 @@ import { z } from "zod";
 type OrderFormSchemaType = z.infer<typeof orderFormSchema>;
 
 type ProductFormProps = {
-  control: any;
+  form: any;
   index: number;
   product: Product[] | null;
   onRemove: (arg0: number) => void;
@@ -60,27 +60,28 @@ type Product = {
   id: number;
   sku: string;
   name: string;
+  price: number;
 };
 
 const ProductForm: React.FC<ProductFormProps> = ({
-  control,
+  form,
   index,
   product,
   onRemove,
 }) => {
-  const [productName, setProductName] = useState("");
-
   const handleSKUChange = (field: any, value: string) => {
     const selectedProduct = product?.find((pd) => pd.sku === value);
-    setProductName(selectedProduct?.name || "");
+    const newName = selectedProduct?.name || "";
+
     field.onChange(value);
+    form.setValue(`package_products[${index}].name`, newName);
   };
 
   return (
     <div className="flex border p-4 shadow-sm">
       <div className="flex-1 min-w-[25%]">
         <FormField
-          control={control}
+          control={form.control}
           name={`package_products[${index}].sku`}
           render={({ field }) => (
             <FormItem>
@@ -110,21 +111,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
       </div>
       <div className="flex-1 min-w-[45%]">
         <FormField
-          control={control}
+          control={form.control}
           name={`package_products[${index}].name`}
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input
                   disabled
-                  value={productName}
                   placeholder="Tên sản phẩm"
-                  className="px-4 py-6 shadow-inner drop-shadow-xl bg-gray-300 w-full"
-                  style={{
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                  }}
+                  className="px-4 py-6 shadow-inner drop-shadow-xl bg-gray-300 w-full truncate"
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -134,7 +130,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       </div>
       <div className="flex-1 min-w-[20%]">
         <FormField
-          control={control}
+          control={form.control}
           name={`package_products[${index}].quantity`}
           render={({ field }) => (
             <FormItem>
@@ -171,7 +167,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 import axios from "axios";
 import { useWatch } from "react-hook-form";
-import { orderFormSchema } from "./order-form-schema";
+import { orderFormSchema } from "../package_schema";
 
 const OrderCreateForm = ({
   modalClose,
@@ -261,15 +257,6 @@ const OrderCreateForm = ({
     name: `package_products`,
   });
 
-  const scanDaysValue = useWatch({
-    control: createOrderForm.control,
-    name: `scan_days`,
-  });
-
-  const handleSKUChange = (field: any, value: string) => {
-    field.onChange(value);
-  };
-
   const handleChooseStateInputChange = (event: any) => {
     const value = event.target.value;
     setSelectedState(value);
@@ -323,63 +310,62 @@ const OrderCreateForm = ({
     const currentValues = createOrderForm.getValues();
     createOrderForm.setValue(
       "package_products",
-      currentValues.package_products?.map((product, i) =>
-        i === index ? null : product
-      )
+      currentValues.package_products?.filter((_, i) => i !== index) || []
     );
   };
 
-  const onSubmit = async (values: OrderFormSchemaType) => {
+  const onSubmit = async (values: any) => {
+    const numericFields = [
+      "weight",
+      "height",
+      "width",
+      "length",
+      "package_quantity",
+      "product_price",
+      "cn_product_price",
+      "cn_shipping_fee",
+    ];
+
+    numericFields.forEach((field) => {
+      values[field] = Number(values[field]);
+    });
     values.country_code = "United States";
-    //@ts-expect-error ts-such
-    values.weight = Number(values.weight);
-    //@ts-expect-error ts-such
-    values.height = Number(values.height);
-    //@ts-expect-error ts-such
-    values.width = Number(values.width);
-    //@ts-expect-error ts-such
-    values.length = Number(values.length);
-    //@ts-expect-error ts-such
-    values.package_quantity = Number(values.package_quantity);
-    //@ts-expect-error ts-such
-    values.product_price = Number(values.product_price);
-    //@ts-expect-error ts-such
-    values.cn_product_price = Number(values.cn_product_price);
-    //@ts-expect-error ts-such
-    values.cn_shipping_fee = Number(values.cn_shipping_fee);
 
-    if (values.service == "Express (CN exclusive)") {
-      if (cnPackageType == "Purchased") {
-        values.is_purchased = true;
-      } else if (cnPackageType == "Pre-purchased") {
-        values.is_purchased = false;
-      } else {
-        // default cnPackageType value is purchased
-        values.is_purchased = true;
-      }
-    }
-
-    const packageProducts = values.package_products?.map(
-      (productFormData: any) => {
-        const product = listProducts?.find(
-          (e) => e.sku === productFormData?.sku
-        );
-        const quantity = productFormData?.quantity
-          ? Number(productFormData?.quantity)
-          : 1;
+    let packageQuantity = 0;
+    let totalProductPrice = 0;
+    const packageProducts = values.package_products
+      ?.map(({ sku, quantity }: any) => {
+        const product = listProducts?.find((p) => p.sku === sku);
+        const qty = Number(quantity) || 1;
 
         if (product) {
-          return {
-            product_id: product!.id,
-            quantity: quantity,
-          };
-        }
-      }
-    );
+          packageQuantity += qty;
+          totalProductPrice += product.price * qty;
 
-    values.package_products = packageProducts?.filter(
-      (item) => item !== undefined
-    );
+          return { product_id: product.id, quantity: qty };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    if (values.service === "Express (CN exclusive)") {
+      values.is_purchased = cnPackageType === "Pre-purchased" ? false : true;
+    }
+    if (selectedService === "Warehouse Stock") {
+      if (packageQuantity == 0) {
+        toast.error("Cần bổ sung ít nhất 1 sản phẩm");
+        return;
+      }
+      values = {
+        ...values,
+        package_name: values.detail,
+        package_quantity: packageQuantity,
+        product_price: totalProductPrice,
+        package_products: packageProducts,
+      };
+    } else {
+      values.package_products = null;
+    }
 
     setLoading(true);
 
@@ -388,7 +374,7 @@ const OrderCreateForm = ({
         const uploadUrl = await uploadCnInvoiceImage(values.image);
         values = {
           ...values,
-          cn_invoice_image: uploadUrl,
+          image_upload: uploadUrl,
         };
       }
 
@@ -417,6 +403,7 @@ const OrderCreateForm = ({
 
   const selectedService =
     createOrderForm.watch("service") || listServices?.[packageListType]?.name;
+  const isTiktokWarehouse = createOrderForm.watch("is_tiktok_warehouse");
 
   useEffect(() => {
     if (!isNaN(Number(shippingFeeInput)) && shippingFeeInput !== "") {
@@ -1051,172 +1038,21 @@ const OrderCreateForm = ({
                   )}
                 </>
               )}
-            </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Sản phẩm</strong>
-                <button
-                  type="button"
-                  onClick={addProductForm}
-                  className="p-2 bg-green-500 text-white rounded-full"
-                >
-                  <Plus />
-                </button>
-              </div>
-              <hr className="my-4" />
-              <div>
-                {createOrderForm
-                  .watch("package_products")!
-                  .map(
-                    (product, index) =>
-                      !!product && (
-                        <ProductForm
-                          key={uniqueId("PrdForm")}
-                          control={createOrderForm.control}
-                          index={index}
-                          product={listProducts}
-                          onRemove={removeProductForm}
-                        />
-                      )
-                  )}
-              </div>
-              <div className="flex gap-3 my-3">
-                <FormField
-                  control={createOrderForm.control}
-                  name="package_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Tên đơn hàng: <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="text"
-                          placeholder="Tên đơn hàng"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={createOrderForm.control}
-                  name="package_quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Số lượng đơn:{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="number"
-                          placeholder="Số lượng đơn"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={createOrderForm.control}
-                  name="product_price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Giá sản phẩm: <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          required={
-                            !productValue ||
-                            productValue.every(
-                              (item) =>
-                                !item ||
-                                (typeof item === "object" &&
-                                  Object.values(item).every((value) => !value))
-                            )
-                          }
-                          type="number"
-                          placeholder="Giá sản phẩm"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            <div className="mt-5 border p-4 shadow-md">
-              <div className="flex justify-between">
-                <strong className="mr-2">Nhãn tùy chỉnh</strong>
-              </div>
-              <hr className="my-4" />
-              <div className="flex border p-4 shadow-sm gap-x-8">
-                <div className="flex-1 min-w-[25%]">
+              {selectedService === "Tiktok" && (
+                <>
+                  <div className="flex justify-between">
+                    <strong className="mr-2">
+                      Mã nhãn Tiktok <span className="text-red-500">*</span>
+                    </strong>
+                  </div>
                   <FormField
                     control={createOrderForm.control}
-                    name={`scan_days`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) =>
-                              handleSKUChange(field, value)
-                            }
-                          >
-                            <SelectTrigger className="mb-4 box-border h-[48px] w-full px-[0.75rem] text-base leading-6">
-                              <SelectValue placeholder="Số ngày quét" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <ScrollArea type="always" className="max-h-64">
-                                <SelectItem value="1">1 ngày</SelectItem>
-                                <SelectItem value="2">2 ngày</SelectItem>
-                                <SelectItem value="3">3 ngày</SelectItem>
-                              </ScrollArea>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex-1 min-w-[20%]">
-                  <FormField
-                    control={createOrderForm.control}
-                    name={`custom_url`}
+                    name={`custom_tiktok_barcode`}
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Input
-                            required={!!scanDaysValue}
-                            placeholder="url"
+                            placeholder="Mã nhãn"
                             {...field}
                             className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
                             style={{
@@ -1230,8 +1066,212 @@ const OrderCreateForm = ({
                       </FormItem>
                     )}
                   />
-                </div>
-              </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="is_early_scan"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            <FormLabel>Scan tiktok sớm</FormLabel>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+              {selectedService === "Warehouse Stock" && (
+                <>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="is_tiktok_warehouse"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            <FormLabel>Dùng mã tiktok riêng</FormLabel>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {isTiktokWarehouse == true && (
+                    <>
+                      <FormField
+                        control={createOrderForm.control}
+                        name="image"
+                        render={({ field: { onChange } }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    onChange(e.target.files[0]);
+                                  }
+                                }}
+                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+            <div className="mt-5 border p-4 shadow-md">
+              {selectedService === "Warehouse Stock" && (
+                <>
+                  <div className="flex justify-between">
+                    <strong className="mr-2">Sản phẩm</strong>
+                    <button
+                      type="button"
+                      onClick={addProductForm}
+                      className="p-2 bg-green-500 text-white rounded-full"
+                    >
+                      <Plus />
+                    </button>
+                  </div>
+                  <hr className="my-4" />
+                  <div>
+                    {createOrderForm
+                      .watch("package_products")!
+                      .map(
+                        (product, index) =>
+                          !!product && (
+                            <ProductForm
+                              key={uniqueId("PrdForm")}
+                              form={createOrderForm}
+                              index={index}
+                              product={listProducts}
+                              onRemove={removeProductForm}
+                            />
+                          )
+                      )}
+                  </div>
+                </>
+              )}
+              {selectedService !== "Warehouse Stock" && (
+                <>
+                  <div className="flex justify-between">
+                    <strong className="mr-2">Sản phẩm</strong>
+                  </div>
+                  <hr className="my-4" />
+                  <div className="flex gap-3 my-3">
+                    <FormField
+                      control={createOrderForm.control}
+                      name="package_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Tên đơn hàng:{" "}
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              required={
+                                !productValue ||
+                                productValue.every(
+                                  (item) =>
+                                    !item ||
+                                    (typeof item === "object" &&
+                                      Object.values(item).every(
+                                        (value) => !value
+                                      ))
+                                )
+                              }
+                              type="text"
+                              placeholder="Tên đơn hàng"
+                              {...field}
+                              className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={createOrderForm.control}
+                      name="package_quantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Số lượng sản phẩm:{" "}
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              required={
+                                !productValue ||
+                                productValue.every(
+                                  (item) =>
+                                    !item ||
+                                    (typeof item === "object" &&
+                                      Object.values(item).every(
+                                        (value) => !value
+                                      ))
+                                )
+                              }
+                              type="number"
+                              placeholder="Số lượng"
+                              {...field}
+                              className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={createOrderForm.control}
+                      name="product_price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Giá sản phẩm:{" "}
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              required={
+                                !productValue ||
+                                productValue.every(
+                                  (item) =>
+                                    !item ||
+                                    (typeof item === "object" &&
+                                      Object.values(item).every(
+                                        (value) => !value
+                                      ))
+                                )
+                              }
+                              type="number"
+                              placeholder="Giá sản phẩm"
+                              {...field}
+                              className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

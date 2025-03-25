@@ -55,3 +55,17 @@ export const getProductsCount = async (
     throw error;
   }
 };
+
+export const importXlsx = async (formData: FormData) => {
+  try {
+    const res = await CustomAxios.post("/products/import", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data;
+  } catch (error: any) {
+    console.error("Error import:", error);
+    return error.response.data;
+  }
+}

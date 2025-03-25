@@ -1,5 +1,6 @@
 import { AlertModal } from "@/components/shared/alert-modal";
 import DataTable from "@/components/shared/data-table";
+import ImportModal from "@/components/shared/import-modal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Modal } from "@/components/ui/modal";
 import { TProduct } from "@/constants/data";
+import { handleCopy } from "@/pages/packages/components/packages-table/columns";
 import {
   getProductsCount,
   getProductsData,
@@ -18,12 +20,12 @@ import { CustomAxios } from "@/utils/customAxios";
 import { ColumnDef } from "@tanstack/react-table";
 import { Copy, Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { BiSolidEdit } from "react-icons/bi";
+import { BiSolidEdit, BiTime } from "react-icons/bi";
 import { CiTrash } from "react-icons/ci";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ModalAddOrUpdateProduct from "./ModalProduct";
-import { handleCopy } from "@/pages/packages/components/packages-table/columns";
+import ImportProductForm from "./ImportProductForm";
+import ModalAddOrUpdateProduct, { ModalProductLog } from "./ModalProduct";
 
 const ListProductPage: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>();
@@ -71,13 +73,18 @@ const ListProductPage: React.FC = () => {
           />
         </div>
         <div className="w-1/2 flex sm:justify-end">
+          <ImportModal
+            renderModal={(onClose) => (
+              <ImportProductForm modalClose={onClose} />
+            )}
+          />
           <Dialog>
             <DialogTrigger asChild>
               <Button
                 type="button"
-                className="btn btn-primary flex items-center bg-blue-500 text-white p-2 rounded-xl px-4"
+                className="btn btn-primary flex items-center bg-blue-500 text-white p-2 rounded-xl px-4 mx-2"
               >
-                <Plus /> Thêm sản phẩm
+                <Plus size={20} className="mr-1" /> Thêm sản phẩm
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -134,6 +141,20 @@ const tableColumns: ColumnDef<TProduct>[] = [
     },
   },
   {
+    accessorKey: "stock",
+    header: "Số lượng",
+    cell: ({ row }) => {
+      return <div>{row.original.stock}</div>;
+    },
+  },
+  {
+    accessorKey: "price",
+    header: "Giá sản phẩm",
+    cell: ({ row }) => {
+      return <div>${parseFloat(row.original.price.toFixed(2))}</div>;
+    },
+  },
+  {
     accessorKey: "detail",
     header: "Loại sản phẩm",
     cell: ({ row }) => {
@@ -172,9 +193,13 @@ const tableColumns: ColumnDef<TProduct>[] = [
 const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
   const [isShowDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
   const [isShowUpdateModal, setIsShowUpdateModal] = useState<boolean>(false);
+  const [isShowProductLogModal, setIsShowProductLogModal] =
+    useState<boolean>(false);
   const product = {
     name: row.name,
     sku: row.sku,
+    stock: row.stock,
+    price: row.price,
     detail: row.detail,
     material: row.material,
     weight: row.weight,
@@ -188,6 +213,7 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
     <div className="flex">
       <div className="border rounded-md mx-1 cursor-pointer">
         <Modal
+          className="sm:max-w-[425px]"
           isOpen={isShowUpdateModal}
           onClose={() => setIsShowUpdateModal(false)}
         >
@@ -202,8 +228,8 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
             setIsShowDeleteModal(false);
           }}
           onConfirm={async () => {
-            const response = await CustomAxios.put(
-              `/products/delete/${row.id}`
+            const response = await CustomAxios.delete(
+              `/products/${row.id}`
             );
             if (response.status === 200)
               toast.success("Xóa sản phẩm thành công!");
@@ -213,6 +239,14 @@ const ActionCell: React.FC<{ row: TProduct }> = ({ row }) => {
           loading={false}
         ></AlertModal>
         <CiTrash size={20} onClick={() => setIsShowDeleteModal(true)} />
+      </div>
+      <div className="border rounded-md mx-1 cursor-pointer">
+        <ModalProductLog
+          onClose={() => setIsShowProductLogModal(false)}
+          isOpen={isShowProductLogModal}
+          product={{ sku: row.sku, id: row.id }}
+        />
+        <BiTime size={20} onClick={() => setIsShowProductLogModal(true)} />
       </div>
     </div>
   );
