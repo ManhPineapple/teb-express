@@ -9,7 +9,7 @@ export const orderFormSchema = z
     phone: z.string().optional(),
     address_1: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
     address_2: z.string().optional(),
-    city: z.string().min(1, { message: "Thành phố là bắt bộc" }),
+    city: z.string().min(1, { message: "Thành phố là bắt buộc" }),
     state_code: z.string().min(1, { message: "Bang là bắt buộc" }),
     country_code: z.string().optional(),
     detail: z.string().min(1, { message: "Chi tiết là bắt buộc" }),
@@ -33,11 +33,8 @@ export const orderFormSchema = z
     image: z.instanceof(File).optional(),
     cn_invoice_image: z.string().optional(),
 
-    custom_tiktok_barcode: z
-      .string()
-      .min(1, { message: "Nhãn Tiktok là bắt buộc" }),
+    custom_tiktok_barcode: z.string().optional(),
     is_early_scan: z.boolean().optional(),
-
     is_tiktok_warehouse: z.boolean().optional(),
   })
   .refine(
@@ -45,7 +42,7 @@ export const orderFormSchema = z
       data.service === "Express (CN exclusive)" ||
       (data.weight && parseFloat(data.weight) > 0),
     {
-      message: "rọng lượng là bắt buộc và phải lớn hơn 0",
+      message: "Trọng lượng là bắt buộc và phải lớn hơn 0",
       path: ["weight"],
     }
   )
@@ -74,6 +71,15 @@ export const orderFormSchema = z
     {
       message: "Chiều cao là bắt buộc và phải lớn hơn 0",
       path: ["height"],
+    }
+  )
+  .refine(
+    (data) =>
+      data.service !== "Express (CN exclusive)" ||
+      (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim().length > 0),
+    {
+      message: "Nhãn Tiktok là bắt buộc khi chọn dịch vụ Express (CN exclusive)",
+      path: ["custom_tiktok_barcode"],
     }
   );
 
