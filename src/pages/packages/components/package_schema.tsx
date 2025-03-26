@@ -73,15 +73,6 @@ export const orderFormSchema = z
       path: ["height"],
     }
   )
-  .refine(
-    (data) =>
-      data.service !== "Express (CN exclusive)" ||
-      (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim().length > 0),
-    {
-      message: "Nhãn Tiktok là bắt buộc khi chọn dịch vụ Express (CN exclusive)",
-      path: ["custom_tiktok_barcode"],
-    }
-  );
 
 export type PackageDetail = {
   id: number;
