@@ -480,13 +480,16 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Tên người nhận: <span className="text-red-500">*</span>
+                        Tên người nhận:{" "}
+                        {selectedService !== "Ship by Tiktok" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Tên người nhận"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -503,7 +506,7 @@ const OrderCreateForm = ({
                         <Input
                           placeholder="Số điện thoại"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -517,13 +520,15 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Địa chỉ nhận hàng:{" "}
-                        <span className="text-red-500">*</span>
+                        {selectedService !== "Ship by Tiktok" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Chỉ gồm tên đường số nhà"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -540,7 +545,7 @@ const OrderCreateForm = ({
                         <Input
                           placeholder="Địa chỉ phụ"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -553,13 +558,16 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Thành phố: <span className="text-red-500">*</span>
+                        Thành phố:{" "}
+                        {selectedService !== "Ship by Tiktok" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Thành phố"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -572,13 +580,16 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Mã bưu điện: <span className="text-red-500">*</span>
+                        Mã bưu điện:{" "}
+                        {selectedService !== "Ship by Tiktok" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Mã bưu điện"
                           {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
                       </FormControl>
                       <FormMessage />
@@ -590,7 +601,10 @@ const OrderCreateForm = ({
                   render={() => (
                     <FormItem>
                       <FormLabel>
-                        Bang: <span className="text-red-500">*</span>
+                        Bang:{" "}
+                        {selectedService !== "Ship by Tiktok" && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </FormLabel>
                       <Input
                         className="mt-3 h-11 border rounded-sm focus:outline-none"
@@ -621,7 +635,6 @@ const OrderCreateForm = ({
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={createOrderForm.control}
                   name="country_code"
@@ -1042,11 +1055,11 @@ const OrderCreateForm = ({
                   )}
                 </>
               )}
-              {selectedService === "Tiktok" && (
+              {selectedService === "Ship by Tiktok" && (
                 <>
                   <div className="flex justify-between">
                     <strong className="mr-2">
-                      Mã nhãn Tiktok <span className="text-red-500">*</span>
+                      Link nhãn Tiktok <span className="text-red-500">*</span>
                     </strong>
                   </div>
                   <FormField
@@ -1056,7 +1069,7 @@ const OrderCreateForm = ({
                       <FormItem>
                         <FormControl>
                           <Input
-                            placeholder="Mã nhãn"
+                            placeholder="Link nhãn"
                             {...field}
                             className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
                             style={{

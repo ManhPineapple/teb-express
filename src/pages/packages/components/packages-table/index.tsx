@@ -1,12 +1,12 @@
 import DataTable from "@/components/shared/data-table";
 import {
   PACKAGE_STATUS_CREATED_TEXT,
-  PACKAGE_STATUS_PURCHASED_TEXT
+  PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
 import {
   fetchBarcodeFile,
   getExportedFile,
-  processPackage
+  processPackage,
 } from "@/services/packages";
 import JsBarcode from "jsbarcode";
 import jsPDF, * as jsPdfLib from "jspdf";
@@ -37,7 +37,7 @@ export default function PackagesTable({
   count,
   packages,
   pageCount,
-  packageListType
+  packageListType,
 }: TPackagesTableProps) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedRowsLabel, setSelectedRowsLabel] = useState<
@@ -165,10 +165,21 @@ export default function PackagesTable({
       if (item.url === "") continue;
 
       try {
-        const res = await fetchBarcodeFile({
-          url: item.url,
-          type: "labels",
-        });
+        if (item.url.startsWith("http://") || item.url.startsWith("https://")) {
+          try {
+            const response = await fetch(item.url);
+            if (!response.ok) throw new Error("Failed to fetch file");
+            const fileBlob = await response.blob();
+            files.push(fileBlob)
+          } catch (error) {
+            toast.error("Lỗi khi lấy tệp từ URL", { autoClose: 3000 });
+            continue;
+          }     
+        } else {
+          const res = await fetchBarcodeFile({
+            url: item.url,
+            type: "labels",
+          });
 
         if (!res || res.error) {
           toast.error(res?.errorMessage || "Error fetching file", {
@@ -177,7 +188,8 @@ export default function PackagesTable({
           continue;
         }
 
-        files.push(res);
+          files.push(res);
+        }
       } catch (error) {
         toast.error("Error fetching file", {
           autoClose: 3000,
@@ -264,7 +276,9 @@ export default function PackagesTable({
   };
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
-      (ele) => ele.status_string !== PACKAGE_STATUS_CREATED_TEXT && ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
+      (ele) =>
+        ele.status_string !== PACKAGE_STATUS_CREATED_TEXT &&
+        ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
     );
 
     if (selectedInvalid.length > 0) {
