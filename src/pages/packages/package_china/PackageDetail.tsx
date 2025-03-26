@@ -34,7 +34,6 @@ import { packageListTypeChina } from ".";
 import { AuditLog } from "../components/audit-logs";
 import DeliveryLog from "../components/deliver-logs";
 import { ModalCancel } from "../components/modal-cancel-packages/ModalCancel";
-import { ModalCreateTracking } from "../components/modal-create-tracking/ModalCreateTracking";
 import ModalUpdatePackages from "../components/modal-update-package/ModalUpdatePackage";
 import { PackageDetail } from "../components/package_schema";
 import PackageTracking from "../components/track";
@@ -330,12 +329,6 @@ export default function PackageDetailChina() {
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>
-
-            {packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT && (
-              <div className="">
-                <ModalCreateTracking sumFee={sumFee} />
-              </div>
-            )}
           </div>
         </div>
       </div>
