@@ -22,9 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TUSState, US_STATES } from "@/constants/packages";
-import { updatePackages, uploadCnInvoiceImage } from "@/services/packages";
+import { updatePackages, uploadImage } from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
-import { getProductList } from "@/services/settings/products";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useEffect, useState } from "react";
@@ -37,12 +36,6 @@ type OrderFormSchemaType = z.infer<typeof orderFormSchema>;
 
 type Service = {
   id: number;
-  name: string;
-};
-
-type Product = {
-  id: number;
-  sku: string;
   name: string;
 };
 
@@ -71,7 +64,6 @@ const ModalUpdatePackage = ({
   const [cnPackageType] = useState<string>(defaultCnPackageType);
   const [cnPackageTab] = useState<string>(defaultTab);
   const [listServices, setListServices] = useState<Service[] | null>([]);
-  const [listProducts, setListProducts] = useState<Product[] | null>([]);
   const [productPriceInput, setProductPriceInput] = useState("");
   const [shippingFeeInput, setShippingFee] = useState("");
   const [currency, setCurrency] = useState("CNY");
@@ -87,15 +79,6 @@ const ModalUpdatePackage = ({
       try {
         const data = await getListServices();
         setListServices(data.services);
-      } catch (error) {
-        /* empty */
-      }
-    };
-
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductList();
-        setListProducts(data.products);
       } catch (error) {
         /* empty */
       }
@@ -124,7 +107,6 @@ const ModalUpdatePackage = ({
     };
 
     fetchPackageService();
-    fetchProduct();
     getCurrencyRate();
   }, []);
 
@@ -206,24 +188,22 @@ const ModalUpdatePackage = ({
     setFilteredStates([]);
   };
 
-  const onSubmit = async (values: OrderFormSchemaType) => {
+  const onSubmit = async (values: any) => {
+    const numericFields = [
+      "weight",
+      "height",
+      "width",
+      "length",
+      "package_quantity",
+      "product_price",
+      "cn_product_price",
+      "cn_shipping_fee",
+    ];
+
+    numericFields.forEach((field) => {
+      values[field] = Number(values[field]);
+    });
     values.country_code = "United States";
-    //@ts-expect-error ts-such
-    values.weight = Number(values.weight);
-    //@ts-expect-error ts-such
-    values.height = Number(values.height);
-    //@ts-expect-error ts-such
-    values.width = Number(values.width);
-    //@ts-expect-error ts-such
-    values.length = Number(values.length);
-    //@ts-expect-error ts-such
-    values.package_quantity = Number(values.package_quantity);
-    //@ts-expect-error ts-such
-    values.product_price = Number(values.product_price);
-    //@ts-expect-error ts-such
-    values.cn_product_price = Number(values.cn_product_price);
-    //@ts-expect-error ts-such
-    values.cn_shipping_fee = Number(values.cn_shipping_fee);
 
     if (values.cn_product_link == "") values.cn_product_link = undefined;
     if (values.custom_cn_barcode == "") values.custom_cn_barcode = undefined;
@@ -239,33 +219,11 @@ const ModalUpdatePackage = ({
       }
     }
 
-    const packageProducts = values.package_products?.map(
-      (productFormData: any) => {
-        const product = listProducts?.find(
-          (e) => e.sku === productFormData?.sku
-        );
-        const quantity = productFormData?.quantity
-          ? Number(productFormData?.quantity)
-          : 1;
-
-        if (product) {
-          return {
-            product_id: product!.id,
-            quantity: quantity,
-          };
-        }
-      }
-    );
-
-    values.package_products = packageProducts?.filter(
-      (item) => item !== undefined
-    );
-
     setLoading(true);
 
     try {
       if (values.image) {
-        const uploadUrl = await uploadCnInvoiceImage(values.image);
+        const uploadUrl = await uploadImage(values.image);
         values = {
           ...values,
           cn_invoice_image: uploadUrl,

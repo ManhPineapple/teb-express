@@ -74,7 +74,7 @@ export async function downloadCNInvoiceImage(url: string) {
   }
 }
 
-export const uploadCnInvoiceImage = async (image: File) => {
+export const uploadImage = async (image: File) => {
   try {
     const formData = new FormData();
     formData.append("image", image);

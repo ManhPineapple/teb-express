@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const CustomAxios = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -40,5 +41,15 @@ CustomAxios.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+CustomAxios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 500) {
+      toast.error("Có lỗi xảy ra!");
+    }
+    return Promise.reject(error);
+  }
+);
 
 export { CustomAxios };
+

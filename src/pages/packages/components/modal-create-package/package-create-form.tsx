@@ -27,7 +27,7 @@ import { TUSState, US_STATES } from "@/constants/packages";
 import {
   createPackage,
   getListPackages,
-  uploadCnInvoiceImage,
+  uploadImage,
 } from "@/services/packages";
 import { getListServices } from "@/services/settings/price";
 import { getProductList } from "@/services/settings/products";
@@ -371,7 +371,7 @@ const OrderCreateForm = ({
 
     try {
       if (values.image) {
-        const uploadUrl = await uploadCnInvoiceImage(values.image);
+        const uploadUrl = await uploadImage(values.image);
         values = {
           ...values,
           image_upload: uploadUrl,
