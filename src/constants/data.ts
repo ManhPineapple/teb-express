@@ -34,7 +34,7 @@ export const navItems: NavItem[] = [
     label: "Hóa đơn"
   },
   {
-    title: "Kho sản phẩm",
+    title: "Lưu kho",
     icon: "package",
     href: "/setting/products",
     label: "Sản phẩm",
