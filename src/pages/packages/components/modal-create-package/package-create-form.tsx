@@ -462,7 +462,8 @@ const OrderCreateForm = ({
       <Heading title={"Tạo đơn hàng"} className="space-y-2 py-4 text-center" />
       <Form {...createOrderForm}>
         <form
-          onSubmit={createOrderForm.handleSubmit(onSubmit)}
+          onSubmit={createOrderForm.handleSubmit(onSubmit, (err) => {console.log(err);
+          })}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-x-8 max-md:grid-cols-1">

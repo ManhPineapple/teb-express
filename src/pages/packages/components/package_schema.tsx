@@ -29,7 +29,7 @@ export const orderFormSchema = z
     custom_cn_barcode: z.string().optional(),
     image: z.instanceof(File).optional(),
     cn_invoice_image: z.string().optional(),
-    custom_tiktok_barcode: z.string().min(1, { message: "Label Tiktok là bắt buộc" }),
+    custom_tiktok_barcode: z.string().optional(),
     is_early_scan: z.boolean().optional(),
     tiktok_tracking_number: z.string().optional(),
     is_tiktok_warehouse: z.boolean().optional(),
@@ -77,6 +77,13 @@ export const orderFormSchema = z
     {
       message: "Chiều cao là bắt buộc và phải lớn hơn 0",
       path: ["height"],
+    }
+  )
+  .refine(
+    (data) => data.service !== "Ship by Tiktok" || (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim() !== ""),
+    {
+      message: "Label Tiktok là bắt buộc khi chọn dịch vụ Ship by Tiktok",
+      path: ["custom_tiktok_barcode"],
     }
   );
 
