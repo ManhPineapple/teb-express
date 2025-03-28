@@ -1,15 +1,16 @@
 import DataTable from "@/components/shared/data-table";
 import {
   PACKAGE_STATUS_CREATED_TEXT,
-  PACKAGE_STATUS_PURCHASED_TEXT
+  PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
 import {
   fetchBarcodeFile,
   getExportedFile,
-  processPackage
+  processPackage,
 } from "@/services/packages";
 import JsBarcode from "jsbarcode";
-import jsPDF, * as jsPdfLib from "jspdf";
+import jsPDF from "jspdf";
+import { PDFDocument } from "pdf-lib";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { columns } from "./columns";
@@ -37,7 +38,7 @@ export default function PackagesTable({
   count,
   packages,
   pageCount,
-  packageListType
+  packageListType,
 }: TPackagesTableProps) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedRowsLabel, setSelectedRowsLabel] = useState<
@@ -102,48 +103,60 @@ export default function PackagesTable({
   //     reader.readAsDataURL(file);
   //   });
   // };
-  const openPrintWindow = (files: File[]) => {
+
+  function openPrintWindow(files: { blob: Blob; type: string }[]) {
     return new Promise<void>((resolve) => {
-      const pdf = new jsPdfLib.jsPDF();
-
-      let fileIndex = 0;
-
-      const addFileToPdf = () => {
-        if (fileIndex >= files.length) {
-          // Nếu đã xử lý hết tất cả file
-          const pdfOutput = pdf.output("blob");
-          const url = URL.createObjectURL(pdfOutput);
-
-          const pdfWindow = window.open(url, "_blank");
-          if (pdfWindow) {
-            pdfWindow.onload = () => {
-              pdfWindow.print();
-            };
-          }
+      async function processFiles() {
+        if (files.length === 0) {
           resolve();
           return;
         }
-
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          const imgData = e.target.result;
-
-          if (fileIndex > 0) {
-            pdf.addPage();
+  
+        // Create a new merged PDF
+        const mergedPdf = await PDFDocument.create();
+  
+        for (const { blob, type } of files) {
+          const fileBytes = await blob.arrayBuffer();
+  
+          if (type === "pdf") {
+            // Load and copy pages from existing PDF
+            const pdfDoc = await PDFDocument.load(fileBytes);
+            const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
+          } else {
+            // Convert image to PDF
+            const imagePdf = await PDFDocument.create();
+            const imageBytes = new Uint8Array(fileBytes);
+            const img = await imagePdf.embedJpg(imageBytes);
+            const page = imagePdf.addPage([img.width, img.height]);
+            page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+  
+            const imagePdfBytes = await imagePdf.save();
+            const imgPdfDoc = await PDFDocument.load(imagePdfBytes);
+            const copiedPages = await mergedPdf.copyPages(imgPdfDoc, imgPdfDoc.getPageIndices());
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
           }
-
-          pdf.addImage(imgData, "JPEG", 10, 10, 190, 0);
-
-          fileIndex++;
-          addFileToPdf();
-        };
-
-        reader.readAsDataURL(files[fileIndex]);
-      };
-
-      addFileToPdf();
+        }
+  
+        // Convert merged PDF to a Blob and open it
+        const mergedPdfBytes = await mergedPdf.save();
+        const mergedBlob = new Blob([mergedPdfBytes], { type: "application/pdf" });
+        const url = URL.createObjectURL(mergedBlob);
+  
+        const pdfWindow = window.open(url, "_blank");
+  
+        if (pdfWindow) {
+          pdfWindow.onload = () => pdfWindow.print();
+        } else {
+          console.error("Failed to open print window");
+        }
+  
+        resolve();
+      }
+  
+      processFiles(); // Call the async function inside the Promise executor
     });
-  };
+  }
 
   const handlerDownloadLabels = async () => {
     const files: any[] = [];
@@ -161,33 +174,38 @@ export default function PackagesTable({
       });
       return;
     }
+
     for (const item of selectedItems) {
-      if (item.url === "") continue;
-
-      try {
-        const res = await fetchBarcodeFile({
-          url: item.url,
-          type: "labels",
-        });
-
+      if (item.url.startsWith("http://") || item.url.startsWith("https://")) {
+        try {
+          const response = await fetch(item.url);
+          if (!response.ok) throw new Error("Failed to fetch file");
+          const fileBlob = await response.blob();
+    
+          if (fileBlob.type === "application/pdf") {
+            files.push({ blob: fileBlob, type: "pdf" }); // Merge PDFs
+          } else if (fileBlob.type.startsWith("image/")) {
+            files.push({ blob: fileBlob, type: "image" }); // Convert image to PDF
+          } else {
+            toast.error("Unsupported file type", { autoClose: 3000 });
+          }
+        } catch (error) {
+          toast.error("Lỗi khi lấy tệp từ URL", { autoClose: 3000 });
+        }
+      } else {
+        const res = await fetchBarcodeFile({ url: item.url, type: "labels" });
+    
         if (!res || res.error) {
           toast.error(res?.errorMessage || "Lỗi khi lấy tệp", {
             autoClose: 3000,
           });
+          toast.error(res?.errorMessage || "Error fetching file", { autoClose: 3000 });
           continue;
         }
-
-        files.push(res);
-      } catch (error) {
-        toast.error("Lỗi khi lấy tệp", {
-          autoClose: 3000,
-        });
+    
+        files.push({ blob: res, type: res.type.startsWith("image/") ? "image" : "pdf" });
       }
     }
-
-    // files.forEach(async (file) => {
-    //   await openPrintWindow(file);
-    // });
     await openPrintWindow(files);
   };
 
@@ -264,7 +282,9 @@ export default function PackagesTable({
   };
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
-      (ele) => ele.status_string !== PACKAGE_STATUS_CREATED_TEXT && ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
+      (ele) =>
+        ele.status_string !== PACKAGE_STATUS_CREATED_TEXT &&
+        ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
     );
 
     if (selectedInvalid.length > 0) {

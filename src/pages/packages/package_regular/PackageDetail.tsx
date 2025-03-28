@@ -449,7 +449,7 @@ export function PackageDetailRegular() {
                   {packageDetail?.include_battery ? "Yes" : "No"}
                 </div>
               </div>
-              {packageDetail?.service_name === "Tiktok" && (
+              {packageDetail?.service_name === "Ship by Tiktok" && (
                 <div className="grid grid-cols-12 mb-2">
                   <div className="col-span-4 font-normal text-[#626363]">
                     Nhãn Tiktok:
