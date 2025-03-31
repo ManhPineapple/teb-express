@@ -112,14 +112,12 @@ export default function PackagesTable({
           return;
         }
 
-        // Create a new merged PDF
         const mergedPdf = await PDFDocument.create();
 
         for (const { blob, type } of files) {
           const fileBytes = await blob.arrayBuffer();
 
           if (type === "pdf") {
-            // Load and copy pages from existing PDF
             const pdfDoc = await PDFDocument.load(fileBytes);
             const copiedPages = await mergedPdf.copyPages(
               pdfDoc,
@@ -127,28 +125,18 @@ export default function PackagesTable({
             );
             copiedPages.forEach((page) => mergedPdf.addPage(page));
           } else {
-            // Convert image to PDF
             const imagePdf = await PDFDocument.create();
             const imageBytes = new Uint8Array(fileBytes);
+
+            let img;
             if (type === "image/png") {
-              const img = await imagePdf.embedPng(imageBytes); // Use embedPng for PNG files
-              const page = imagePdf.addPage([img.width, img.height]);
-              page.drawImage(img, {
-                x: 0,
-                y: 0,
-                width: img.width,
-                height: img.height,
-              });
+              img = await imagePdf.embedPng(imageBytes);
             } else {
-              const img = await imagePdf.embedJpg(imageBytes); // Keep embedJpg for JPEGs
-              const page = imagePdf.addPage([img.width, img.height]);
-              page.drawImage(img, {
-                x: 0,
-                y: 0,
-                width: img.width,
-                height: img.height,
-              });
+              img = await imagePdf.embedJpg(imageBytes);
             }
+
+            const page = imagePdf.addPage([img.width + 60, img.height + 60]);
+            page.drawImage(img, { x: 30, y: 30, width: img.width, height: img.height });            
 
             const imagePdfBytes = await imagePdf.save();
             const imgPdfDoc = await PDFDocument.load(imagePdfBytes);
@@ -160,13 +148,11 @@ export default function PackagesTable({
           }
         }
 
-        // Convert merged PDF to a Blob and open it
         const mergedPdfBytes = await mergedPdf.save();
         const mergedBlob = new Blob([mergedPdfBytes], {
           type: "application/pdf",
         });
         const url = URL.createObjectURL(mergedBlob);
-
         const pdfWindow = window.open(url, "_blank");
 
         if (pdfWindow) {
@@ -178,7 +164,7 @@ export default function PackagesTable({
         resolve();
       }
 
-      processFiles(); // Call the async function inside the Promise executor
+      processFiles();
     });
   }
 
