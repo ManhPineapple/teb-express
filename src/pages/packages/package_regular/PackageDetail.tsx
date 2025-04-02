@@ -454,8 +454,15 @@ export function PackageDetailRegular() {
                   <div className="col-span-4 font-normal text-[#626363]">
                     Nhãn Tiktok:
                   </div>
-                  <div className="col-span-8">
-                    {packageDetail?.custom_tiktok_barcode}
+                  <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+                    <a
+                      href={packageDetail?.custom_tiktok_barcode}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {packageDetail?.custom_tiktok_barcode || "N/A"}
+                    </a>
                   </div>
                 </div>
               )}
