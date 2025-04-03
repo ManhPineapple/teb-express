@@ -64,9 +64,9 @@ const ModalUpdatePackage = ({
   const [cnPackageType] = useState<string>(defaultCnPackageType);
   const [cnPackageTab] = useState<string>(defaultTab);
   const [listServices, setListServices] = useState<Service[] | null>([]);
-  const [productPriceInput, setProductPriceInput] = useState("");
-  const [shippingFeeInput, setShippingFee] = useState("");
-  const [currency, setCurrency] = useState("CNY");
+  const [productPriceInput, setProductPriceInput] = useState(packageDetail.cn_product_price);
+  const [shippingFeeInput, setShippingFee] = useState(packageDetail.cn_shipping_fee);
+  const [currency, setCurrency] = useState("USD");
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout>();
   const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({
     VND: 0.000039,
@@ -135,8 +135,8 @@ const ModalUpdatePackage = ({
       product_price: (packageDetail.product_price || 0).toString(),
       custom_cn_barcode: packageDetail.custom_cn_barcode || "",
       cn_product_link: packageDetail.cn_product_link || "",
-      cn_product_price: packageDetail.cn_product_price?.toString(),
-      cn_shipping_fee: packageDetail.cn_shipping_fee?.toString(),
+      cn_product_price: (packageDetail.cn_product_price || 0).toString(),
+      cn_shipping_fee:(packageDetail.cn_shipping_fee || 0).toString(),
       custom_tiktok_barcode: packageDetail.custom_tiktok_barcode?.toString(),
       is_early_scan: packageDetail.is_early_scan,
     },
