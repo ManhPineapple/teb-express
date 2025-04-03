@@ -10,14 +10,16 @@ export const orderFormSchema = z
     city: z.string().min(1, { message: "Thành phố là bắt buộc" }).optional(),
     state_code: z.string().min(1, { message: "Bang là bắt buộc" }).optional(),
     country_code: z.string().optional(),
-    detail: z.string().min(1, { message: "Chi tiết là bắt buộc" }),
+
     zipcode: z.string().min(1, { message: "Mã bưu điện là bắt buộc" }).optional(),
     order_number: z.string().min(1, { message: "Mã đơn hàng là bắt buộc" }),
+    detail: z.string().min(1, { message: "Chi tiết là bắt buộc" }),
     weight: z.string().optional(),
     length: z.string().optional(),
     width: z.string().optional(),
     height: z.string().optional(),
     include_battery: z.boolean().optional(),
+
     package_products: z.array(z.any()).optional(),
     package_name: z.string().optional(),
     package_quantity: z.string().optional(),
@@ -34,15 +36,15 @@ export const orderFormSchema = z
     tiktok_tracking_number: z.string().optional(),
     is_tiktok_warehouse: z.boolean().optional(),
   })
-  .refine(
-    (data) =>
-      data.service === "Ship by Tiktok" ||
-      (data.recipient && data.address_1 && data.city && data.state_code && data.zipcode),
-    {
-      message: "Thông tin địa chỉ đầy đủ là bắt buộc",
-      path: ["recipient"],
-    }
-  )
+  // .refine(
+  //   (data) =>
+  //     data.service === "Ship by Tiktok" ||
+  //     (data.recipient && data.address_1 && data.city && data.state_code && data.zipcode),
+  //   {
+  //     message: "Thông tin địa chỉ đầy đủ là bắt buộc",
+  //     path: ["recipient"],
+  //   }
+  // )
   .refine(
     (data) =>
       data.service === "Express (CN exclusive)" ||
