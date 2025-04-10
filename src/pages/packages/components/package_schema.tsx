@@ -3,7 +3,10 @@ import { z } from "zod";
 export const orderFormSchema = z
   .object({
     service: z.string().optional(),
-    recipient: z.string().min(5, { message: "Người nhận là bắt buộc, ít nhất 5 ký tự" }).optional(),
+    recipient: z
+      .string()
+      .min(5, { message: "Người nhận là bắt buộc, ít nhất 5 ký tự" })
+      .optional(),
     phone: z.string().optional(),
     address_1: z.string().min(1, { message: "Địa chỉ là bắt buộc" }).optional(),
     address_2: z.string().optional(),
@@ -11,7 +14,10 @@ export const orderFormSchema = z
     state_code: z.string().min(1, { message: "Bang là bắt buộc" }).optional(),
     country_code: z.string().optional(),
 
-    zipcode: z.string().min(1, { message: "Mã bưu điện là bắt buộc" }).optional(),
+    zipcode: z
+      .string()
+      .min(1, { message: "Mã bưu điện là bắt buộc" })
+      .optional(),
     order_number: z.string().min(1, { message: "Mã đơn hàng là bắt buộc" }),
     detail: z.string().min(1, { message: "Chi tiết là bắt buộc" }),
     weight: z.string().optional(),
@@ -34,7 +40,7 @@ export const orderFormSchema = z
     custom_tiktok_barcode: z.string().optional(),
     is_early_scan: z.boolean().optional(),
     tiktok_tracking_number: z.string().optional(),
-    is_tiktok_warehouse: z.boolean().optional(),
+    has_tiktok_label: z.boolean().optional(),
   })
   // .refine(
   //   (data) =>
@@ -82,13 +88,14 @@ export const orderFormSchema = z
     }
   )
   .refine(
-    (data) => data.service !== "Ship by Tiktok" || (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim() !== ""),
+    (data) =>
+      (data.service !== "Ship by Tiktok" && data.has_tiktok_label === false) ||
+      (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim() !== ""),
     {
       message: "Label Tiktok là bắt buộc khi chọn dịch vụ Ship by Tiktok",
       path: ["custom_tiktok_barcode"],
     }
   );
-
 
 export type PackageDetail = {
   id: number;
