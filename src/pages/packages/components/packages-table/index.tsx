@@ -136,7 +136,12 @@ export default function PackagesTable({
             }
 
             const page = imagePdf.addPage([img.width + 60, img.height + 60]);
-            page.drawImage(img, { x: 30, y: 30, width: img.width, height: img.height });            
+            page.drawImage(img, {
+              x: 30,
+              y: 30,
+              width: img.width,
+              height: img.height,
+            });
 
             const imagePdfBytes = await imagePdf.save();
             const imgPdfDoc = await PDFDocument.load(imagePdfBytes);
@@ -214,10 +219,14 @@ export default function PackagesTable({
           });
           continue;
         }
-        files.push({
-          blob: res,
-          type: res.type.startsWith("image/") ? res.type : "pdf",
-        });
+        const type = res.type || "";
+        if (type.startsWith("image/")) {
+          files.push({ blob: res, type });
+        } else if (type === "application/pdf") {
+          files.push({ blob: res, type: "pdf" });
+        } else {
+          toast.error(`Lỗi khi lấy tệp: ${item.order_number}`, { autoClose: 3000 });
+        }
       }
     }
     await openPrintWindow(files);
