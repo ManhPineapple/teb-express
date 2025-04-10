@@ -156,7 +156,7 @@ export const validateAddress = async (payload: any) => {
   }
 };
 
-export const fetchBarcodeFile = async ({
+export const fetchLabel = async ({
   url,
   type,
 }: FetchBarcodeFileParams) => {

@@ -17,7 +17,7 @@ import {
   Printer,
   Send,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useSearchParams } from "react-router-dom";
 import { ModalCancelPackages } from "../modal-cancel-packages/ModalCancelPackages";
@@ -48,6 +48,16 @@ export default function PackageTableActions({
   selectedRowsLabel: any[];
   packageListType: number;
 }) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadWithLoading = async () => {
+    setIsDownloading(true);
+    try {
+      await handleDownloadLabel();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
   return (
     <div className="xl:flex items-center justify-between py-5 max-xl:flex-wrap">
       <div className="flex flex-1 gap-4 max-xl:mb-3">
@@ -72,9 +82,11 @@ export default function PackageTableActions({
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#1f8e23]"
-              onClick={() => handleDownloadLabel()}
+              onClick={handleDownloadWithLoading}
+              disabled={isDownloading}
             >
-              <Printer className="mr-2 h-4 w-4" /> Tải xuống nhãn
+              <Printer className="mr-2 h-4 w-4" />
+              {isDownloading ? "Đang tải..." : "Tải xuống nhãn"}
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"

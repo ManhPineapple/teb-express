@@ -4,7 +4,7 @@ import {
   PACKAGE_STATUS_PURCHASED_TEXT,
 } from "@/constants/packages";
 import {
-  fetchBarcodeFile,
+  fetchLabel,
   getExportedFile,
   processPackage,
 } from "@/services/packages";
@@ -208,7 +208,7 @@ export default function PackagesTable({
           toast.error("Lỗi khi lấy tệp từ URL", { autoClose: 3000 });
         }
       } else {
-        const res = await fetchBarcodeFile({ url: item.url, type: "labels" });
+        const res = await fetchLabel({ url: item.url, type: "labels" });
 
         if (!res || res.error) {
           toast.error(res?.errorMessage || "Lỗi khi lấy tệp", {
