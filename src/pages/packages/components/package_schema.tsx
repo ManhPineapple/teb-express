@@ -81,14 +81,6 @@ export const orderFormSchema = z
       path: ["height"],
     }
   )
-  .refine(
-    (data) => data.service !== "Ship by Tiktok" || (data.custom_tiktok_barcode && data.custom_tiktok_barcode.trim() !== ""),
-    {
-      message: "Label Tiktok là bắt buộc khi chọn dịch vụ Ship by Tiktok",
-      path: ["custom_tiktok_barcode"],
-    }
-  );
-
 
 export type PackageDetail = {
   id: number;
