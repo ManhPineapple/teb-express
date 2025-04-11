@@ -225,9 +225,9 @@ export async function getCountListPackages(
   }
 }
 
-export async function importXlsx(formData: FormData) {
+export async function importXlsx(formData: FormData, isCNTemplate: boolean) {
   try {
-    const res = await CustomAxios.post("/packages/import", formData, {
+    const res = await CustomAxios.post(`/packages/import${isCNTemplate ? "?package_type=CN" : ""}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

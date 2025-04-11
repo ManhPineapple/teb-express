@@ -1078,8 +1078,10 @@ const OrderCreateForm = ({
                           )}
                         />
                       </div>
-                      <div className="flex mt-10">
-                        <strong className="mr-2">Ảnh biên nhận</strong>
+                    </>
+                  )}
+                  <div className="flex mt-10">
+                        <strong className="mr-2">Upload ảnh</strong>
                       </div>
                       <FormField
                         control={createOrderForm.control}
@@ -1123,8 +1125,6 @@ const OrderCreateForm = ({
                           </FormItem>
                         )}
                       />
-                    </>
-                  )}
                 </>
               )}
             </div>
