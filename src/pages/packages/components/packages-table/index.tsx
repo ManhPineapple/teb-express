@@ -173,6 +173,31 @@ export default function PackagesTable({
     });
   }
 
+  const MAX_CONCURRENT = 10;
+  async function processItemsConcurrently(
+    items: any,
+    handler: any,
+    maxConcurrent = MAX_CONCURRENT
+  ) {
+    const results: any = [];
+    let i = 0;
+
+    const next = async () => {
+      if (i >= items.length) return;
+      const index = i++;
+      try {
+        results[index] = await handler(items[index]);
+      } catch (error) {
+        results[index] = null;
+      }
+      return next();
+    };
+
+    // Kick off initial batch
+    await Promise.all(Array.from({ length: maxConcurrent }, next));
+    return results;
+  }
+
   const handlerDownloadLabels = async () => {
     const files: any[] = [];
     const selectedItems = selectedRowsLabel.map((x) => ({
@@ -190,17 +215,17 @@ export default function PackagesTable({
       return;
     }
 
-    for (const item of selectedItems) {
+    await processItemsConcurrently(selectedItems, async (item: any) => {
       if (item.url.startsWith("http://") || item.url.startsWith("https://")) {
         try {
           const response = await fetch(item.url);
           if (!response.ok) throw new Error("Failed to fetch file");
-          const fileBlob = await response.blob();
 
+          const fileBlob = await response.blob();
           if (fileBlob.type === "application/pdf") {
-            files.push({ blob: fileBlob, type: "pdf" }); // Merge PDFs
+            files.push({ blob: fileBlob, type: "pdf" });
           } else if (fileBlob.type.startsWith("image/")) {
-            files.push({ blob: fileBlob, type: "image" }); // Convert image to PDF
+            files.push({ blob: fileBlob, type: "image" });
           } else {
             toast.error("Unsupported file type", { autoClose: 3000 });
           }
@@ -217,18 +242,21 @@ export default function PackagesTable({
           toast.error(res?.errorMessage || "Error fetching file", {
             autoClose: 3000,
           });
-          continue;
+          return;
         }
+
         const type = res.type || "";
         if (type.startsWith("image/")) {
           files.push({ blob: res, type });
         } else if (type === "application/pdf") {
           files.push({ blob: res, type: "pdf" });
         } else {
-          toast.error(`Lỗi khi lấy tệp: ${item.order_number}`, { autoClose: 3000 });
+          toast.error(`Lỗi khi lấy tệp: ${item.order_number}`, {
+            autoClose: 3000,
+          });
         }
       }
-    }
+    });
     await openPrintWindow(files);
   };
 

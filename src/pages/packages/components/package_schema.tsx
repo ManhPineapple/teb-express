@@ -33,18 +33,8 @@ export const orderFormSchema = z
     cn_invoice_image: z.string().optional(),
     custom_tiktok_barcode: z.string().optional(),
     is_early_scan: z.boolean().optional(),
-    tiktok_tracking_number: z.string().optional(),
-    is_tiktok_warehouse: z.boolean().optional(),
+    has_tiktok_label: z.boolean().optional(),
   })
-  // .refine(
-  //   (data) =>
-  //     data.service === "Ship by Tiktok" ||
-  //     (data.recipient && data.address_1 && data.city && data.state_code && data.zipcode),
-  //   {
-  //     message: "Thông tin địa chỉ đầy đủ là bắt buộc",
-  //     path: ["recipient"],
-  //   }
-  // )
   .refine(
     (data) =>
       data.service === "Express (CN exclusive)" ||

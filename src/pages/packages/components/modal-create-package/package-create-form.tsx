@@ -403,7 +403,7 @@ const OrderCreateForm = ({
 
   const selectedService =
     createOrderForm.watch("service") || listServices?.[packageListType]?.name;
-  const isTiktokWarehouse = createOrderForm.watch("is_tiktok_warehouse");
+  const hasTiktokLabel = createOrderForm.watch("has_tiktok_label");
 
   useEffect(() => {
     if (!isNaN(Number(shippingFeeInput)) && shippingFeeInput !== "") {
@@ -873,7 +873,80 @@ const OrderCreateForm = ({
                       </ScrollArea>
                     </SelectContent>
                   </Select>
-
+                </>
+              )}
+              {selectedService !== "Ship by Tiktok" && (
+                <FormField
+                  control={createOrderForm.control}
+                  name="has_tiktok_label"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center space-x-2 my-4">
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                          <FormLabel>
+                            Dùng mã tiktok riêng (Ship by Tiktok)
+                          </FormLabel>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {(selectedService === "Ship by Tiktok" || hasTiktokLabel) && (
+                <>
+                  <div className="flex justify-between">
+                    <strong className="mr-2">
+                      Link nhãn Tiktok <span className="text-red-500">*</span>
+                    </strong>
+                  </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name={`custom_tiktok_barcode`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Link nhãn"
+                            {...field}
+                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
+                            style={{
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={createOrderForm.control}
+                    name="is_early_scan"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                            <FormLabel>Scan tiktok sớm</FormLabel>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+              {selectedService === "Express (CN exclusive)" && (
+                <>
                   {cnPackageType == "Pre-purchased" && (
                     <>
                       <div className="flex mt-10">
@@ -1003,148 +1076,53 @@ const OrderCreateForm = ({
                           )}
                         />
                       </div>
-                      <div className="flex mt-10">
-                        <strong className="mr-2">Ảnh biên nhận</strong>
-                      </div>
-                      <FormField
-                        control={createOrderForm.control}
-                        name="image"
-                        render={({ field: { onChange } }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  if (e.target.files?.[0]) {
-                                    onChange(e.target.files[0]);
-                                  }
-                                }}
-                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="flex mt-10">
-                        <strong className="mr-2">Nhãn Trung Quốc:</strong>
-                      </div>
-                      <FormField
-                        control={createOrderForm.control}
-                        name="custom_cn_barcode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="Mã nhãn"
-                                {...field}
-                                className="px-4 py-6 shadow-inner drop-shadow-xl"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </>
                   )}
-                </>
-              )}
-              {selectedService === "Ship by Tiktok" && (
-                <>
-                  <div className="flex justify-between">
-                    <strong className="mr-2">
-                      Link nhãn Tiktok <span className="text-red-500">*</span>
-                    </strong>
+                  <div className="flex mt-10">
+                    <strong className="mr-2">Upload ảnh</strong>
                   </div>
                   <FormField
                     control={createOrderForm.control}
-                    name={`custom_tiktok_barcode`}
-                    render={({ field }) => (
+                    name="image"
+                    render={({ field: { onChange } }) => (
                       <FormItem>
                         <FormControl>
                           <Input
-                            placeholder="Link nhãn"
-                            {...field}
-                            className="px-4 py-6 shadow-inner drop-shadow-xl w-full"
-                            style={{
-                              textOverflow: "ellipsis",
-                              overflow: "hidden",
-                              whiteSpace: "nowrap",
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              if (e.target.files?.[0]) {
+                                onChange(e.target.files[0]);
+                              }
                             }}
+                            className="px-4 pt-2 shadow-inner drop-shadow-xl"
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  <div className="flex mt-10">
+                    <strong className="mr-2">Nhãn Trung Quốc:</strong>
+                  </div>
                   <FormField
                     control={createOrderForm.control}
-                    name="is_early_scan"
+                    name="custom_cn_barcode"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <div className="flex items-center space-x-2 mt-4">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                            <FormLabel>Scan tiktok sớm</FormLabel>
-                          </div>
+                          <Input
+                            type="text"
+                            placeholder="Mã nhãn"
+                            {...field}
+                            className="px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </>
-              )}
-              {selectedService === "Warehouse Stock" && (
-                <>
-                  <FormField
-                    control={createOrderForm.control}
-                    name="is_tiktok_warehouse"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2 mt-4">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                            <FormLabel>Dùng mã tiktok riêng</FormLabel>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {isTiktokWarehouse == true && (
-                    <>
-                      <FormField
-                        control={createOrderForm.control}
-                        name="image"
-                        render={({ field: { onChange } }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  if (e.target.files?.[0]) {
-                                    onChange(e.target.files[0]);
-                                  }
-                                }}
-                                className="px-4 pt-2 shadow-inner drop-shadow-xl"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
-                  )}
                 </>
               )}
             </div>
