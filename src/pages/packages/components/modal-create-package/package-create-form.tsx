@@ -462,7 +462,8 @@ const OrderCreateForm = ({
       <Heading title={"Tạo đơn hàng"} className="space-y-2 py-4 text-center" />
       <Form {...createOrderForm}>
         <form
-          onSubmit={createOrderForm.handleSubmit(onSubmit, (err) => {console.log(err);
+          onSubmit={createOrderForm.handleSubmit(onSubmit, (err) => {
+            console.log(err);
           })}
           className="space-y-4"
         >
@@ -478,9 +479,10 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Tên người nhận:{" "}
-                        {selectedService !== "Ship by Tiktok" && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {selectedService !== "Ship by Tiktok" &&
+                          !hasTiktokLabel && (
+                            <span className="text-red-500">*</span>
+                          )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -517,9 +519,10 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Địa chỉ nhận hàng:{" "}
-                        {selectedService !== "Ship by Tiktok" && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {selectedService !== "Ship by Tiktok" &&
+                          !hasTiktokLabel && (
+                            <span className="text-red-500">*</span>
+                          )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -556,9 +559,10 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Thành phố:{" "}
-                        {selectedService !== "Ship by Tiktok" && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {selectedService !== "Ship by Tiktok" &&
+                          !hasTiktokLabel && (
+                            <span className="text-red-500">*</span>
+                          )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -578,9 +582,10 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Mã bưu điện:{" "}
-                        {selectedService !== "Ship by Tiktok" && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {selectedService !== "Ship by Tiktok" &&
+                          !hasTiktokLabel && (
+                            <span className="text-red-500">*</span>
+                          )}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -599,9 +604,10 @@ const OrderCreateForm = ({
                     <FormItem>
                       <FormLabel>
                         Bang:{" "}
-                        {selectedService !== "Ship by Tiktok" && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {selectedService !== "Ship by Tiktok" &&
+                          !hasTiktokLabel && (
+                            <span className="text-red-500">*</span>
+                          )}
                       </FormLabel>
                       <Input
                         className="mt-3 h-11 border rounded-sm focus:outline-none"

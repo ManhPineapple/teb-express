@@ -42,7 +42,7 @@ const ImportOrdersForm = ({
     setLoading(true);
 
     try {
-      const importXlsxResponse = await importXlsx(formData);
+      const importXlsxResponse = await importXlsx(formData, packageListType == packageListTypeChina ? true : false);
 
       setTotal(importXlsxResponse.total);
       setImportSuccess(importXlsxResponse.import_sucess);
