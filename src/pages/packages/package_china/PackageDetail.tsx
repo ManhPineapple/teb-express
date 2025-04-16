@@ -84,6 +84,7 @@ export default function PackageDetailChina() {
   const [refundFee, setRefundFee] = useState<RefundFee[] | null>([]);
   const [extraFee, setExtraFee] = useState<ExtraFee[] | null>([]);
   const [displayDeliverDetail, setDisplayDeliverDetail] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const ids = parseInt(package_id, 10);
 
   useEffect(() => {
@@ -396,6 +397,47 @@ export default function PackageDetailChina() {
                   >
                     {packageDetail?.cn_product_link || "N/A"}
                   </a>
+                </div>
+              </div>
+              <>
+      <div className="grid grid-cols-12 mb-2">
+        <div className="col-span-4 font-normal text-[#626363]">
+          Ảnh sản phẩm:
+        </div>
+        <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+          {packageDetail?.cn_product_image ? (
+            <img
+              src={packageDetail?.cn_product_image}
+              alt="Ảnh sản phẩm"
+              className="h-10 cursor-pointer inline-block object-cover rounded"
+              onClick={() => setShowPreview(true)}
+            />
+          ) : (
+            "N/A"
+          )}
+        </div>
+      </div>
+
+      {showPreview && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
+          onClick={() => setShowPreview(false)}
+        >
+          <img
+            src={packageDetail?.cn_product_image}
+            alt="Preview"
+            className="max-w-[90%] max-h-[90%] rounded shadow-lg"
+            onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking the image itself
+          />
+        </div>
+      )}
+    </>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Ghi chú:
+                </div>
+                <div className="col-span-8">
+                  {packageDetail?.cn_note || "N/A"}
                 </div>
               </div>
               <div className="grid grid-cols-12 mb-2">

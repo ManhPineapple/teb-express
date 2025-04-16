@@ -32,6 +32,8 @@ export const orderFormSchema = z
     product_price: z.string().optional(),
     is_purchased: z.boolean().optional(),
     cn_product_link: z.string().optional(),
+    cn_product_image: z.string().optional(),
+    cn_note: z.string().optional(),
     cn_product_price: z.string().optional(),
     cn_shipping_fee: z.string().optional(),
     custom_cn_barcode: z.string().optional(),
@@ -122,9 +124,11 @@ export type PackageDetail = {
   is_purchased: boolean;
   cn_product_link: string;
   cn_product_price: string;
+  cn_product_image: string;
   cn_invoice_image: string;
   cn_shipping_fee: string;
   custom_cn_barcode: string;
+  cn_note: string;
 
   custom_tiktok_barcode: string;
   is_early_scan: boolean;

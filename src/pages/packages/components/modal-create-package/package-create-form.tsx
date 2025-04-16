@@ -1085,7 +1085,7 @@ const OrderCreateForm = ({
                     </>
                   )}
                   <div className="flex mt-10">
-                    <strong className="mr-2">Upload ảnh</strong>
+                    <strong className="mr-2">Ảnh biên nhận</strong>
                   </div>
                   <FormField
                     control={createOrderForm.control}
@@ -1102,6 +1102,48 @@ const OrderCreateForm = ({
                               }
                             }}
                             className="px-4 pt-2 shadow-inner drop-shadow-xl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex mt-10">
+                    <strong className="mr-2">Ảnh sản phẩm:</strong>
+                  </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="cn_product_image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Link ảnh"
+                            {...field}
+                            className="px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex mt-10">
+                    <strong className="mr-2">Ghi chú thêm:</strong>
+                  </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="cn_note"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Bất cứ lưu ý cho sản phẩm"
+                            {...field}
+                            className="px-4 py-6 shadow-inner drop-shadow-xl"
                           />
                         </FormControl>
                         <FormMessage />
