@@ -278,20 +278,23 @@ export default function PackageDetailChina() {
               <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
                 {packageDetail?.created_at
                   ? format(
-                    new Date(packageDetail.created_at),
-                    "dd/MM/yyyy - HH:mm:ss"
-                  )
+                      new Date(packageDetail.created_at),
+                      "dd/MM/yyyy - HH:mm:ss"
+                    )
                   : "N/A"}
               </span>
             </div>
             <div>
-              <div className="text-sm font-normal text-[#626363]">Trạng thái:</div>
+              <div className="text-sm font-normal text-[#626363]">
+                Trạng thái:
+              </div>
               <span
-                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${packageDetail?.status_string
-                  ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
-                    .className
-                  : "N/A"
-                  }`}
+                className={`text-base font-medium px-2 p-1 rounded-2xl capitalize whitespace-nowrap mr-5 ${
+                  packageDetail?.status_string
+                    ? MAP_STATUS_CLASS_NAME[packageDetail?.status_string]
+                        .className
+                    : "N/A"
+                }`}
               >
                 {packageDetail?.status_string}
               </span>
@@ -301,27 +304,27 @@ export default function PackageDetailChina() {
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string === PACKAGE_STATUS_PURCHASED_TEXT ||
               packageDetail?.status_string ===
-              PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
-                <div className="">
-                  <ModalCancel ids={[ids]} />
-                </div>
-              )}
+                PACKAGE_STATUS_PENDING_PICKUP_TEXT) && (
+              <div className="">
+                <ModalCancel ids={[ids]} />
+              </div>
+            )}
 
             {(packageDetail?.status_string === PACKAGE_STATUS_CREATED_TEXT ||
               packageDetail?.status_string ===
-              PACKAGE_STATUS_PURCHASED_TEXT) && (
-                <div className="">
-                  <ModalUpdatePackage
-                    renderModal={(onClose) => (
-                      <ModalUpdatePackages
-                        modalClose={onClose}
-                        packageDetail={packageDetail}
-                        packageListType={packageListTypeChina}
-                      />
-                    )}
-                  />
-                </div>
-              )}
+                PACKAGE_STATUS_PURCHASED_TEXT) && (
+              <div className="">
+                <ModalUpdatePackage
+                  renderModal={(onClose) => (
+                    <ModalUpdatePackages
+                      modalClose={onClose}
+                      packageDetail={packageDetail}
+                      packageListType={packageListTypeChina}
+                    />
+                  )}
+                />
+              </div>
+            )}
 
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
@@ -400,38 +403,38 @@ export default function PackageDetailChina() {
                 </div>
               </div>
               <>
-      <div className="grid grid-cols-12 mb-2">
-        <div className="col-span-4 font-normal text-[#626363]">
-          Ảnh sản phẩm:
-        </div>
-        <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
-          {packageDetail?.cn_product_image ? (
-            <img
-              src={packageDetail?.cn_product_image}
-              alt="Ảnh sản phẩm"
-              className="h-10 cursor-pointer inline-block object-cover rounded"
-              onClick={() => setShowPreview(true)}
-            />
-          ) : (
-            "N/A"
-          )}
-        </div>
-      </div>
+                <div className="grid grid-cols-12 mb-2">
+                  <div className="col-span-4 font-normal text-[#626363]">
+                    Ảnh sản phẩm:
+                  </div>
+                  <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+                    {packageDetail?.cn_product_image ? (
+                      <img
+                        src={packageDetail?.cn_product_image}
+                        alt="Ảnh sản phẩm"
+                        className="h-10 cursor-pointer inline-block object-cover rounded"
+                        onClick={() => setShowPreview(true)}
+                      />
+                    ) : (
+                      "N/A"
+                    )}
+                  </div>
+                </div>
 
-      {showPreview && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
-          onClick={() => setShowPreview(false)}
-        >
-          <img
-            src={packageDetail?.cn_product_image}
-            alt="Preview"
-            className="max-w-[90%] max-h-[90%] rounded shadow-lg"
-            onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking the image itself
-          />
-        </div>
-      )}
-    </>
+                {showPreview && (
+                  <div
+                    className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
+                    onClick={() => setShowPreview(false)}
+                  >
+                    <img
+                      src={packageDetail?.cn_product_image}
+                      alt="Preview"
+                      className="max-w-[90%] max-h-[90%] rounded shadow-lg"
+                      onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking the image itself
+                    />
+                  </div>
+                )}
+              </>
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
                   Ghi chú:
@@ -513,6 +516,24 @@ export default function PackageDetailChina() {
                 </div>
                 <div className="col-span-8">{packageDetail?.country_code}</div>
               </div>
+              {(packageDetail?.service_name === "Ship by Tiktok" ||
+                packageDetail?.custom_tiktok_barcode) && (
+                <div className="grid grid-cols-12 mb-2">
+                  <div className="col-span-4 font-normal text-[#626363]">
+                    Nhãn Tiktok:
+                  </div>
+                  <div className="col-span-8 overflow-hidden text-ellipsis whitespace-nowrap">
+                    <a
+                      href={packageDetail?.custom_tiktok_barcode}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {packageDetail?.custom_tiktok_barcode || "N/A"}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -618,9 +639,7 @@ export default function PackageDetailChina() {
         <div className="col-span-5">
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">
-                Thông tin phụ phí:
-              </div>
+              <div className="border-b pb-3 font-bold">Thông tin phụ phí:</div>
               {extraFee && extraFee.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
@@ -655,11 +674,9 @@ export default function PackageDetailChina() {
           </div>
           <div className="">
             <div className=" h-full items-center justify-center p-6">
-              <div className="border-b pb-3 font-bold">
-                Thông tin sản phẩm:
-              </div>
+              <div className="border-b pb-3 font-bold">Thông tin sản phẩm:</div>
               {packageDetail?.package_products &&
-                packageDetail?.package_products?.length > 0 ? (
+              packageDetail?.package_products?.length > 0 ? (
                 <div className="mt-3">
                   <div className="grid grid-cols-12 mb-5">
                     <div className="col-span-5 text-[#626363]">SKU</div>
