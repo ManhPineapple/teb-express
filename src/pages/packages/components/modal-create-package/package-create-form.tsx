@@ -812,6 +812,24 @@ const OrderCreateForm = ({
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={createOrderForm.control}
+                  name="is_trade_mark"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                          <FormLabel>Hàng TradeMark</FormLabel>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <div className="flex mt-10">
                 <strong className="mr-2">

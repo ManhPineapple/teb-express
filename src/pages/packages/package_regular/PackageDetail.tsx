@@ -539,7 +539,7 @@ export function PackageDetailRegular() {
               </div>
               <div className="flex justify-between mt-3">
                 <div className="total-title font-medium text-[#aaabab]">
-                  Phí mùa cao điểm:
+                  Phụ phí:
                 </div>
                 <span className="total-number text-lg font-medium text-[#111212] tracking-[.2px]">
                   ${sumExtraFee().toFixed(2)}
