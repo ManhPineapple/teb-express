@@ -66,7 +66,9 @@ const BankingTopup: React.FC = () => {
     setFirstInput(value);
     setSecondInput(
       value
-        ? String(Intl.NumberFormat("en-US").format(Math.round(exchangeRate * value)))
+        ? String(
+            Intl.NumberFormat("en-US").format(Math.round(exchangeRate * value))
+          )
         : ""
     );
   };
@@ -82,7 +84,9 @@ const BankingTopup: React.FC = () => {
     );
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = () => {
+    setIsSubmitting(true);
     const body = {
       amount: Number(firstInput),
     };
@@ -94,6 +98,9 @@ const BankingTopup: React.FC = () => {
       })
       .catch(() => {
         toast.error("Đã có lỗi xảy ra");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -234,7 +241,9 @@ const BankingTopup: React.FC = () => {
         <img src={qrCode} className="w-[200px]" />
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button onClick={handleSubmit}>Lưu</Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Đang lưu..." : "Lưu"}
+        </Button>
         <div className="ml-auto text-xs text-right italic">
           <div>{`Tỉ giá chuyển đổi: 1 USD = ${new Intl.NumberFormat("en-US", {
             minimumFractionDigits: 2,

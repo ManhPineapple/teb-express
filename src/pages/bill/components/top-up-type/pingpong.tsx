@@ -28,7 +28,9 @@ const PingpongTopup: React.FC = () => {
     );
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     if (Number(amount) < 1) {
       toast.error("Số tiền phải lớn hơn 0 và tối thiểu là 1 USD.");
       return;
@@ -50,6 +52,8 @@ const PingpongTopup: React.FC = () => {
     } catch (error) {
       toast.error("Something went wrong");
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -104,7 +108,9 @@ const PingpongTopup: React.FC = () => {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button onClick={handleSubmit}>Lưu</Button>
+                <Button onClick={handleSubmit} disabled={isSubmitting}>
+                  {isSubmitting ? "Đang lưu..." : "Lưu"}
+                </Button>
         <div className="w-2/3 ml-auto text-xs text-right italic">
           Thời gian xử lý khoảng 15 phút. Nếu tiền không được chuyển vào topup
           sau thời gian này, vui lòng liên hệ bộ phận support của AnanBay để
