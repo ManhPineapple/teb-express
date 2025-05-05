@@ -224,61 +224,54 @@ export function PackageDetailRegular() {
 
   const handleDownloadBarcode = async () => {
     const files: any[] = [];
-    // const selectedItems = selectedRowsLabel.map((x) => ({
-    //   order_number: x.order_number,
-    //   code: x.code,
-    //   tracking_number: x.tracking_number,
-    // }));
-
-    // console.log("Selected Items:", selectedItems);
-
-    // const allTrackingNumbersEmpty = selectedItems.every(
-    //   (element) => element.tracking_number === ""
-    // );
-
-    // if (allTrackingNumbersEmpty) {
-    //   toast.error("The selected order has no barcode!", {
-    //     autoClose: 3000,
-    //   });
-    //   return;
-    // }
-
+  
     try {
+      const scale = 4; // vẫn giữ độ nét cao
+      const displayWidth = 400; // tăng chiều rộng hiển thị
+      const displayHeight = 150; // tăng chiều cao hiển thị
+  
       const canvas = document.createElement("canvas");
+      canvas.width = displayWidth * scale;
+      canvas.height = displayHeight * scale;
+  
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(scale, scale); // tăng DPI
+  
       JsBarcode(canvas, packageDetail!.code_package, {
         format: "CODE128",
         displayValue: true,
-        fontSize: 8,
-        height: 50,
-        width: 0.8,
+        fontSize: 20,    // tăng cỡ chữ
+        height: 100,     // tăng chiều cao barcode
+        width: 3,        // tăng độ rộng mỗi thanh barcode
+        margin: 10,
       });
-
-      const imageDataUrl = canvas.toDataURL("image/png");
-
+  
+      const imageDataUrl = canvas.toDataURL("image/png", 1.0); // full quality
+  
       files.push({
         fileName: `${packageDetail?.order_number || "barcode"}.png`,
         imageDataUrl,
       });
     } catch (error) {
       console.error("Error generating barcode:", error);
-      toast.error("Lỗi tạo mã vạch", {
+      toast.error("Error generating barcode", {
         autoClose: 3000,
       });
     }
-
+  
     files.forEach(({ fileName, imageDataUrl }) => {
       const link = document.createElement("a");
       link.href = imageDataUrl;
       link.download = fileName;
       link.click();
     });
-
+  
     if (files.length > 0) {
-      toast.success("Mã vạch đã được tải xuống thành công!", {
+      toast.success("Barcodes downloaded successfully!", {
         autoClose: 3000,
       });
     } else {
-      toast.error("Không có mã vạch nào được tạo!", {
+      toast.error("No barcodes generated!", {
         autoClose: 3000,
       });
     }

@@ -266,51 +266,56 @@ export default function PackagesTable({
       code: x.code,
       tracking_number: x.tracking_number,
     }));
-
+  
     const allTrackingNumbersEmpty = selectedItems.every(
       (element) => element.tracking_number === ""
     );
-
+  
     if (allTrackingNumbersEmpty) {
       toast.error("Đơn hàng đã chọn không có mã vạch!", {
         autoClose: 3000,
       });
       return;
     }
-
+  
     const pdf = new jsPDF();
-
-    let currentY = 10; // Starting Y position for the first barcode
-    const lineHeight = 60; // Height reserved for each barcode (including spacing)
-
+    let currentY = 10;
+    const lineHeight = 60;
+  
     for (const item of selectedItems) {
       if (item.tracking_number === "") continue;
-
+  
       try {
+        // Create a high-res canvas
         const canvas = document.createElement("canvas");
+        const scale = 3; // Increase for better quality
+        const width = 300;
+        const height = 100;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.scale(scale, scale); // scale the drawing context
+        }
+  
         JsBarcode(canvas, item.code, {
           format: "CODE128",
           displayValue: true,
-          fontSize: 14,
-          height: 50,
-          width: 1,
+          fontSize: 18,
+          height: 70,
+          width: 5,
+          margin: 0,
         });
-
+  
         const imageDataUrl = canvas.toDataURL("image/png");
-
+  
         if (currentY + lineHeight > pdf.internal.pageSize.height) {
-          // Add a new page if the content exceeds the current page
           pdf.addPage();
-          currentY = 10; // Reset Y position
+          currentY = 10;
         }
-
-        // Add barcode image
-        pdf.addImage(imageDataUrl, "PNG", 10, currentY, 100, 50);
-
-        // Add order number below the barcode
-        // pdf.text(`Order Number: ${item.order_number}`, 10, currentY + 55);
-
-        currentY += lineHeight; // Move to the next line for the next barcode
+  
+        pdf.addImage(imageDataUrl, "PNG", 10, currentY, 100, 40); // Smaller height but better quality
+        currentY += lineHeight;
       } catch (error) {
         console.error("Error generating barcode:", error);
         toast.error("Lỗi tạo mã vạch", {
@@ -318,8 +323,7 @@ export default function PackagesTable({
         });
       }
     }
-
-    // Save the PDF if barcodes were added
+  
     if (currentY > 10) {
       pdf.save("barcodes.pdf");
       toast.success("Tệp PDF mã vạch đã được tải xuống thành công!", {
@@ -330,7 +334,8 @@ export default function PackagesTable({
         autoClose: 3000,
       });
     }
-  };
+  };  
+  
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
       (ele) =>
