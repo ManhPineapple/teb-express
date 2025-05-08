@@ -668,12 +668,12 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Chi tiết sản phẩm:{" "}
+                        Chất liệu sản phẩm:{" "}
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Chi tiết sản phẩm"
+                          placeholder="Điền tiếng Anh"
                           {...field}
                           className=" px-4 py-6 shadow-inner drop-shadow-xl"
                         />
@@ -1237,7 +1237,7 @@ const OrderCreateForm = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Tên đơn hàng:{" "}
+                            Tên hàng hoá:{" "}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
@@ -1254,7 +1254,7 @@ const OrderCreateForm = ({
                                 )
                               }
                               type="text"
-                              placeholder="Tên đơn hàng"
+                              placeholder="Điền tiếng Anh"
                               {...field}
                               className=" px-4 py-6 shadow-inner drop-shadow-xl"
                             />

@@ -400,7 +400,7 @@ export function PackageDetailRegular() {
               <div className="border-b pb-3 font-bold ">Chi tiết đơn hàng:</div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
-                  Chi tiết:
+                  Chất liệu:
                 </div>
                 <div className="col-span-8"> {packageDetail?.detail}</div>
               </div>
