@@ -233,9 +233,18 @@ export async function importXlsx(formData: FormData, isCNTemplate: boolean) {
       },
     });
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error import:", error);
-    return error;
+
+    if (error?.code === "ERR_NETWORK") {
+      return { isNetworkError: true };
+    }
+
+    if (error?.response?.status === 504) {
+      return { isTimeout: true };
+    }
+
+    return { isError: true, error };
   }
 }
 
