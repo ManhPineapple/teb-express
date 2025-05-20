@@ -912,7 +912,7 @@ const ModalUpdatePackage = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Số lượng đơn hàng:{" "}
+                          Số lượng sản phẩm:{" "}
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -929,7 +929,7 @@ const ModalUpdatePackage = ({
                               )
                             }
                             type="number"
-                            placeholder="Số lượng đơn hàng"
+                            placeholder="Số lượng"
                             {...field}
                             className=" px-4 py-6 shadow-inner drop-shadow-xl"
                           />
