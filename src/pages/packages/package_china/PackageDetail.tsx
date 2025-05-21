@@ -167,56 +167,77 @@ export default function PackageDetailChina() {
     navigate("/packages-china");
   };
 
-  const handleDownloadBarcode = async () => {
-    const files: any[] = [];
-  
+  const handlePrintBarcode = async () => {
     try {
-      const scale = 4; // vẫn giữ độ nét cao
-      const displayWidth = 400; // tăng chiều rộng hiển thị
-      const displayHeight = 150; // tăng chiều cao hiển thị
-  
+      const scale = 4;
+      const displayWidth = 400;
+      const displayHeight = 150;
+
       const canvas = document.createElement("canvas");
       canvas.width = displayWidth * scale;
       canvas.height = displayHeight * scale;
-  
+
       const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(scale, scale); // tăng DPI
-  
+      if (ctx) ctx.scale(scale, scale);
+
       JsBarcode(canvas, packageDetail!.code_package, {
         format: "CODE128",
         displayValue: true,
-        fontSize: 20,    // tăng cỡ chữ
-        height: 100,     // tăng chiều cao barcode
-        width: 3,        // tăng độ rộng mỗi thanh barcode
+        fontSize: 20,
+        height: 100,
+        width: 3,
         margin: 10,
       });
-  
-      const imageDataUrl = canvas.toDataURL("image/png", 1.0); // full quality
-  
-      files.push({
-        fileName: `${packageDetail?.order_number || "barcode"}.png`,
-        imageDataUrl,
-      });
+
+      const imageDataUrl = canvas.toDataURL("image/png", 1.0);
+
+      const orderNumber = packageDetail?.order_number || "No Order Number";
+
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
+        return;
+      }
+
+      printWindow.document.write(`
+      <html>
+        <head>
+          <title>In mã vạch</title>
+          <style>
+            body {
+              text-align: center;
+              font-family: Arial, sans-serif;
+              margin-top: 50px;
+            }
+            .barcode-container {
+              margin-bottom: 40px;
+            }
+            .order-number {
+              font-size: 16px;
+              margin-bottom: 10px;
+            }
+            img {
+              height: 120px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="barcode-container">
+            <div class="order-number">Order: ${orderNumber}</div>
+            <img src="${imageDataUrl}" />
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+      printWindow.document.close();
     } catch (error) {
       console.error("Error generating barcode:", error);
       toast.error("Error generating barcode", {
-        autoClose: 3000,
-      });
-    }
-  
-    files.forEach(({ fileName, imageDataUrl }) => {
-      const link = document.createElement("a");
-      link.href = imageDataUrl;
-      link.download = fileName;
-      link.click();
-    });
-  
-    if (files.length > 0) {
-      toast.success("Barcodes downloaded successfully!", {
-        autoClose: 3000,
-      });
-    } else {
-      toast.error("No barcodes generated!", {
         autoClose: 3000,
       });
     }
@@ -339,7 +360,7 @@ export default function PackageDetailChina() {
 
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
-              onClick={() => handleDownloadBarcode()}
+              onClick={() => handlePrintBarcode()}
               disabled={!packageDetail?.tracking_number}
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch

@@ -9,7 +9,6 @@ import {
   processPackage,
 } from "@/services/packages";
 import JsBarcode from "jsbarcode";
-import jsPDF from "jspdf";
 import { PDFDocument } from "pdf-lib";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -260,82 +259,92 @@ export default function PackagesTable({
     await openPrintWindow(files);
   };
 
-  const handlerDownloadBarcodes = async () => {
-    const selectedItems = selectedRowsLabel.map((x) => ({
-      order_number: x.order_number,
-      code: x.code,
-      tracking_number: x.tracking_number,
-    }));
-  
-    const allTrackingNumbersEmpty = selectedItems.every(
-      (element) => element.tracking_number === ""
-    );
-  
-    if (allTrackingNumbersEmpty) {
-      toast.error("Đơn hàng đã chọn không có mã vạch!", {
-        autoClose: 3000,
-      });
-      return;
-    }
-  
-    const pdf = new jsPDF();
-    let currentY = 10;
-    const lineHeight = 60;
-  
-    for (const item of selectedItems) {
-      if (item.tracking_number === "") continue;
-  
-      try {
-        // Create a high-res canvas
-        const canvas = document.createElement("canvas");
-        const scale = 3; // Increase for better quality
-        const width = 300;
-        const height = 100;
-        canvas.width = width * scale;
-        canvas.height = height * scale;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.scale(scale, scale); // scale the drawing context
-        }
-  
-        JsBarcode(canvas, item.code, {
-          format: "CODE128",
-          displayValue: true,
-          fontSize: 18,
-          height: 70,
-          width: 5,
-          margin: 0,
-        });
-  
-        const imageDataUrl = canvas.toDataURL("image/png");
-  
-        if (currentY + lineHeight > pdf.internal.pageSize.height) {
-          pdf.addPage();
-          currentY = 10;
-        }
-  
-        pdf.addImage(imageDataUrl, "PNG", 10, currentY, 100, 40); // Smaller height but better quality
-        currentY += lineHeight;
-      } catch (error) {
-        console.error("Error generating barcode:", error);
-        toast.error("Lỗi tạo mã vạch", {
-          autoClose: 3000,
-        });
-      }
-    }
-  
-    if (currentY > 10) {
-      pdf.save("barcodes.pdf");
-      toast.success("Tệp PDF mã vạch đã được tải xuống thành công!", {
-        autoClose: 3000,
-      });
-    } else {
-      toast.error("Không có mã vạch nào được tạo!", {
-        autoClose: 3000,
-      });
-    }
-  };  
-  
+const handlePrintBarcodes = async () => {
+  const selectedItems = selectedRowsLabel.map((x) => ({
+    order_number: x.order_number,
+    code: x.code,
+    tracking_number: x.tracking_number,
+  }));
+
+  const allTrackingNumbersEmpty = selectedItems.every(
+    (element) => element.tracking_number === ""
+  );
+
+  if (allTrackingNumbersEmpty) {
+    toast.error("Đơn hàng đã chọn không có mã vạch!", {
+      autoClose: 3000,
+    });
+    return;
+  }
+
+  const barcodeHTMLBlocks: string[] = [];
+
+  for (const item of selectedItems) {
+    if (item.tracking_number === "") continue;
+
+    const canvas = document.createElement("canvas");
+    JsBarcode(canvas, item.code, {
+      format: "CODE128",
+      displayValue: true,
+      fontSize: 18,
+      height: 70,
+      width: 2,
+      margin: 0,
+    });
+
+    const imageDataUrl = canvas.toDataURL("image/png");
+
+    barcodeHTMLBlocks.push(`
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="font-size: 14px; margin-bottom: 5px;">Order: ${item.order_number}</div>
+        <img src="${imageDataUrl}" style="height: 80px;" />
+      </div>
+    `);
+  }
+
+  if (barcodeHTMLBlocks.length === 0) {
+    toast.error("Không có mã vạch nào được tạo!", {
+      autoClose: 3000,
+    });
+    return;
+  }
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    toast.error("Không thể mở cửa sổ in!", {
+      autoClose: 3000,
+    });
+    return;
+  }
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>In mã vạch</title>
+        <style>
+          @media print {
+            body {
+              margin: 20px;
+              font-family: Arial, sans-serif;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${barcodeHTMLBlocks.join("")}
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+};
+
+
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
       (ele) =>
@@ -453,7 +462,7 @@ export default function PackagesTable({
       <PackageTableActions
         handleExport={handleExport}
         handleDownloadLabel={handlerDownloadLabels}
-        handleDownloadBarcode={handlerDownloadBarcodes}
+        handleDownloadBarcode={handlePrintBarcodes}
         handleTracking={handleActionWayBill}
         // handleCancel={handleCancel}
         selectedRow={selectedIds}
