@@ -222,77 +222,74 @@ export function PackageDetailRegular() {
     navigate("/packages");
   };
 
-  const handlePrintBarcode = async () => {
+  const handleDownloadBarcode = async () => {
+    const files: any[] = [];
+
     try {
-      const scale = 4;
-      const displayWidth = 400;
-      const displayHeight = 150;
+      const orderNumber = packageDetail?.order_number || "No Order Number";
 
-      const canvas = document.createElement("canvas");
-      canvas.width = displayWidth * scale;
-      canvas.height = displayHeight * scale;
-
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(scale, scale);
-
-      JsBarcode(canvas, packageDetail!.code_package, {
+      // 1. Create barcode on temporary canvas
+      const barcodeCanvas = document.createElement("canvas");
+      JsBarcode(barcodeCanvas, packageDetail!.code_package, {
         format: "CODE128",
         displayValue: true,
         fontSize: 20,
         height: 100,
-        width: 3,
+        width: 2,
         margin: 10,
       });
 
+      // 2. Measure order number text width and set canvas size dynamically
+      const tempTextCanvas = document.createElement("canvas");
+      const textCtx = tempTextCanvas.getContext("2d")!;
+      textCtx.font = "bold 16px Arial";
+      const textWidth = textCtx.measureText(orderNumber).width;
+
+      // Use max of barcode width and text width
+      const canvasWidth = Math.ceil(Math.max(barcodeCanvas.width, textWidth));
+      const canvasHeight = 20 + barcodeCanvas.height + 10; // 20px text + barcode + margin
+
+      const canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      const ctx = canvas.getContext("2d")!;
+      ctx.font = "bold 16px Arial";
+      ctx.fillStyle = "#000";
+      ctx.textAlign = "center";
+
+      // 3. Draw order number centered
+      ctx.fillText(orderNumber, canvasWidth / 2, 16); // y = font size
+
+      // 4. Draw barcode below the text
+      ctx.drawImage(barcodeCanvas, (canvasWidth - barcodeCanvas.width) / 2, 20);
+
+      // 5. Export and download
       const imageDataUrl = canvas.toDataURL("image/png", 1.0);
-
-      const orderNumber = packageDetail?.order_number || "No Order Number";
-
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) {
-        toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
-        return;
-      }
-
-      printWindow.document.write(`
-      <html>
-        <head>
-          <title>In mã vạch</title>
-          <style>
-            body {
-              text-align: center;
-              font-family: Arial, sans-serif;
-              margin-top: 50px;
-            }
-            .barcode-container {
-              margin-bottom: 40px;
-            }
-            .order-number {
-              font-size: 16px;
-              margin-bottom: 10px;
-            }
-            img {
-              height: 120px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="barcode-container">
-            <div class="order-number">Order: ${orderNumber}</div>
-            <img src="${imageDataUrl}" />
-          </div>
-          <script>
-            window.onload = function() {
-              window.print();
-            };
-          </script>
-        </body>
-      </html>
-    `);
-      printWindow.document.close();
+      files.push({
+        fileName: `${packageDetail?.order_number || "barcode"}.png`,
+        imageDataUrl,
+      });
     } catch (error) {
       console.error("Error generating barcode:", error);
       toast.error("Error generating barcode", {
+        autoClose: 3000,
+      });
+    }
+
+    files.forEach(({ fileName, imageDataUrl }) => {
+      const link = document.createElement("a");
+      link.href = imageDataUrl;
+      link.download = fileName;
+      link.click();
+    });
+
+    if (files.length > 0) {
+      toast.success("Barcodes downloaded successfully!", {
+        autoClose: 3000,
+      });
+    } else {
+      toast.error("No barcodes generated!", {
         autoClose: 3000,
       });
     }
@@ -398,7 +395,7 @@ export function PackageDetailRegular() {
 
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
-              onClick={() => handlePrintBarcode()}
+              onClick={() => handleDownloadBarcode()}
               disabled={!packageDetail?.tracking_number}
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch

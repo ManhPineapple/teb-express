@@ -20,6 +20,7 @@ import { downloadCNInvoiceImage, getPackagesDetail } from "@/services/packages";
 import { format } from "date-fns";
 import saveAs from "file-saver";
 import JsBarcode from "jsbarcode";
+import jsPDF from "jspdf";
 import {
   ArrowUpRight,
   Barcode,
@@ -189,52 +190,20 @@ export default function PackageDetailChina() {
         margin: 10,
       });
 
-      const imageDataUrl = canvas.toDataURL("image/png", 1.0);
-
+      const imageDataUrl = canvas.toDataURL("image/png");
       const orderNumber = packageDetail?.order_number || "No Order Number";
 
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) {
-        toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
-        return;
-      }
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: [800, 400],
+      });
 
-      printWindow.document.write(`
-      <html>
-        <head>
-          <title>In mã vạch</title>
-          <style>
-            body {
-              text-align: center;
-              font-family: Arial, sans-serif;
-              margin-top: 50px;
-            }
-            .barcode-container {
-              margin-bottom: 40px;
-            }
-            .order-number {
-              font-size: 16px;
-              margin-bottom: 10px;
-            }
-            img {
-              height: 120px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="barcode-container">
-            <div class="order-number">Order: ${orderNumber}</div>
-            <img src="${imageDataUrl}" />
-          </div>
-          <script>
-            window.onload = function() {
-              window.print();
-            };
-          </script>
-        </body>
-      </html>
-    `);
-      printWindow.document.close();
+      pdf.setFontSize(14);
+      pdf.text(`Order: ${orderNumber}`, 140, 20);
+
+      pdf.addImage(imageDataUrl, "PNG", 20, 25, 360, 100);
+      pdf.save(`barcode_${packageDetail!.code_package}.pdf`);
     } catch (error) {
       console.error("Error generating barcode:", error);
       toast.error("Error generating barcode", {
