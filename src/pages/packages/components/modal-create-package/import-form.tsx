@@ -51,7 +51,7 @@ const ImportOrdersForm = ({
         toast.success("Quá trình nhập đơn hàng đang diễn ra, vui lòng kiểm tra lại sau ít phút");
       } else if (importXlsxResponse.isError) {
         console.error("Import error:", importXlsxResponse.error);
-        toast.error("Đã xảy ra lỗi khi nhập đơn hàng");
+        toast.error(importXlsxResponse.error?.response?.data || "Đã xảy ra lỗi khi nhập đơn hàng");
       } else {
         setTotal(importXlsxResponse.total);
         setImportSuccess(importXlsxResponse.import_sucess);
