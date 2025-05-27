@@ -830,6 +830,24 @@ const OrderCreateForm = ({
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={createOrderForm.control}
+                  name="is_early_scan"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center space-x-2 mt-4">
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                          <FormLabel>Scan sớm</FormLabel>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <div className="flex mt-10">
                 <strong className="mr-2">
@@ -944,24 +962,6 @@ const OrderCreateForm = ({
                               whiteSpace: "nowrap",
                             }}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={createOrderForm.control}
-                    name="is_early_scan"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2 mt-4">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                            <FormLabel>Scan tiktok sớm</FormLabel>
-                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
