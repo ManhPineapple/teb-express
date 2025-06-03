@@ -266,11 +266,11 @@ const handlePrintBarcodes = async () => {
     tracking_number: x.tracking_number,
   }));
 
-  const allTrackingNumbersEmpty = selectedItems.every(
-    (element) => element.tracking_number === ""
+  const allCodeIsEmpty = selectedItems.every(
+    (element) => element.code === ""
   );
 
-  if (allTrackingNumbersEmpty) {
+  if (allCodeIsEmpty) {
     toast.error("Đơn hàng đã chọn không có mã vạch!", {
       autoClose: 3000,
     });
@@ -280,7 +280,7 @@ const handlePrintBarcodes = async () => {
   const barcodeHTMLBlocks: string[] = [];
 
   for (const item of selectedItems) {
-    if (item.tracking_number === "") continue;
+    if (item.code === "") continue;
 
     const canvas = document.createElement("canvas");
     JsBarcode(canvas, item.code, {
