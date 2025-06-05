@@ -99,46 +99,46 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       );
     },
   },
-  // {
-  //   accessorKey: "code",
-  //   header: "TRACKING",
-  //   cell: ({ row }) => {
-  //     const packageCode: string = row.getValue("code") || "N/A";
+  {
+    accessorKey: "code",
+    header: "Mã AB",
+    cell: ({ row }) => {
+      const packageCode: string = row.getValue("code") || "N/A";
 
-  //     return (
-  //       <div className="capitalize font-medium">
-  //         {packageCode !== "N/A" ? (
-  //           <div className="flex gap-3 relative">
-  //             <Link
-  //               to={`/package/details/${row.original.id}`}
-  //               className="text-no-underline text-[#006a5e]"
-  //             >
-  //               {packageCode}
-  //             </Link>
-  //             <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-  //               <Copy
-  //                 className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
-  //                 onClick={() => handleCopy(`${row.original.code}`)}
-  //               />
-  //               <Printer
-  //                 className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
-  //                 onClick={() => showContent(`${row.original.label}`)}
-  //               />
-  //               <a
-  //                 target="_blank"
-  //                 href={`https://t.17track.net/en#nums=${row.original.code}`}
-  //               >
-  //                 <Send className="h-4 w-4 hover:text-[#20bddb] cursor-pointer" />
-  //               </a>
-  //             </div>
-  //           </div>
-  //         ) : (
-  //           <span className="text-black">{packageCode}</span>
-  //         )}
-  //       </div>
-  //     );
-  //   },
-  // },
+      return (
+        <div className="capitalize font-medium">
+          {packageCode !== "N/A" ? (
+            <div className="flex gap-3 relative">
+              <Link
+                to={`/package/details/${row.original.id}`}
+                className="text-no-underline text-[#006a5e]"
+              >
+                {packageCode}
+              </Link>
+              <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Copy
+                  className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
+                  onClick={() => handleCopy(`${row.original.code}`)}
+                />
+                <Printer
+                  className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
+                  onClick={() => showContent(`${row.original.label}`)}
+                />
+                <a
+                  target="_blank"
+                  href={`https://t.17track.net/en#nums=${row.original.code}`}
+                >
+                  <Send className="h-4 w-4 hover:text-[#20bddb] cursor-pointer" />
+                </a>
+              </div>
+            </div>
+          ) : (
+            <span className="text-black">{packageCode}</span>
+          )}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "tracking_number",
     header: "Mã theo dõi",
