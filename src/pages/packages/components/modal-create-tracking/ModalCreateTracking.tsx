@@ -16,9 +16,11 @@ import { toast } from "react-toastify";
 export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
   const { package_id } = useParams<{ package_id: any }>();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const idss = parseInt(package_id, 10);
 
   const handleActionWayBill = async () => {
+    setLoading(true);
     const params = {
       ids: [idss],
       coupon_user_id: null,
@@ -26,15 +28,18 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
 
     try {
       const res = await processPackage(params);
-      if (res.success)
+      if (res.success) {
         toast.success(
           "The order is being processed and tracking is created, processing information will be updated later"
         );
+      }
     } catch (err: any) {
       console.error("Error processing package:", err);
-      toast.error(err.response.data || err.message);
+      toast.error(err.response?.data || err.message);
+    } finally {
+      setLoading(false);
+      setOpen(false);
     }
-    setOpen(false);
   };
 
   return (
@@ -55,7 +60,7 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="secondary" disabled={loading}>
               Hủy
             </Button>
           </DialogClose>
@@ -63,8 +68,9 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
             type="button"
             className="bg-[#00978c] text-[#fff]"
             onClick={handleActionWayBill}
+            disabled={loading}
           >
-            Tạo theo dõi đơn
+            {loading ? "Đang xử lý..." : "Tạo theo dõi đơn"}
           </Button>
         </DialogFooter>
       </DialogContent>
