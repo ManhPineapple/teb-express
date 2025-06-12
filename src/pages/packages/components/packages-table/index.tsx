@@ -296,7 +296,7 @@ const handlePrintBarcodes = async () => {
 
     barcodeHTMLBlocks.push(`
       <div style="text-align: center; margin-bottom: 40px;">
-        <div style="font-size: 14px; margin-bottom: 5px;">Order: ${item.order_number}</div>
+        <div style="font-size: 14px; margin-bottom: 5px;">${item.order_number}</div>
         <img src="${imageDataUrl}" style="height: 80px;" />
       </div>
     `);

@@ -200,7 +200,7 @@ export default function PackageDetailChina() {
       });
 
       pdf.setFontSize(14);
-      pdf.text(`Order: ${orderNumber}`, 140, 20);
+      pdf.text(`${orderNumber}`, 140, 20);
 
       pdf.addImage(imageDataUrl, "PNG", 20, 25, 360, 100);
       pdf.save(`barcode_${packageDetail!.code_package}.pdf`);
