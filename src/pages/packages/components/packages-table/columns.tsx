@@ -232,6 +232,19 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       );
     },
   },
+    {
+    accessorKey: "last_print_label_at",
+    header: "Ngày in label",
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize font-medium">
+          {row.original.last_print_label_at
+            ? format(new Date(row.original.last_print_label_at), "dd/MM/yyyy")
+            : "N/A"}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "status_string",
     header: "Trạng thái",

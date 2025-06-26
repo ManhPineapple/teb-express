@@ -118,6 +118,7 @@ export type PackageDetail = {
   is_package_exceed: boolean;
   include_battery: boolean;
   package_products: any[];
+  last_print_label_at: string;
 
   package_name: string;
   package_quantity: number;

@@ -356,6 +356,19 @@ export function PackageDetailRegular() {
             </div>
             <div>
               <div className="text-sm font-normal text-[#626363]">
+                Ngày in label:
+              </div>
+              <span className="font-medium text-sm tracking-[.2px] text-[#111212]">
+                {packageDetail?.last_print_label_at
+                  ? format(
+                      new Date(packageDetail.last_print_label_at),
+                      "dd/MM/yyyy - HH:mm:ss"
+                    )
+                  : "N/A"}
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-normal text-[#626363]">
                 Trạng thái:
               </div>
               <span
