@@ -343,7 +343,7 @@ export default function PackageDetailChina() {
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
               onClick={() => handlePrintBarcode()}
-              disabled={!packageDetail?.tracking_number}
+              disabled={!packageDetail?.code_package}
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>

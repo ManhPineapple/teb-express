@@ -409,7 +409,7 @@ export function PackageDetailRegular() {
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
               onClick={() => handleDownloadBarcode()}
-              disabled={!packageDetail?.tracking_number}
+              disabled={!packageDetail?.code_package}
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
             </Button>
