@@ -11,8 +11,10 @@ import {
   TransactionStatusSuccess,
 } from "@/constants/bill";
 import { getTransactions } from "@/services/bill";
+import { saveAs } from "file-saver";
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import * as XLSX from "xlsx";
 import { BillDatePickerWithRange } from "../components/bill-datepicker";
 
 type Bill = {
@@ -94,6 +96,46 @@ const HistoryTab: React.FC = () => {
     setSelectedType(selectedValue !== -1 ? selectedValue : undefined);
   };
 
+  const exportToExcel = () => {
+    if (!transactions || transactions.length === 0) return;
+
+    const exportData = transactions.map((item) => ({
+      "Loại giao dịch":
+        item.type === typeTopup ||
+        item.type === typePayoneer ||
+        item.type === typePingPong
+          ? "Nạp tiền vào ví"
+          : item.type === typeRefund || item.type === typeAffiliate
+            ? `Hoàn tiền cho hóa đơn ${item.bill?.code}`
+            : `Thanh toán hóa đơn ${item.bill?.code}`,
+      "Số tiền":
+        item.type === typePayoneer || item.type === typePingPong
+          ? Math.abs(item.amount)
+          : item.type === typePay
+            ? -Math.abs(item.amount)
+            : Math.abs(item.amount),
+      "Trạng thái": statusText[item.status].text,
+      "Thời gian": new Date(item.created_at).toLocaleString("en-US"),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    // Auto column widths
+    const keys = Object.keys(exportData[0]);
+    ws["!cols"] = keys.map((key) => {
+      const maxLength = Math.max(
+        key.length,
+        ...exportData.map((row) => (row[key] ? row[key].toString().length : 0))
+      );
+      return { wch: maxLength + 2 };
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `Transaction-history-${Date.now()}.xlsx`);
+  };
+
   return (
     <Card>
       <CardContent className="space-y-2">
@@ -112,6 +154,12 @@ const HistoryTab: React.FC = () => {
           <div className="mb-4">
             <BillDatePickerWithRange />
           </div>
+          <button
+            className="bg-[#006a5e] text-white py-1 w-40 mb-4 rounded-md hover:bg-[#00564c]"
+            onClick={exportToExcel}
+          >
+            Xuất Excel
+          </button>
         </div>
         {transactions && transactions.length > 0 ? (
           transactions.map((item, i) => (
@@ -138,11 +186,11 @@ const HistoryTab: React.FC = () => {
                   <div className="flex gap-2 font-medium">
                     <div>
                       {item.type === typeTopup ||
-                        item.type === typePayoneer ||
-                        item.type === typePingPong
+                      item.type === typePayoneer ||
+                      item.type === typePingPong
                         ? "Nạp tiền vào ví"
                         : item.type === typeRefund ||
-                          item.type === typeAffiliate
+                            item.type === typeAffiliate
                           ? "Hoàn tiền cho hóa đơn"
                           : "Thanh toán hóa đơn"}
                     </div>
@@ -175,13 +223,13 @@ const HistoryTab: React.FC = () => {
                 <div className="text-sm font-bold">
                   {item.type === typePayoneer || item.type === typePingPong
                     ? `+ $ ${Math.abs(item.amount)
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
                     : ` ${item.type === typePay ? "-" : "+"} $${Math.abs(
-                      item.amount
-                    )
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                        item.amount
+                      )
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
                 </div>
                 <span
                   className={`float-right ${statusText[item.status].className} text-sm`}
