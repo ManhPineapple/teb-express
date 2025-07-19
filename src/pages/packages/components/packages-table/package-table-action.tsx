@@ -10,13 +10,7 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { format } from "date-fns";
-import {
-  Barcode,
-  CalendarIcon,
-  FolderUp,
-  Printer,
-  Send,
-} from "lucide-react";
+import { Barcode, CalendarIcon, FolderUp, Printer, Send } from "lucide-react";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useSearchParams } from "react-router-dom";
@@ -35,7 +29,7 @@ export default function PackageTableActions({
   countSelectedRows,
   feeSelectedRows,
   selectedRowsLabel,
-  packageListType
+  packageListType,
 }: {
   handleExport: () => void;
   handleDownloadLabel: () => void;
@@ -48,14 +42,22 @@ export default function PackageTableActions({
   selectedRowsLabel: any[];
   packageListType: number;
 }) {
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDownloadWithLoading = async () => {
-    setIsDownloading(true);
+    setIsLoading(true);
     try {
       await handleDownloadLabel();
     } finally {
-      setIsDownloading(false);
+      setIsLoading(false);
+    }
+  };
+  const handleCreateTrackingWithLoading = async () => {
+    setIsLoading(true);
+    try {
+      await handleTracking();
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -65,8 +67,8 @@ export default function PackageTableActions({
         {selectedRow.length > 0 && (
           <div className="mt-1.5">
             <p>
-              Bạn có <b>{countSelectedRows}</b> đơn hàng đang được chọn.Tổng
-              Chi phí: <b>${feeSelectedRows}</b>
+              Bạn có <b>{countSelectedRows}</b> đơn hàng đang được chọn.Tổng Chi
+              phí: <b>${feeSelectedRows}</b>
             </p>
           </div>
         )}
@@ -76,17 +78,18 @@ export default function PackageTableActions({
           <div className="flex gap-3 max-sm:flex-wrap">
             <Button
               className="text-xs md:text-sm bg-[#00978c]"
-              onClick={() => handleTracking()}
+              onClick={handleCreateTrackingWithLoading}
+              disabled={isLoading}
             >
               <Send className="mr-2 h-4 w-4" /> Tạo theo dõi đơn
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#1f8e23]"
               onClick={handleDownloadWithLoading}
-              disabled={isDownloading}
+              disabled={isLoading}
             >
               <Printer className="mr-2 h-4 w-4" />
-              {isDownloading ? "Đang tải..." : "Tải xuống nhãn"}
+              {isLoading ? "Đang tải..." : "Tải xuống nhãn"}
             </Button>
             <Button
               className="text-xs md:text-sm bg-[#8D181B]"
@@ -111,12 +114,18 @@ export default function PackageTableActions({
 
               <ImportModal
                 renderModal={(onClose) => (
-                  <ImportOrdersForm modalClose={onClose} packageListType={packageListType} />
+                  <ImportOrdersForm
+                    modalClose={onClose}
+                    packageListType={packageListType}
+                  />
                 )}
               />
               <PopupModal
                 renderModal={(onClose) => (
-                  <OrderCreateForm modalClose={onClose} packageListType={packageListType} />
+                  <OrderCreateForm
+                    modalClose={onClose}
+                    packageListType={packageListType}
+                  />
                 )}
               />
             </div>
