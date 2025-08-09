@@ -17,10 +17,17 @@ import {
 import { CustomAxios } from "@/utils/customAxios";
 import axios from "axios";
 import { ArrowLeftRight, Copy } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { VietQR } from "vietqr";
+
+const BankingAccount = {
+  bank: "970422",
+  bankName: "MB Bank - Ngân hàng Thương mại cổ phần Quân đội",
+  accountName: "CONG TY TNHH SAN XUAT THUONG MAI DICH VU ANANBAY",
+  accountNumber: "293636688",
+};
 
 const BankingTopup: React.FC = () => {
   const [exchangeRate, setExchangeRate] = useState(28000);
@@ -39,9 +46,8 @@ const BankingTopup: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const today = new Date().toISOString().split("T")[0];
-
   useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
     axios
       .get(`https://www.vietcombank.com.vn/api/exchangerates?date=${today}`)
       .then((response) => {
@@ -104,34 +110,22 @@ const BankingTopup: React.FC = () => {
       });
   };
 
-  let vietQR = new VietQR({
-    clientID: "de8a0804-a76d-41e5-8ad6-31503ce7d5f4",
-    apiKey: "17c29f09-4ea2-4417-b9c2-7f020d35de42",
-  });
-
-  // list banks are supported create QR code by Vietqr
-  // vietQR
-  //   .getBanks()
-  //   .then((banks:any) => {
-  //     console.log(banks);
-  //   })
-  //   .catch((err: any) => {});
-
-  // list templates are supported by Vietqr
-  // vietQR
-  //   .getTemplate()
-  //   .then((data: any) => {
-  //     console.log(data);
-  //   })
-  //   .catch((err: any) => {});
+  const vietQR = useMemo(
+    () =>
+      new VietQR({
+        clientID: "de8a0804-a76d-41e5-8ad6-31503ce7d5f4",
+        apiKey: "17c29f09-4ea2-4417-b9c2-7f020d35de42",
+      }),
+    []
+  );
 
   // create QR code from data
   useEffect(() => {
     vietQR
       .genQRCodeBase64({
-        bank: "970436",
-        accountName: "DO VAN CHIEN",
-        accountNumber: "0021002006288",
+        bank: BankingAccount.bank,
+        accountName: BankingAccount.accountName,
+        accountNumber: BankingAccount.accountNumber,
         amount: `${Math.round(Number(firstInput) * exchangeRate)}`,
         // memo: `Nap topup ${topupId}`, // remove message
         template: "compact",
@@ -154,18 +148,18 @@ const BankingTopup: React.FC = () => {
       <CardContent className="space-y-2">
         <div className="space-y-1">
           <p className="text-sm text-[#626363]">Ngân hàng:</p>
-          <b className="text-base">VietcomBank</b>
+          <b className="text-base">{BankingAccount.bankName}</b>
         </div>
         <div className="space-y-1">
           <p className="text-sm text-[#626363]">Tên chủ thẻ:</p>
           <div className="flex gap-2">
-            <b className="text-base">DO VAN CHIEN</b>
+            <b className="text-base">{BankingAccount.accountName}</b>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Copy
                     className="w-4 h-4 cursor-pointer"
-                    onClick={() => handleCopy("DO VAN CHIEN")}
+                    onClick={() => handleCopy(BankingAccount.accountName)}
                   />
                 </TooltipTrigger>
                 <TooltipContent>
@@ -178,13 +172,13 @@ const BankingTopup: React.FC = () => {
         <div className="space-y-1">
           <p className="text-sm text-[#626363]">Số tài khoản:</p>
           <div className="flex gap-2">
-            <b className="text-base">0021 002 006 288</b>
+            <b className="text-base">{BankingAccount.accountNumber}</b>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Copy
                     className="w-4 h-4 cursor-pointer"
-                    onClick={() => handleCopy("0021 002 006 288")}
+                    onClick={() => handleCopy(BankingAccount.accountNumber)}
                   />
                 </TooltipTrigger>
                 <TooltipContent>
