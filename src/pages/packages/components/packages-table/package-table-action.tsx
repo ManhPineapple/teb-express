@@ -15,14 +15,13 @@ import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useSearchParams } from "react-router-dom";
 import { ModalCancelPackages } from "../modal-cancel-packages/ModalCancelPackages";
-import { ModalConfirmAddresses } from "../modal-confirm-address/ModalConfirmAddresses";
 import ImportOrdersForm from "../modal-create-package/import-form";
 import OrderCreateForm from "../modal-create-package/package-create-form";
 
 export default function PackageTableActions({
   handleExport,
   handleDownloadLabel,
-  handleDownloadBarcode,
+  handlePrintBarcode,
   handleTracking,
   // handleCancel,
   selectedRow,
@@ -33,7 +32,7 @@ export default function PackageTableActions({
 }: {
   handleExport: () => void;
   handleDownloadLabel: () => void;
-  handleDownloadBarcode: () => void;
+  handlePrintBarcode: (barcodeSource: "code" | "order_number", labelSource: "code" | "order_number") => void;
   handleTracking: () => void;
   // handleCancel: () => void;
   selectedRow: number[];
@@ -92,12 +91,18 @@ export default function PackageTableActions({
               {isLoading ? "Đang tải..." : "Tải xuống nhãn"}
             </Button>
             <Button
-              className="text-xs md:text-sm bg-[#8D181B]"
-              onClick={() => handleDownloadBarcode()}
+              className="text-xs md:text-sm bg-[#00978c]"
+              onClick={() => handlePrintBarcode("code", "order_number")}
             >
-              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch
+              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch AB
             </Button>
-            <ModalConfirmAddresses selectedRowsLabel={selectedRowsLabel} />
+                        <Button
+              className="text-xs md:text-sm bg-[#8D181B]"
+              onClick={() => handlePrintBarcode("order_number", "code")}
+            >
+              <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch mã đơn
+            </Button>
+            {/* <ModalConfirmAddresses selectedRowsLabel={selectedRowsLabel} /> */}
             <Button
               className="text-xs md:text-sm bg-[#a84a77]"
               onClick={() => handleExport()}

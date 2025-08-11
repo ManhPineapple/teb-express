@@ -259,65 +259,66 @@ export default function PackagesTable({
     await openPrintWindow(files);
   };
 
-const handlePrintBarcodes = async () => {
-  const selectedItems = selectedRowsLabel.map((x) => ({
-    order_number: x.order_number,
-    code: x.code,
-    tracking_number: x.tracking_number,
-  }));
+  const handlePrintBarcode = async (
+    barcodeSource: "code" | "order_number",
+    labelSource: "code" | "order_number"
+  ) => {
+    const selectedItems = selectedRowsLabel.map((x) => ({
+      order_number: x.order_number,
+      code: x.code,
+      tracking_number: x.tracking_number,
+    }));
 
-  const allCodeIsEmpty = selectedItems.every(
-    (element) => element.code === ""
-  );
+    // Check if all barcodes would be empty
+    const allBarcodesEmpty = selectedItems.every(
+      (item) => item[barcodeSource] === ""
+    );
 
-  if (allCodeIsEmpty) {
-    toast.error("Đơn hàng đã chọn không có mã vạch!", {
-      autoClose: 3000,
-    });
-    return;
-  }
+    if (allBarcodesEmpty) {
+      toast.error("Đơn hàng đã chọn không có mã vạch!", { autoClose: 3000 });
+      return;
+    }
 
-  const barcodeHTMLBlocks: string[] = [];
+    const barcodeHTMLBlocks: string[] = [];
 
-  for (const item of selectedItems) {
-    if (item.code === "") continue;
+    for (const item of selectedItems) {
+      const barcodeValue = item[barcodeSource];
+      const labelValue = item[labelSource] || "N/A";
 
-    const canvas = document.createElement("canvas");
-    JsBarcode(canvas, item.code, {
-      format: "CODE128",
-      displayValue: true,
-      fontSize: 18,
-      height: 70,
-      width: 2,
-      margin: 0,
-    });
+      if (!barcodeValue) continue;
 
-    const imageDataUrl = canvas.toDataURL("image/png");
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, barcodeValue, {
+        format: "CODE128",
+        displayValue: true,
+        fontSize: 18,
+        height: 70,
+        width: 2,
+        margin: 0,
+      });
 
-    barcodeHTMLBlocks.push(`
+      const imageDataUrl = canvas.toDataURL("image/png");
+
+      barcodeHTMLBlocks.push(`
       <div style="text-align: center; margin-bottom: 40px;">
-        <div style="font-size: 14px; margin-bottom: 5px;">${item.order_number}</div>
+        <div style="font-size: 14px; margin-bottom: 5px;">${labelValue}</div>
         <img src="${imageDataUrl}" style="height: 80px;" />
       </div>
     `);
-  }
+    }
 
-  if (barcodeHTMLBlocks.length === 0) {
-    toast.error("Không có mã vạch nào được tạo!", {
-      autoClose: 3000,
-    });
-    return;
-  }
+    if (barcodeHTMLBlocks.length === 0) {
+      toast.error("Không có mã vạch nào được tạo!", { autoClose: 3000 });
+      return;
+    }
 
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) {
-    toast.error("Không thể mở cửa sổ in!", {
-      autoClose: 3000,
-    });
-    return;
-  }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
+      return;
+    }
 
-  printWindow.document.write(`
+    printWindow.document.write(`
     <html>
       <head>
         <title>In mã vạch</title>
@@ -341,9 +342,8 @@ const handlePrintBarcodes = async () => {
     </html>
   `);
 
-  printWindow.document.close();
-};
-
+    printWindow.document.close();
+  };
 
   const handleActionWayBill = async () => {
     const selectedInvalid = selectedRowsLabel.filter(
@@ -462,7 +462,7 @@ const handlePrintBarcodes = async () => {
       <PackageTableActions
         handleExport={handleExport}
         handleDownloadLabel={handlerDownloadLabels}
-        handleDownloadBarcode={handlePrintBarcodes}
+        handlePrintBarcode={handlePrintBarcode}
         handleTracking={handleActionWayBill}
         // handleCancel={handleCancel}
         selectedRow={selectedIds}

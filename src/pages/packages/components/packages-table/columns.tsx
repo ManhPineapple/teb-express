@@ -12,8 +12,10 @@ import {
 } from "@/constants/packages";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import JsBarcode from "jsbarcode";
 import { ArrowUpRight, Copy, Printer, Send } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import Warning from "../../../../assets/warning.svg";
 import { prints } from "../../print/print";
 import { ModalConfirmAddress } from "../modal-confirm-address/ModalConfirmAddress";
@@ -27,6 +29,64 @@ export const handleCopy = (text: string) => {
       console.error("Failed to copy text: ", err);
     }
   );
+};
+
+export const printBarcode = (text: string) => {
+  const canvas = document.createElement("canvas");
+  JsBarcode(canvas, text, {
+    format: "CODE128",
+    displayValue: true,
+    fontSize: 18,
+    height: 70,
+    width: 2,
+    margin: 0,
+  });
+
+  const imageDataUrl = canvas.toDataURL("image/png");
+
+  // Calculate size in mm (1px ≈ 0.264583 mm at 96 DPI)
+  const imgWidthMm = canvas.width * 0.264583;
+  const imgHeightMm = canvas.height * 0.264583;
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
+    return;
+  }
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>In mã vạch</title>
+        <style>
+          @page {
+            size: ${imgWidthMm}mm ${imgHeightMm}mm;
+            margin: 0;
+          }
+          body {
+            margin: 0;
+            padding: 10;
+            text-align: center;
+          }
+          img {
+            width: 100%;
+            height: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <img src="${imageDataUrl}" />
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = () => window.close();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
 };
 
 const showContent = async (item: string) => {
@@ -82,10 +142,14 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
             >
               {row.getValue("order_number")}
             </Link>
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Copy
                 className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
                 onClick={() => handleCopy(`${row.original.order_number}`)}
+              />
+              <Printer
+                className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
+                onClick={() => printBarcode(`${row.original.order_number}`)}
               />
             </div>
           </div>
@@ -122,14 +186,8 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
                 />
                 <Printer
                   className="h-4 w-4 hover:text-[#20bddb] cursor-pointer"
-                  onClick={() => showContent(`${row.original.label}`)}
+                  onClick={() => printBarcode(`${row.original.code}`)}
                 />
-                <a
-                  target="_blank"
-                  href={`https://t.17track.net/en#nums=${row.original.code}`}
-                >
-                  <Send className="h-4 w-4 hover:text-[#20bddb] cursor-pointer" />
-                </a>
               </div>
             </div>
           ) : (
@@ -179,7 +237,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
                   />
                   <a
                     target="_blank"
-                    href={`https://t.17track.net/en#nums=${row.original.code}`}
+                    href={`https://t.17track.net/en#nums=${row.original.tracking_number}`}
                   >
                     <Send className="h-4 w-4 hover:text-[#20bddb] cursor-pointer" />
                   </a>
@@ -232,7 +290,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       );
     },
   },
-    {
+  {
     accessorKey: "last_print_label_at",
     header: "Ngày in label",
     cell: ({ row }) => {
@@ -252,10 +310,11 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       return (
         <div className="flex justify-between">
           <span
-            className={`text-base capitalize p-0.5 px-1 rounded-full font-medium whitespace-nowrap ${row.original?.status_string
-              ? MAP_STATUS_CLASS_NAME[row.original?.status_string].className
-              : "N/A"
-              }`}
+            className={`text-base capitalize p-0.5 px-1 rounded-full font-medium whitespace-nowrap ${
+              row.original?.status_string
+                ? MAP_STATUS_CLASS_NAME[row.original?.status_string].className
+                : "N/A"
+            }`}
           >
             {row.original.status_string}
           </span>
@@ -296,7 +355,8 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
               style={{ color: "#FA8C16" }}
             >
               <span className="pkg-exceed" title="Oversized Package">
-                {packageListType == 0 ? '$' : "$"}{convertPrice(row.original).toFixed(2)}
+                {packageListType == 0 ? "$" : "$"}
+                {convertPrice(row.original).toFixed(2)}
               </span>
             </div>
           );
@@ -304,7 +364,8 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       } else {
         return (
           <div className="capitalize font-medium text-center mr-5">
-            {packageListType == 0 ? '$' : "$"}{convertPrice(row.original).toFixed(2)}
+            {packageListType == 0 ? "$" : "$"}
+            {convertPrice(row.original).toFixed(2)}
           </div>
         );
       }
