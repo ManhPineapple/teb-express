@@ -14,6 +14,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import JsBarcode from "jsbarcode";
 import { ArrowUpRight, Copy, Printer, Send } from "lucide-react";
+import { PDFDocument } from "pdf-lib";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Warning from "../../../../assets/warning.svg";
@@ -31,62 +32,57 @@ export const handleCopy = (text: string) => {
   );
 };
 
-export const printBarcode = (text: string) => {
-  const canvas = document.createElement("canvas");
-  JsBarcode(canvas, text, {
-    format: "CODE128",
-    displayValue: true,
-    fontSize: 18,
-    height: 70,
-    width: 2,
-    margin: 0,
-  });
+export const printBarcode = async (text: string) => {
+  try {
+    // Generate barcode on a canvas
+    const canvas = document.createElement("canvas");
+    JsBarcode(canvas, text, {
+      format: "CODE128",
+      displayValue: true,
+      fontSize: 18,
+      height: 70,
+      width: 2,
+      margin: 5,
+    });
 
-  const imageDataUrl = canvas.toDataURL("image/png");
+    const imgDataUrl = canvas.toDataURL("image/png");
 
-  // Calculate size in mm (1px ≈ 0.264583 mm at 96 DPI)
-  const imgWidthMm = canvas.width * 0.264583;
-  const imgHeightMm = canvas.height * 0.264583;
+    // Convert px → mm → pt
+    const imgWidthMm = canvas.width * 0.264583;
+    const imgHeightMm = canvas.height * 0.264583;
+    const imgWidthPt = imgWidthMm * 2.83465;
+    const imgHeightPt = imgHeightMm * 2.83465;
 
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) {
-    toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
-    return;
+    // Create PDF
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([imgWidthPt, imgHeightPt]);
+
+    const pngImage = await pdfDoc.embedPng(imgDataUrl);
+    page.drawImage(pngImage, {
+      x: 0,
+      y: 0,
+      width: imgWidthPt,
+      height: imgHeightPt,
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    // Create hidden iframe to print PDF
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+
+    iframe.onload = () => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+    };
+  } catch (err) {
+    toast.error("Lỗi khi in mã vạch!", { autoClose: 3000 });
+    console.error(err);
   }
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>In mã vạch</title>
-        <style>
-          @page {
-            size: ${imgWidthMm}mm ${imgHeightMm}mm;
-            margin: 0;
-          }
-          body {
-            margin: 0;
-            padding: 10;
-            text-align: center;
-          }
-          img {
-            width: 100%;
-            height: auto;
-          }
-        </style>
-      </head>
-      <body>
-        <img src="${imageDataUrl}" />
-        <script>
-          window.onload = function() {
-            window.print();
-            window.onafterprint = () => window.close();
-          };
-        </script>
-      </body>
-    </html>
-  `);
-
-  printWindow.document.close();
 };
 
 const showContent = async (item: string) => {
