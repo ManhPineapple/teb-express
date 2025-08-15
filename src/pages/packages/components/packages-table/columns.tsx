@@ -274,6 +274,19 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
     },
   },
   {
+    accessorKey: "scan_weight_at",
+    header: "Ngày cân mã vạch",
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize font-medium">
+          {row.original.scan_weight_at
+            ? format(new Date(row.original.scan_weight_at), "dd/MM/yyyy")
+            : "N/A"}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "accepted_at",
     header: "Ngày chấp nhận",
     cell: ({ row }) => {
@@ -299,6 +312,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       );
     },
   },
+
   {
     accessorKey: "status_string",
     header: "Trạng thái",

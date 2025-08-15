@@ -183,6 +183,7 @@ export type TPackage = {
   created_at: string;
   accepted_at: string;
   last_print_label_at: string;
+  scan_weight_at: string;
   status_string: string;
   shipping_fee: number;
   profile_picture?: string | null;

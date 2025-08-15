@@ -119,6 +119,7 @@ export type PackageDetail = {
   include_battery: boolean;
   package_products: any[];
   last_print_label_at: string;
+  scan_weight_at: string;
 
   package_name: string;
   package_quantity: number;
