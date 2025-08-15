@@ -165,6 +165,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
   );
 };
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import axios from "axios";
 import { useWatch } from "react-hook-form";
 import { orderFormSchema } from "../package_schema";
@@ -1328,6 +1334,38 @@ const OrderCreateForm = ({
                       )}
                     />
                   </div>
+                  <FormField
+                    control={createOrderForm.control}
+                    name="is_insured"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center space-x-2 mt-4">
+                            <TooltipProvider delayDuration={0}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center space-x-2 cursor-pointer">
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                    <FormLabel className="cursor-pointer">
+                                      Mua bảo hiểm
+                                    </FormLabel>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  Giá Bảo hiểm bằng với 10% giá trị gói hàng,
+                                  được khai báo ở mục Giá sản phẩm
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </>
               )}
             </div>

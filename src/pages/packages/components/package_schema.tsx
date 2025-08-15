@@ -26,6 +26,7 @@ export const orderFormSchema = z
     height: z.string().optional(),
     include_battery: z.boolean().optional(),
     is_trade_mark: z.boolean().optional(),
+    is_insured: z.boolean().optional(),
 
     package_products: z.array(z.any()).optional(),
     package_name: z.string().optional(),
