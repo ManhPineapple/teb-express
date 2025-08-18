@@ -116,35 +116,37 @@ const ModalUpdatePackage = ({
 
   const updatePackageForm = useForm<OrderFormSchemaType>({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: {
-      service: packageDetail.service_name,
-      recipient: packageDetail.recipient,
-      phone: packageDetail.phone_number,
-      address_1: packageDetail.address_1,
-      address_2: packageDetail.address_2,
-      city: packageDetail.city,
-      state_code: packageDetail.state_code,
-      country_code: packageDetail.country_code,
-      detail: packageDetail.detail,
-      zipcode: packageDetail.zipcode,
-      order_number: packageDetail.order_number,
-      weight: packageDetail.weight.toString(),
-      length: packageDetail.length.toString(),
-      width: packageDetail.width.toString(),
-      height: packageDetail.height.toString(),
-      include_battery: packageDetail.include_battery || false,
-      package_products: packageDetail.package_products || [{}],
-      package_name: packageDetail.package_name,
-      package_quantity: (packageDetail.package_quantity || 0).toString(),
-      product_price: (packageDetail.product_price || 0).toString(),
-      custom_cn_barcode: packageDetail.custom_cn_barcode || "",
-      cn_product_link: packageDetail.cn_product_link || "",
-      cn_product_price: (packageDetail.cn_product_price || 0).toString(),
-      cn_shipping_fee: (packageDetail.cn_shipping_fee || 0).toString(),
-      custom_tiktok_barcode: packageDetail.custom_tiktok_barcode?.toString(),
-      is_early_scan: packageDetail.is_early_scan,
-      is_insured: packageDetail.is_insured,
-    },
+    defaultValues: Object.fromEntries(
+      Object.entries({
+        service: packageDetail.service_name,
+        recipient: packageDetail.recipient,
+        phone: packageDetail.phone_number,
+        address_1: packageDetail.address_1,
+        address_2: packageDetail.address_2,
+        city: packageDetail.city,
+        state_code: packageDetail.state_code,
+        country_code: packageDetail.country_code,
+        detail: packageDetail.detail,
+        zipcode: packageDetail.zipcode,
+        order_number: packageDetail.order_number,
+        weight: packageDetail.weight?.toString(),
+        length: packageDetail.length?.toString(),
+        width: packageDetail.width?.toString(),
+        height: packageDetail.height?.toString(),
+        include_battery: packageDetail.include_battery,
+        package_products: packageDetail.package_products,
+        package_name: packageDetail.package_name,
+        package_quantity: packageDetail.package_quantity?.toString(),
+        product_price: packageDetail.product_price?.toString(),
+        custom_cn_barcode: packageDetail.custom_cn_barcode,
+        cn_product_link: packageDetail.cn_product_link,
+        cn_product_price: packageDetail.cn_product_price?.toString(),
+        cn_shipping_fee: packageDetail.cn_shipping_fee?.toString(),
+        custom_tiktok_barcode: packageDetail.custom_tiktok_barcode?.toString(),
+        is_early_scan: packageDetail.is_early_scan,
+        is_insured: packageDetail.is_insured,
+      }).map(([k, v]) => [k, v || undefined])
+    ),
   });
 
   const productValue = useWatch({
@@ -1001,6 +1003,7 @@ const ModalUpdatePackage = ({
                 Hủy
               </Button>
               <Button
+                onClick={() => console.log(updatePackageForm.getValues())}
                 type="submit"
                 disabled={loading}
                 className="rounded-full"
