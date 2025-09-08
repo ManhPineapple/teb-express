@@ -146,9 +146,12 @@ export const processPackage = async (payload: any) => {
 
 export const validateAddress = async (payload: any) => {
   try {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || ""
-    const newUrl = baseUrl.split('/').slice(0, -2).join('/');
-    const res = await axios.post(`${newUrl}/v1/packages/address/validate`, payload)
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const newUrl = baseUrl.split("/").slice(0, -2).join("/");
+    const res = await axios.post(
+      `${newUrl}/v1/packages/address/validate`,
+      payload
+    );
     return res;
   } catch (error) {
     console.error("Error validate address:", error);
@@ -156,10 +159,7 @@ export const validateAddress = async (payload: any) => {
   }
 };
 
-export const fetchLabel = async ({
-  url,
-  type,
-}: FetchBarcodeFileParams) => {
+export const fetchLabel = async ({ url, type }: FetchBarcodeFileParams) => {
   try {
     const res = await CustomAxios.get(`/uploads/file-export/download`, {
       params: { url, type },
@@ -182,16 +182,19 @@ export async function getListPackages(
   service?: string
 ) {
   try {
-    const queryString =
-      `?page=${page}&limit=${pageLimit}` +
-      (order_number ? `&code=${order_number}` : "") +
-      (status ? `&status=${status}` : "") +
-      (startDate ? `&start_date=${startDate}` : "") +
-      (endDate ? `&end_date=${endDate}` : "") +
-      (byDate ? `&by_date=${byDate}` : "") + 
-      (service ? `&service=${service}` : "");
+    const res = await CustomAxios.get("/packages", {
+      params: {
+        page,
+        limit: pageLimit,
+        code: order_number,
+        status,
+        start_date: startDate,
+        end_date: endDate,
+        by_date: byDate,
+        service,
+      },
+    });
 
-    const res = await CustomAxios.get(`/packages${queryString}`);
     return res.data;
   } catch (error) {
     return error;
@@ -206,19 +209,21 @@ export async function getCountListPackages(
   startDate?: string,
   endDate?: string,
   byDate?: string,
-  service?: string,
+  service?: string
 ) {
   try {
-    const queryString =
-      `?page=${page}&limit=${pageLimit}` +
-      (order_number ? `&code=${order_number}` : "") +
-      (status ? `&status=${status}` : "") +
-      (startDate ? `&start_date=${startDate}` : "") +
-      (endDate ? `&end_date=${endDate}` : "") +
-      (byDate ? `&by_date=${byDate}` : "") +
-      (service ? `&service=${service}` : "");
-
-    const res = await CustomAxios.get(`/packages/count${queryString}`);
+    const res = await CustomAxios.get(`/packages/count`, {
+      params: {
+        page,
+        limit: pageLimit,
+        code: order_number,
+        status,
+        start_date: startDate,
+        end_date: endDate,
+        by_date: byDate,
+        service,
+      },
+    });
     return res.data;
   } catch (error) {
     return error;
@@ -227,11 +232,15 @@ export async function getCountListPackages(
 
 export async function importXlsx(formData: FormData, isCNTemplate: boolean) {
   try {
-    const res = await CustomAxios.post(`/packages/import${isCNTemplate ? "?package_type=CN" : ""}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const res = await CustomAxios.post(
+      `/packages/import${isCNTemplate ? "?package_type=CN" : ""}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return res.data;
   } catch (error: any) {
     console.error("Error import:", error);

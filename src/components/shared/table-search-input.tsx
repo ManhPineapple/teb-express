@@ -11,30 +11,32 @@ export default function TableSearchInput({
   const country = searchParams.get("code") || "";
   const [searchTerm, setSearchTerm] = React.useState(country);
   // debounce the search input
-  const handleSettingSearchParams = useCallback((newCodeValue: string) => {
-    // Update the URL with the new search value
-    if (
-      newCodeValue === "" ||
-      newCodeValue === undefined ||
-      !newCodeValue
-    ) {
-      searchParams.delete("code");
-      setSearchParams(searchParams);
-      return;
-    }
-    setSearchParams({
-      ...Object.fromEntries(searchParams),
-      page: "1",
-      code: newCodeValue,
-    });
-    window.location.reload();
-  });
+  const handleSettingSearchParams = useCallback(
+    (newCodeValue: string) => {
+      // Update the URL with the new search value
+      if (newCodeValue === "" || newCodeValue === undefined || !newCodeValue) {
+        const params = new URLSearchParams(searchParams);
+        params.delete("code");
+        setSearchParams(params);
+        return;
+      }
+      setSearchParams({
+        ...Object.fromEntries(searchParams),
+        page: "1",
+        code: newCodeValue,
+      });
+      window.location.reload();
+    },
+    [searchParams, setSearchParams]
+  );
   return (
     <Input
       placeholder={placeholder || `Tìm mã đơn hàng...`}
       value={searchTerm}
       onChange={(event) => setSearchTerm(event.target.value)}
-      onKeyDown={(event) => event.key == "Enter" && handleSettingSearchParams(searchTerm)}
+      onKeyDown={(event) =>
+        event.key == "Enter" && handleSettingSearchParams(searchTerm)
+      }
       className="w-full md:max-w-sm"
     />
   );
