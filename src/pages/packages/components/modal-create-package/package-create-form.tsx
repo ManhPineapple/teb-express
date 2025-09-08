@@ -587,7 +587,7 @@ const OrderCreateForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Mã bưu điện:{" "}
+                        ZIP Code:{" "}
                         {selectedService !== "Ship by Tiktok" &&
                           !hasTiktokLabel && (
                             <span className="text-red-500">*</span>
@@ -595,7 +595,7 @@ const OrderCreateForm = ({
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Mã bưu điện"
+                          placeholder="ZIP Code"
                           {...field}
                           className="px-4 py-6 shadow-inner drop-shadow-xl"
                         />
@@ -670,29 +670,9 @@ const OrderCreateForm = ({
               <div className="grid grid-cols-2 gap-x-5 gap-y-4">
                 <FormField
                   control={createOrderForm.control}
-                  name="detail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Chất liệu sản phẩm:{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Điền tiếng Anh"
-                          {...field}
-                          className=" px-4 py-6 shadow-inner drop-shadow-xl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={createOrderForm.control}
                   name="order_number"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-2">
                       <FormLabel>
                         Mã đơn hàng: <span className="text-red-500">*</span>
                       </FormLabel>
@@ -847,7 +827,39 @@ const OrderCreateForm = ({
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
-                          <FormLabel>Scan sớm</FormLabel>
+                          <FormLabel>Scan trước</FormLabel>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={createOrderForm.control}
+                  name="is_insured"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center space-x-2 mt-4">
+                          <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center space-x-2 cursor-pointer">
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                  <FormLabel className="cursor-pointer">
+                                    Mua bảo hiểm
+                                  </FormLabel>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                Giá Bảo hiểm bằng với 10% giá trị gói hàng, được
+                                khai báo ở mục Giá sản phẩm
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -936,7 +948,7 @@ const OrderCreateForm = ({
                             onCheckedChange={field.onChange}
                           />
                           <FormLabel>
-                            Dùng mã tiktok riêng (Ship by Tiktok)
+                            Dùng label có sẵn
                           </FormLabel>
                         </div>
                       </FormControl>
@@ -1336,31 +1348,19 @@ const OrderCreateForm = ({
                   </div>
                   <FormField
                     control={createOrderForm.control}
-                    name="is_insured"
+                    name="detail"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel>
+                          Chất liệu sản phẩm:{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
-                          <div className="flex items-center space-x-2 mt-4">
-                            <TooltipProvider delayDuration={0}>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div className="flex items-center space-x-2 cursor-pointer">
-                                    <Checkbox
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                    <FormLabel className="cursor-pointer">
-                                      Mua bảo hiểm
-                                    </FormLabel>
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  Giá Bảo hiểm bằng với 10% giá trị gói hàng,
-                                  được khai báo ở mục Giá sản phẩm
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
+                          <Input
+                            placeholder="Điền tiếng Anh"
+                            {...field}
+                            className=" px-4 py-6 shadow-inner drop-shadow-xl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
