@@ -399,66 +399,17 @@ export default function PackagesTable({
     }, 5000);
   };
 
-  // const handleCancel = async () => {
-  //   const selectedInvalid = selectedRowsLabel.filter(
-  //     (ele) =>
-  //       ele.status_string !== PACKAGE_STATUS_CREATED_TEXT &&
-  //       ele.status_string !== PACKAGE_STATUS_PENDING_PICKUP_TEXT
-  //   );
-
-  //   if (selectedInvalid.length > 0) {
-  //     let codeSelectedInvalid = selectedInvalid.map((ele) => ele.order_number);
-  //     if (codeSelectedInvalid.length > 3) {
-  //       codeSelectedInvalid = [...codeSelectedInvalid.slice(0, 3), "..."];
-  //     }
-
-  //     return toast.error(
-  //       `Đơn hàng ${codeSelectedInvalid.join(", ")} không thể hủy đơn.`,
-  //       {
-  //         autoClose: 5000,
-  //       }
-  //     );
-  //   }
-
-  //   const ids = selectedRowsLabel.map((item) => item.id);
-  //   const order_number = selectedRowsLabel.map((item) => item.order_number);
-
-  //   const payload = {
-  //     ids: ids,
-  //   };
-
-  //   try {
-  //     const result = await cancelPackages(payload);
-
-  //     if (!result || !result.success) {
-  //       return toast.error(result.message, {
-  //         autoClose: 3000,
-  //       });
-  //     }
-
-  //     toast.success(`Hủy đơn: ${order_number} thành công`, {
-  //       autoClose: 3000,
-  //     });
-  //     const { setPackages } = usePackageStore.getState();
-  //     const newPackages = await getListPackages(
-  //       1,
-  //       50,
-  //       "",
-  //       "",
-  //       undefined,
-  //       undefined,
-  //       undefined
-  //     );
-  //     setPackages(newPackages.packages);
-  //   } catch (error) {
-  //     toast.error("Đã xảy ra lỗi trong quá trình hủy đơn.", {
-  //       autoClose: 3000,
-  //     });
-  //   }
-  // };
-
   return (
     <>
+      <div className="w-full flex justify-center items-center gap-2 overflow-hidden py-2">
+        <span className="text-red-600 font-bold text-xl animate-pulse">!</span>
+        <div className="relative w-50% overflow-hidden bg-red-50">
+          <p className="whitespace-nowrap font-bold text-red-600 animate-marquee">
+            Mẫu excel import đơn được cập nhật vào 23:59 08/09/2025, vui lòng
+            tải lại mẫu mới khi import đơn!
+          </p>
+        </div>
+      </div>
       <PackageTableActions
         handleExport={handleExport}
         handleDownloadLabel={handlerDownloadLabels}

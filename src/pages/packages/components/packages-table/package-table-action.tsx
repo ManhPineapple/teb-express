@@ -32,7 +32,10 @@ export default function PackageTableActions({
 }: {
   handleExport: () => void;
   handleDownloadLabel: () => void;
-  handlePrintBarcode: (barcodeSource: "code" | "order_number", labelSource: "code" | "order_number") => void;
+  handlePrintBarcode: (
+    barcodeSource: "code" | "order_number",
+    labelSource: "code" | "order_number"
+  ) => void;
   handleTracking: () => void;
   // handleCancel: () => void;
   selectedRow: number[];
@@ -96,7 +99,7 @@ export default function PackageTableActions({
             >
               <Barcode className="mr-2 h-4 w-4" /> Tải xuống mã vạch AB
             </Button>
-                        <Button
+            <Button
               className="text-xs md:text-sm bg-[#8D181B]"
               onClick={() => handlePrintBarcode("order_number", "code")}
             >
