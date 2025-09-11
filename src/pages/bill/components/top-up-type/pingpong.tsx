@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const PingpongTopup: React.FC = () => {
-  const receiveTopupInfoEmail = "dovanchien87@gmail.com";
+  const receiveTopupInfoEmail = "payment@tebprint.com";
   const [transactionId, setTransactionId] = useState("");
   const [amount, setAmount] = useState("");
 
