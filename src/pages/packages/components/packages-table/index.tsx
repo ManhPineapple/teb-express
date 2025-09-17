@@ -401,7 +401,7 @@ export default function PackagesTable({
 
   return (
     <>
-      <div className="w-full flex justify-center items-center gap-2 overflow-hidden py-2">
+      {/* <div className="w-full flex justify-center items-center gap-2 overflow-hidden py-2">
         <span className="text-red-600 font-bold text-xl animate-pulse">!</span>
         <div className="relative w-50% overflow-hidden bg-red-50">
           <p className="whitespace-nowrap font-bold text-red-600 animate-marquee">
@@ -409,7 +409,7 @@ export default function PackagesTable({
             tải lại mẫu mới khi import đơn!
           </p>
         </div>
-      </div>
+      </div> */}
       <PackageTableActions
         handleExport={handleExport}
         handleDownloadLabel={handlerDownloadLabels}

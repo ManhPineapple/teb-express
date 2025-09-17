@@ -10,8 +10,9 @@ interface TabProps {
 
 const initTabs = [
   "All",
-  "Purchased",
   "Pending",
+  "Purchased",
+  "WeightScanned",
   "Pre-Transit",
   "In-Transit",
   "Delivered",
@@ -48,10 +49,11 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <button
-      className={`px-2 py-4 focus:outline-none text-sm font-medium whitespace-nowrap ${isSelected
+      className={`px-2 py-4 focus:outline-none text-sm font-medium whitespace-nowrap ${
+        isSelected
           ? "text-blue-500 border-b-2 border-blue-500"
           : "text-gray-500"
-        }`}
+      }`}
       onClick={handleClick}
     >
       {label}
@@ -76,6 +78,7 @@ const PackageTabs: React.FC<{ count: any }> = ({ count }) => {
     const statusMapping: Record<string, string> = {
       Pending: "pending",
       Purchased: "purchased",
+      WeightScanned: "weightscanned",
       "Pre-Transit": "pre-transit",
       "In-Transit": "in-transit",
       Delivered: "delivered",
