@@ -275,7 +275,7 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
   },
   {
     accessorKey: "scan_weight_at",
-    header: "Ngày cân mã vạch",
+    header: "Ngày cân đo máy",
     cell: ({ row }) => {
       return (
         <div className="capitalize font-medium">
@@ -299,20 +299,6 @@ export const columns = (packageListType: number): ColumnDef<TPackage>[] => [
       );
     },
   },
-  {
-    accessorKey: "last_print_label_at",
-    header: "Ngày in label",
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize font-medium">
-          {row.original.last_print_label_at
-            ? format(new Date(row.original.last_print_label_at), "dd/MM/yyyy")
-            : "N/A"}
-        </div>
-      );
-    },
-  },
-
   {
     accessorKey: "status_string",
     header: "Trạng thái",
