@@ -429,6 +429,13 @@ export function PackageDetailRegular() {
           <div className="">
             <div className=" sm:h-[200px] items-center justify-center p-6">
               <div className="border-b pb-3 font-bold ">Chi tiết đơn hàng:</div>
+
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Mã đơn hàng:
+                </div>
+                <div className="col-span-8">{packageDetail?.order_number}</div>
+              </div>
               <div className="grid grid-cols-12 my-2">
                 <div className="col-span-4 font-normal text-[#626363]">
                   Tên hàng hóa:
@@ -441,12 +448,7 @@ export function PackageDetailRegular() {
                 </div>
                 <div className="col-span-8"> {packageDetail?.detail}</div>
               </div>
-              <div className="grid grid-cols-12 mb-2">
-                <div className="col-span-4 font-normal text-[#626363]">
-                  Số đơn hàng:
-                </div>
-                <div className="col-span-8">{packageDetail?.order_number}</div>
-              </div>
+
               <div className="grid grid-cols-12 mb-2">
                 <div className="col-span-4 font-normal text-[#626363]">
                   Cân nặng:
@@ -471,14 +473,6 @@ export function PackageDetailRegular() {
                 </div>
                 <div className="col-span-8"> {packageDetail?.height} cm</div>
               </div>
-              <div className="grid grid-cols-12 mb-2">
-                <div className="col-span-4 font-normal text-[#626363]">
-                  Pin:
-                </div>
-                <div className="col-span-8">
-                  {packageDetail?.include_battery ? "Yes" : "No"}
-                </div>
-              </div>
               {(packageDetail?.service_name === "Ship by Tiktok" ||
                 packageDetail?.custom_tiktok_barcode) && (
                 <div className="grid grid-cols-12 mb-2">
@@ -497,6 +491,20 @@ export function PackageDetailRegular() {
                   </div>
                 </div>
               )}
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Số lượng:
+                </div>
+                <div className="col-span-8">
+                  {packageDetail?.package_quantity}
+                </div>
+              </div>
+              <div className="grid grid-cols-12 mb-2">
+                <div className="col-span-4 font-normal text-[#626363]">
+                  Giá tiền:
+                </div>
+                <div className="col-span-8"> {packageDetail?.product_price}</div>
+              </div>
             </div>
           </div>
           <div className="">
