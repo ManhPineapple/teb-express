@@ -9,6 +9,7 @@ import {
   processPackage,
 } from "@/services/packages";
 import JsBarcode from "jsbarcode";
+import jsPDF from "jspdf";
 import { PDFDocument } from "pdf-lib";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -269,80 +270,58 @@ export default function PackagesTable({
       tracking_number: x.tracking_number,
     }));
 
-    // Check if all barcodes would be empty
     const allBarcodesEmpty = selectedItems.every(
-      (item) => item[barcodeSource] === ""
+      (item) => !item[barcodeSource]
     );
-
     if (allBarcodesEmpty) {
-      toast.error("Đơn hàng đã chọn không có mã vạch!", { autoClose: 3000 });
+      toast.error("Đơn hàng đã chọn không có mã vạch!", {
+        autoClose: 3000,
+      });
       return;
     }
 
-    const barcodeHTMLBlocks: string[] = [];
+    const doc = new jsPDF({ orientation: "landscape", format: [170, 85] });
 
-    for (const item of selectedItems) {
+    selectedItems.forEach((item, index) => {
       const barcodeValue = item[barcodeSource];
       const labelValue = item[labelSource] || "N/A";
 
-      if (!barcodeValue) continue;
+      if (!barcodeValue) return;
 
       const canvas = document.createElement("canvas");
       JsBarcode(canvas, barcodeValue, {
         format: "CODE128",
         displayValue: true,
-        fontSize: 18,
-        height: 70,
+        fontSize: 20,
+        height: 50,
         width: 2,
         margin: 0,
       });
 
       const imageDataUrl = canvas.toDataURL("image/png");
+      doc.setFontSize(20);
+      doc.text(labelValue, 85, 15, { align: "center" });
+      doc.addImage(imageDataUrl, "PNG", 20, 25, 130, 40);
 
-      barcodeHTMLBlocks.push(`
-      <div style="text-align: center; margin-bottom: 40px;">
-        <div style="font-size: 14px; margin-bottom: 5px;">${labelValue}</div>
-        <img src="${imageDataUrl}" style="height: 80px;" />
-      </div>
-    `);
-    }
+      if (index < selectedItems.length - 1) {
+        doc.addPage();
+      }
+    });
 
-    if (barcodeHTMLBlocks.length === 0) {
-      toast.error("Không có mã vạch nào được tạo!", { autoClose: 3000 });
-      return;
-    }
+    // Open PDF in new tab and trigger print
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
 
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open(pdfUrl);
     if (!printWindow) {
       toast.error("Không thể mở cửa sổ in!", { autoClose: 3000 });
       return;
     }
 
-    printWindow.document.write(`
-    <html>
-      <head>
-        <title>In mã vạch</title>
-        <style>
-          @media print {
-            body {
-              margin: 20px;
-              font-family: Arial, sans-serif;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        ${barcodeHTMLBlocks.join("")}
-        <script>
-          window.onload = function() {
-            window.print();
-          };
-        </script>
-      </body>
-    </html>
-  `);
-
-    printWindow.document.close();
+    printWindow.onload = function () {
+      printWindow.focus();
+      printWindow.print();
+    };
   };
 
   const handleActionWayBill = async () => {
