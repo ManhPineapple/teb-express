@@ -1,9 +1,5 @@
 import DataTable from "@/components/shared/data-table";
 import {
-  PACKAGE_STATUS_CREATED_TEXT,
-  PACKAGE_STATUS_PURCHASED_TEXT,
-} from "@/constants/packages";
-import {
   fetchLabel,
   getExportedFile,
   processPackage,
@@ -325,31 +321,26 @@ export default function PackagesTable({
   };
 
   const handleActionWayBill = async () => {
-    const selectedInvalid = selectedRowsLabel.filter(
-      (ele) =>
-        ele.status_string !== PACKAGE_STATUS_CREATED_TEXT &&
-        ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
-    );
-
-    if (selectedInvalid.length > 0) {
-      let codeSelectedInvalid = selectedInvalid.map((ele) => ele.order_number);
-
-      if (codeSelectedInvalid.length > 3) {
-        codeSelectedInvalid = [...codeSelectedInvalid.slice(0, 3), "..."];
-      }
-
-      toast.error(
-        `Đơn hàng ${codeSelectedInvalid.join(", ")} không thể tạo mã theo dõi.`,
-        {
-          autoClose: 5000,
-        }
-      );
-
-      return;
-    }
+    // const selectedInvalid = selectedRowsLabel.filter(
+    //   (ele) =>
+    //     ele.status_string !== PACKAGE_STATUS_CREATED_TEXT &&
+    //     ele.status_string !== PACKAGE_STATUS_PURCHASED_TEXT
+    // );
+    // if (selectedInvalid.length > 0) {
+    //   let codeSelectedInvalid = selectedInvalid.map((ele) => ele.order_number);
+    //   if (codeSelectedInvalid.length > 3) {
+    //     codeSelectedInvalid = [...codeSelectedInvalid.slice(0, 3), "..."];
+    //   }
+    //   toast.error(
+    //     `Đơn hàng ${codeSelectedInvalid.join(", ")} không thể tạo mã theo dõi.`,
+    //     {
+    //       autoClose: 5000,
+    //     }
+    //   );
+    //   return;
+    // }
 
     const ids = selectedRowsLabel.map((item) => item.id);
-
     const params = {
       ids: ids,
       coupon_user_id: null,
