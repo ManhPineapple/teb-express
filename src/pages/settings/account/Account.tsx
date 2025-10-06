@@ -1,7 +1,7 @@
 import PageHead from "@/components/shared/page-head";
 import { userService } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Copy, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -28,6 +28,13 @@ const Account: React.FC = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKey, setApiKey] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(apiKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -82,23 +89,54 @@ const Account: React.FC = () => {
                 type={showApiKey ? "text" : "password"}
                 value={apiKey}
                 readOnly
-                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-opacity-50 pr-10"
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-opacity-50 pr-20"
               />
+
+              {/* Buttons */}
+              <div className="absolute inset-y-0 right-0 flex items-center space-x-1 pr-2">
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="p-1 text-gray-500 hover:text-gray-700"
+                >
+                  {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="p-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <Copy size={18} />
+                  </button>
+
+                  {copied && (
+                    <div className="absolute bottom-full mb-2 right-0 bg-green-500 text-white text-xs px-2 py-1 rounded-md shadow-md animate-fadeIn whitespace-nowrap">
+                      API key is copied to clipboard
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3 mt-4">
               <button
                 type="button"
-                onClick={() => setShowApiKey(!showApiKey)}
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500"
+                onClick={handleResetToken}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
               >
-                {showApiKey ? <EyeOff /> : <Eye />}
+                Reset Token
               </button>
+
+              <a
+                href="https://www.postman.com/descent-module-architect-70215079/my-workspace/collection/iufb217/ananbay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                API documentations
+              </a>
             </div>
-            <button
-              type="button"
-              onClick={handleResetToken}
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
-            >
-              Reset Token
-            </button>
           </div>
         </div>
 
