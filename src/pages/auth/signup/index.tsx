@@ -197,8 +197,13 @@ const SignUp: React.FC = () => {
               Yêu cầu của bạn đã được gửi
             </div>
             <p className="text-center thank_use_sevice">
-              Cảm ơn bạn đã sử dụng dịch vụ của Ananbay. Chúng tôi sẽ liên hệ với
-              bạn sớm để thiết lập tài khoản.
+              Cảm ơn bạn đã sử dụng dịch vụ của Ananbay. Chúng tôi sẽ liên hệ
+              với bạn sớm để thiết lập tài khoản.
+            </p>
+            <p className="text-center text-sm text-gray-600 mt-2">
+              Hoặc liên hệ
+              <span className="mx-1 font-medium text-[#008A7F]">0782.374.341</span>
+              để được hỗ trợ xử lý sớm hơn.
             </p>
           </div>
         </div>
