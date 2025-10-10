@@ -25,13 +25,19 @@ export const navItems: NavItem[] = [
         icon: "shopping",
         label: "Đơn hàng Trung Quốc",
       },
+      {
+        title: "Đơn hàng FBA",
+        href: "/shipments",
+        icon: "shopping",
+        label: "Đơn hàng FBA",
+      },
     ],
   },
   {
     title: "Hóa đơn",
     icon: "billing",
     href: "/bill",
-    label: "Hóa đơn"
+    label: "Hóa đơn",
   },
   {
     title: "Lưu kho",

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MAP_SHIPMENT_STATUS } from "@/constants/shipments";
-import { getListShipmentItems, getShipmentsDetail } from "@/services/shipments";
+import { getListShipmentItems, getShipmentDetail } from "@/services/shipments";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -70,7 +70,7 @@ export default function ShipmentDetail() {
     const fetchPackageDetail = async () => {
       try {
         if (id) {
-          const data = await getShipmentsDetail(id);
+          const data = await getShipmentDetail(id);
           setShipmentsDetail(data.shipment);
           setTotalAmount(data.total_amount);
         }

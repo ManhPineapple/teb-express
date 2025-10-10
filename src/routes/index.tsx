@@ -65,6 +65,10 @@ export default function AppRouter() {
           element: <ChinaPackage />,
         },
         {
+          path: "/packages-fba",
+          element: <Shipments />,
+        },
+        {
           path: "/package/details/:package_id",
           element: <PackageDetailRegular />,
         },
