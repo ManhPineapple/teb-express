@@ -77,29 +77,6 @@ export default function PackagesTable({
     document.body.removeChild(link);
   };
 
-  // const openPrintWindow = (file: File) => {
-  //   return new Promise<void>((resolve) => {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: any) => {
-  //       const imgData = e.target.result;
-  //       const pdf = new jsPdfLib.jsPDF();
-  //       pdf.addImage(imgData, "JPEG", 10, 10, 190, 0);
-  //       const pdfOutput = pdf.output("blob");
-  //       const url = URL.createObjectURL(pdfOutput);
-
-  //       const pdfWindow = window.open(url, "_blank");
-  //       if (pdfWindow) {
-  //         pdfWindow.onload = () => {
-  //           pdfWindow.print();
-  //         };
-  //       } else {
-  //         resolve();
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   });
-  // };
-
   function openPrintWindow(files: { blob: Blob; type: string }[]) {
     return new Promise<void>((resolve) => {
       async function processFiles() {

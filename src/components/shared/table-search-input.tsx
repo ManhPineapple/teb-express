@@ -31,7 +31,7 @@ export default function TableSearchInput({
   );
   return (
     <Input
-      placeholder={placeholder || `Tìm mã đơn hàng...`}
+      placeholder={placeholder || `Tìm theo mã đơn/mã AB/mã tracking/tên người nhận...`}
       value={searchTerm}
       onChange={(event) => setSearchTerm(event.target.value)}
       onKeyDown={(event) =>

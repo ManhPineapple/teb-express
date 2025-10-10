@@ -65,7 +65,7 @@ export default function PackageTableActions({
   return (
     <div className="xl:flex items-center justify-between py-5 max-xl:flex-wrap">
       <div className="flex flex-1 gap-4 max-xl:mb-3">
-        <TableSearchInput placeholder="Tìm mã đơn hàng" />
+        <TableSearchInput placeholder="Tìm theo mã đơn/mã AB/mã tracking/tên người nhận" />
         {selectedRow.length > 0 && (
           <div className="mt-1.5">
             <p>
