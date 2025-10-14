@@ -30,6 +30,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { FolderDown } from "lucide-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -205,11 +206,12 @@ export function Shipments() {
           className="max-w-full mr-3 h-[40px]"
         />
         <Button
-          className="bg-[#00978c] ml-3 h-[40px] font-bold"
+          className="text-xs md:text-sm bg-[#776ca8]"
           onClick={() => setShowImportModal(true)}
         >
-          Import Excel
+          <FolderDown className="mr-2 h-4 w-4" /> Nhập dữ liệu
         </Button>
+
         <DropdownMenu>
           <DropdownMenuContent align="end">
             {table

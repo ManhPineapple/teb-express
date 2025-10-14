@@ -341,11 +341,7 @@ export default function PackagesTable({
         <span className="text-red-600 font-bold text-xl animate-pulse">!</span>
         <div className="relative w-50% overflow-hidden bg-red-50">
           <p className="whitespace-nowrap font-bold text-red-600 animate-marquee">
-            Căn cứ Nghị quyết 204/2025/QH15 của Quốc hội và Nghị định
-            174/2025/NĐ‑CP của Chính phủ, từ 10:37 ngày 02/10/2025, ANANBAY áp
-            dụng phụ phí thuế VAT 8% trên tổng chi phí đơn hàng. Phụ phí áp dụng
-            cho tất cả đơn được tạo sau thời điểm này. Kính mong Quý khách thông
-            cảm và tiếp tục đồng hành cùng ANANBAY!
+            Mẫu file Import đơn đã được cập nhật vào 16:17 14/10/2025. Hãy tải về mẫu mới trước khi tải đơn lên hệ thống. Xin cảm ơn!
           </p>
         </div>
       </div>
