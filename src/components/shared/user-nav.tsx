@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { userService } from "@/services/auth";
+import { getUserInfo } from "@/services/auth";
 import { useEffect, useState } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 
@@ -20,12 +20,12 @@ export default function UserNav() {
 
     window.location.href = "/login";
   };
-  const getUserInfo = async () => {
-    const response = await userService.getUserInfo();
+  const getUserData = async () => {
+    const response = await getUserInfo();
     setUserInfo(response.user);
   };
   useEffect(() => {
-    getUserInfo();
+    getUserData();
   }, []);
 
   return (

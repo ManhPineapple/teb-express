@@ -37,7 +37,7 @@ import {
 } from "@/services/bill";
 import saveAs from "file-saver";
 import { Link, useSearchParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { BillDatePickerWithRange } from "../bill-datepicker";
 
 export type Payment = {
@@ -148,16 +148,12 @@ const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const handleDownloadBill = async () => {
-        try {
-          const downloadUrl = await getInvoiceDownloadUrl(row.original.code);
-          const invoiceToPrint = await getInvoice(downloadUrl);
-          const blob = new Blob([invoiceToPrint], {
-            type: "application/pdf",
-          });
-          saveAs(blob, `payment_receipt_${row.original.code}`);
-        } catch (e: any) {
-          toast.error(e.response.data || e.message);
-        }
+        const downloadUrl = await getInvoiceDownloadUrl(row.original.code);
+        const invoiceToPrint = await getInvoice(downloadUrl);
+        const blob = new Blob([invoiceToPrint], {
+          type: "application/pdf",
+        });
+        saveAs(blob, `payment_receipt_${row.original.code}`);
       };
 
       return (
@@ -262,9 +258,9 @@ export function ManagementTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -303,7 +299,7 @@ export function ManagementTable() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} trong {" "}
+          {table.getFilteredSelectedRowModel().rows.length} trong{" "}
           {table.getFilteredRowModel().rows.length} dòng được chọn.
         </div>
         <div className="space-x-2">

@@ -1,91 +1,78 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
-// 🧾 Get list of shipments
-export async function getListShipments(params?: Record<string, any>) {
+export const getListShipments = async (params?: Record<string, any>) => {
   try {
-    const res = await CustomAxios.get("/shipments", { params });
-    return res.data;
+    const { data } = await CustomAxios.get("/shipments", { params });
+    return data;
   } catch (error) {
-    console.log("Error fetching shipments:", error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách lô hàng");
   }
-}
+};
 
-// 🔢 Count shipments
-export async function countShipments() {
+export const countShipments = async () => {
   try {
-    const res = await CustomAxios.get("/shipments/count");
-    return res.data;
+    const { data } = await CustomAxios.get("/shipments/count");
+    return data;
   } catch (error) {
-    console.log("Error counting shipments:", error);
-    return error;
+    return handleAxiosError(error, "Không thể đếm số lượng lô hàng");
   }
-}
+};
 
-// 📦 Get shipment detail
-export async function getShipmentDetail(id: string | number) {
+export const getShipmentDetail = async (id: string | number) => {
   try {
-    const res = await CustomAxios.get(`/shipments/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/shipments/${id}`);
+    return data;
   } catch (error) {
-    console.log("Error fetching shipment detail:", error);
-    return error;
+    return handleAxiosError(error, "Không thể tải chi tiết lô hàng");
   }
-}
+};
 
-// ✅ Fulfill a shipment
-export async function fulfillShipment(id: string | number) {
+export const fulfillShipment = async (id: string | number) => {
   try {
-    const res = await CustomAxios.post(`/shipments/fulfill/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.post(`/shipments/fulfill/${id}`);
+    return data;
   } catch (error) {
-    console.log("Error fulfilling shipment:", error);
-    return error;
+    return handleAxiosError(error, "Không thể xác nhận lô hàng");
   }
-}
+};
 
-// ❌ Cancel a shipment
-export async function cancelShipment(id: string | number) {
+export const cancelShipment = async (id: string | number) => {
   try {
-    const res = await CustomAxios.put(`/shipments/cancel/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.put(`/shipments/cancel/${id}`);
+    return data;
   } catch (error) {
-    console.log("Error cancelling shipment:", error);
-    return error;
+    return handleAxiosError(error, "Không thể hủy lô hàng");
   }
-}
+};
 
-// 📦 Get list of shipment items
-export async function getListShipmentItems(id: string | number) {
+export const getListShipmentItems = async (id: string | number) => {
   try {
-    const res = await CustomAxios.get(`/shipments/items/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/shipments/items/${id}`);
+    return data;
   } catch (error) {
-    console.log("Error fetching shipment items:", error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách kiện hàng");
   }
-}
+};
 
-// 🔢 Count shipment items
-export async function countShipmentItems(id: string | number) {
+export const countShipmentItems = async (id: string | number) => {
   try {
-    const res = await CustomAxios.get(`/shipments/items/count/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/shipments/items/count/${id}`);
+    return data;
   } catch (error) {
-    console.log("Error counting shipment items:", error);
-    return error;
+    return handleAxiosError(error, "Không thể đếm số lượng kiện hàng");
   }
-}
+};
 
-// 📤 Import shipment via Excel (similar to Import package FBA)
-export async function importShipmentXlsx(formData: FormData) {
+export const importShipmentXlsx = async (formData: FormData) => {
   try {
-    const res = await CustomAxios.post("/packages/import/fba", formData, {
+    const { data } = await CustomAxios.post("/packages/import/fba", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    return res.data;
-  } catch (error) {
-    console.log("Error importing shipment Excel:", error);
-    return error;
+    return data;
+  } catch (error: any) {
+    if (error?.code === "ERR_NETWORK") return { isNetworkError: true };
+    if (error?.response?.status === 504) return { isTimeout: true };
+    return handleAxiosError(error, "Lỗi khi nhập file Excel");
   }
-}
+};

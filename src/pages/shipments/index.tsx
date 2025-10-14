@@ -33,6 +33,7 @@ import { format } from "date-fns";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import ImportShipmentForm from "./components/ImportShipmentForm";
 
 type Shipment = {
@@ -74,19 +75,14 @@ export function Shipments() {
 
   const handleFulfillShipment = async (id: number) => {
     setLoadingId(id);
-    try {
-      const res = await fulfillShipment(id);
-      alert("Shipment fulfilled successfully!");
-      console.log("Fulfill response:", res);
-      // Optionally re-fetch shipments
-      const shipments = await getListShipments();
-      setData(shipments.shipments);
-    } catch (error) {
-      console.error("Error fulfilling shipment:", error);
-      alert("Failed to fulfill shipment.");
-    } finally {
-      setLoadingId(null);
-    }
+
+    const res = await fulfillShipment(id);
+    toast.success(res);
+
+    const shipments = await getListShipments();
+    setData(shipments.shipments);
+
+    setLoadingId(null);
   };
 
   const columns: ColumnDef<Shipment>[] = [

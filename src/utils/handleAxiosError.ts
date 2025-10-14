@@ -1,22 +1,24 @@
-import { isAxiosError } from 'axios';
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
-export function handleAxiosError<T>(error: unknown, customErrorMessage?: string): T {
-  let errorMessage = customErrorMessage || 'Unknown Error';
+export function handleAxiosError(err: unknown, customErrorMessage?: string) {
+  const defaultMessage = customErrorMessage || "Có lỗi xảy ra!";
 
-  if (isAxiosError<T>(error)) {
-    if (error.response) {
-      return error.response.data;
+  if (isAxiosError(err) && err.response) {
+    const data = err.response.data;
+
+    if (typeof data === "object" && data?.error) {
+      toast.error(data.error);
+      return;
     }
 
-    errorMessage = error.message;
+    if (typeof data === "string") {
+      toast.error(data);
+      return;
+    }
   }
 
-  // eslint-disable-next-line no-console
-  console.error(error);
-
-  return {
-    success: false,
-    message: errorMessage,
-    data: null,
-  } as any;
+  console.error("Unhandled error:", err);
+  toast.error(defaultMessage);
+  return err
 }

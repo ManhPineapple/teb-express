@@ -1,5 +1,5 @@
 import PageHead from "@/components/shared/page-head";
-import { userService } from "@/services/auth";
+import { getToken, resetToken, updateUser } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Copy, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,36 +38,26 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     const fetchToken = async () => {
-      try {
-        const token = await userService.getToken();
-        setApiKey(token);
-      } catch (error: any) {
-        toast.error(error.message || "Không thể lấy API key");
-      }
+      const token = await getToken();
+      if (token) setApiKey(token);
     };
     fetchToken();
   }, []);
 
   const onSubmit = async (data: FormData) => {
-    try {
-      await userService.updateUser({
-        password: data.password,
-        newPassword: data.newPassword,
-        name: data.name,
-      });
-      toast.success("Cập nhật thành công");
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
-    }
+    const res = await updateUser({
+      password: data.password,
+      newPassword: data.newPassword,
+      name: data.name,
+    });
+    if (res.user) toast.success("Cập nhật thành công");
   };
 
   const handleResetToken = async () => {
-    try {
-      const newToken = await userService.resetToken();
+    const newToken = await resetToken();
+    if (newToken) {
       setApiKey(newToken);
       toast.success("API key đã được tạo lại");
-    } catch (error: any) {
-      toast.error(error.message || "Không thể reset API key");
     }
   };
 

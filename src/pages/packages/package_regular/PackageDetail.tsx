@@ -272,7 +272,7 @@ export function PackageDetailRegular() {
       });
     } catch (error) {
       console.error("Error generating barcode:", error);
-      toast.error("Error generating barcode", {
+      toast.error("Lỗi khi tạo barcode, hãy thử lại sau", {
         autoClose: 3000,
       });
     }
@@ -285,11 +285,11 @@ export function PackageDetailRegular() {
     });
 
     if (files.length > 0) {
-      toast.success("Barcodes downloaded successfully!", {
+      toast.success("Tải xuống mã vạch thành công", {
         autoClose: 3000,
       });
     } else {
-      toast.error("No barcodes generated!", {
+      toast.error("Không có mã vạch nào được tạo", {
         autoClose: 3000,
       });
     }

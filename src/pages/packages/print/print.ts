@@ -4,7 +4,7 @@ export const extension = (str: string): string => {
   return arr[1].toLowerCase();
 };
 
-import { CustomAxios } from "@/utils/customAxios";
+import { fetchLabel } from "@/services/packages";
 
 interface PrintImageOptions {
   name: string;
@@ -141,11 +141,7 @@ export async function prints(url: string) {
   }
 
   try {
-    const res = await CustomAxios.get(
-      `/uploads/file-export/download?type=labels&url=${url}`,
-      { responseType: "blob" }
-    );
-
+    const res = await fetchLabel({url: url, type: "labels"})
     const src = (window.webkitURL || window.URL).createObjectURL(res.data);
 
     if (ext === "pdf") {

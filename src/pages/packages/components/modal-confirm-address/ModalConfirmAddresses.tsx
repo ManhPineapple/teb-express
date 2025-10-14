@@ -9,9 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { validateAddress } from "@/services/packages";
+import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { TriangleAlert } from "lucide-react";
 
 type AddressProps = {
   selectedRowsLabel: any[];
@@ -57,10 +57,6 @@ export function ModalConfirmAddresses({ selectedRowsLabel }: AddressProps) {
   const order_number = selectedRowsLabel
     .filter((item) => item.validate_address === 0)
     .map((item) => item.order_number);
-
-  const address = selectedRowsLabel
-    .filter((item) => item.validate_address === 0)
-    .map((item) => item.address_1);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

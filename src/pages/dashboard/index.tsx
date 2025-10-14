@@ -1,10 +1,4 @@
 import PageHead from "@/components/shared/page-head";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Box, PackageCheck, PackageX, Plane, Search } from "lucide-react";
-import OrderStatsChart from "./components/overview";
-
 import {
   PACKAGE_STATUS_CANCELLED,
   PACKAGE_STATUS_CREATED,
@@ -28,160 +22,122 @@ import { ChartBackUp } from "./components/barChart";
 
 type TimeFrame = "d7" | "d14" | "d30";
 
-type Analytic = {
+interface Analytic {
   status: number;
-  status_text: number;
   count: number;
   date_time: string;
-};
+}
 
-type DataValues = {
+interface DataValues {
   created: number[];
   pendingPickup: number[];
   intransit: number[];
   delivered: number[];
   returned: number[];
   cancelled: number[];
-  processing: number[];
-};
+}
 
 const DashboardPage: React.FC = () => {
-  const [time, setTime] = useState<TimeFrame>();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const startDate = searchParams.get("start_date")
-    ? //@ts-ignore
-    new Date(searchParams.get("start_date"))
-    : new Date(new Date().getTime() - 14 * 86400 * 1000);
-  const endDate = searchParams.get("end_date")
-    ? //@ts-ignore
-    new Date(searchParams.get("end_date"))
-    : new Date();
 
-  const formattedStartDate = startDate.toISOString().split("T")[0];
-  const formattedEndDate = endDate.toISOString().split("T")[0];
-
-  // Function to calculate start and end dates based on selected time
-  useEffect(() => {
-    if (!time) return;
-
-    const today = new Date();
-    let daysToAdd = 0;
-
-    switch (time) {
-      case "d7":
-        daysToAdd = 7;
-        break;
-      case "d14":
-        daysToAdd = 14;
-        break;
-      case "d30":
-        daysToAdd = 30;
-        break;
-      // default:
-      //   daysToAdd = 14; // Default to 14 days if none is selected
-      //   break;
-    }
-
-    const start = new Date(today);
-    start.setDate(today.getDate() - daysToAdd + 1); // Calculate start date
-
-    setSearchParams({
-      start_date: start.toISOString().split("T")[0], // format yyyy-mm-dd
-      end_date: today.toISOString().split("T")[0],
-    });
-  }, [time]);
-
-  useEffect(() => {
-    const startDaysAgo =
-      (new Date().getTime() - startDate.getTime()) / (1000 * 86400);
-    if (startDaysAgo <= 7) {
-      setTime("d7");
-    } else if (startDaysAgo <= 14) {
-      setTime("d14");
-    } else {
-      setTime("d30");
-    }
-  }, [formattedStartDate]);
-
+  const [time, setTime] = useState<TimeFrame>("d14");
   const [analytics, setAnalytics] = useState<Analytic[]>([]);
-  const [chartData, setChartData] = useState<any>(null);
-
-  const initNumbers = {
-    created: 0,
-    pendingPickup: 0,
-    intransit: 0,
-    delivered: 0,
-    returned: 0,
-    cancelled: 0,
-    processing: 0,
-  };
-  const [numbers, setNumbers] = useState(initNumbers);
-
-  const [datavalues, setDatavalues] = useState<DataValues>({
+  const [dataValues, setDataValues] = useState<DataValues>({
     created: [],
     pendingPickup: [],
     intransit: [],
     delivered: [],
     returned: [],
     cancelled: [],
-    processing: [],
   });
 
+  // ⏱ Parse date range
+  const startDate = searchParams.get("start_date")
+    ? new Date(searchParams.get("start_date")!)
+    : new Date(Date.now() - 14 * 86400 * 1000);
+  const endDate = searchParams.get("end_date")
+    ? new Date(searchParams.get("end_date")!)
+    : new Date();
+
+  const formattedStartDate = startDate.toISOString().split("T")[0];
+  const formattedEndDate = endDate.toISOString().split("T")[0];
+
+  // 🧭 Update URL when time range changes
   useEffect(() => {
-    const fetchData = async () => {
+    if (!time) return;
+
+    const today = new Date();
+    const range = { d7: 7, d14: 14, d30: 30 }[time];
+    const start = new Date(today);
+    start.setDate(today.getDate() - range + 1);
+
+    setSearchParams({
+      start_date: start.toISOString().split("T")[0],
+      end_date: today.toISOString().split("T")[0],
+    });
+  }, [time]);
+
+  // 🧮 Determine timeframe from startDate
+  useEffect(() => {
+    const daysDiff =
+      (Date.now() - startDate.getTime()) / (1000 * 86400);
+
+    if (daysDiff <= 7) setTime("d7");
+    else if (daysDiff <= 14) setTime("d14");
+    else setTime("d30");
+  }, [formattedStartDate]);
+
+  // 📊 Fetch analytics
+  useEffect(() => {
+    const loadAnalytics = async () => {
       try {
-        const analytics = await fetchAnalytics(
-          formattedStartDate,
-          formattedEndDate
-        );
-        setAnalytics(analytics.package_analytics);
+        const res = await fetchAnalytics(formattedStartDate, formattedEndDate);
+        setAnalytics(res.package_analytics);
       } catch (error) {
         console.error("Error fetching analytics:", error);
       }
     };
-
-    fetchData();
+    loadAnalytics();
   }, [formattedStartDate, formattedEndDate]);
 
+  // 📅 Generate list of days between start and end
   const days = useMemo(() => {
-    const num =
-      (endDate.getTime() -
-        (startDate ? startDate.getTime() : endDate.getTime())) /
-      (1000 * 3600 * 24) +
-      1;
+    const diff =
+      (endDate.getTime() - startDate.getTime()) / (1000 * 86400) + 1;
     const result: string[] = [];
-    const date = new Date(endDate);
-    for (let i = 0; i < num; i++) {
-      const m = date.getMonth() + 1;
-      const d = date.getDate();
-      result[num - i - 1] = `${d > 9 ? d : "0" + d}/${m > 9 ? m : "0" + m}`;
-      date.setDate(date.getDate() - 1);
+    const temp = new Date(endDate);
+    for (let i = 0; i < diff; i++) {
+      const d = temp.getDate().toString().padStart(2, "0");
+      const m = (temp.getMonth() + 1).toString().padStart(2, "0");
+      result[diff - i - 1] = `${d}/${m}`;
+      temp.setDate(temp.getDate() - 1);
     }
     return result;
-  }, []);
+  }, [startDate, endDate]);
 
+  // 🧠 Process analytics data
   useEffect(() => {
-    createBaseData();
+    const baseData = Object.keys(dataValues).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: Array(days.length).fill(0),
+      }),
+      {} as DataValues
+    );
 
-    if (!analytics || analytics.length === 0) return;
-
-    const newNumbers = { ...initNumbers };
-    const newDatavalues = { ...datavalues };
-
+    const updated = { ...baseData };
     for (const v of analytics) {
-      const day = dateToDay(v.date_time);
-      const index = days.findIndex((item) => item === day);
-      if (index === -1) continue;
+      const day = formatDateLabel(v.date_time);
+      const idx = days.indexOf(day);
+      if (idx === -1) continue;
 
-      const count = v.count;
       switch (v.status) {
         case PACKAGE_STATUS_CREATED:
-          newNumbers.created += count;
-          newDatavalues.created[index] += count;
+          updated.created[idx] += v.count;
           break;
         case PACKAGE_STATUS_PENDING_PICKUP:
-          newNumbers.pendingPickup += count;
-          newDatavalues.pendingPickup[index] += count;
+          updated.pendingPickup[idx] += v.count;
           break;
         case PACKAGE_STATUS_PICKED:
         case PACKAGE_STATUS_WAREHOUSE_LABELED:
@@ -192,279 +148,83 @@ const DashboardPage: React.FC = () => {
         case PACKAGE_STATUS_EXPORT_HUB:
         case PACKAGE_STATUS_INTRANSIT:
         case PACKAGE_STATUS_RESHIP:
-          newNumbers.intransit += count;
-          newDatavalues.intransit[index] += count;
+          updated.intransit[idx] += v.count;
           break;
         case PACKAGE_STATUS_DELIVERED:
-          newNumbers.delivered += count;
-          newDatavalues.delivered[index] += count;
+          updated.delivered[idx] += v.count;
           break;
         case PACKAGE_STATUS_RETURNED:
-          newNumbers.returned += count;
-          newDatavalues.returned[index] += count;
+          updated.returned[idx] += v.count;
           break;
         case PACKAGE_STATUS_CANCELLED:
-          newNumbers.cancelled += count;
-          newDatavalues.cancelled[index] += count;
+          updated.cancelled[idx] += v.count;
           break;
       }
     }
 
-    setNumbers(newNumbers);
-    setDatavalues(newDatavalues);
-    fillData(newDatavalues, days);
-  }, [days, analytics]);
+    setDataValues(updated);
+  }, [analytics, days]);
 
-  const dateToDay = (date: string) => {
-    const d = date.substr(-2, 2);
-    const m = date.substr(5, 2);
+  // 🔢 Helpers
+  const formatDateLabel = (date: string) => {
+    const d = date.slice(-2);
+    const m = date.slice(5, 7);
     return `${d}/${m}`;
   };
 
-  const fillData = (datavalues: any, days: string[]) => {
-    setChartData({
-      labels: days,
-      datasets: [
-        {
-          label: "Delivered",
-          borderColor: "#48BE78",
-          borderWidth: 1,
-          backgroundColor: "#F0FFF3",
-          data: datavalues.delivered,
-        },
-        {
-          label: "In-transit",
-          borderColor: "#02baba",
-          borderWidth: 1,
-          backgroundColor: "#ddf3f4",
-          data: datavalues.intransit,
-        },
-      ],
-    });
-  };
+  const formatChartData = useMemo(() => {
+    const year = new Date().getFullYear();
+    return days.map((d, i) => ({
+      date: `${year}-${d.split("/").reverse().join("-")}`,
+      intransit: dataValues.intransit[i],
+      delivered: dataValues.delivered[i],
+      pretransit: dataValues.pendingPickup[i],
+    }));
+  }, [days, dataValues]);
 
-  const createBaseData = () => {
-    for (const key in datavalues) {
-      if (!Object.hasOwnProperty.call(datavalues, key)) continue;
-      datavalues[key as keyof DataValues] = [];
-      for (let i = 0; i < days.length; i++) {
-        datavalues[key as keyof DataValues].push(0);
-      }
-    }
-  };
+  const goListPackage = (status: string) => {
+    const mapDays = { d7: 7, d14: 14, d30: 30 };
+    const daysRange = mapDays[time] || 14;
 
-  const options = {
-    responsive: true,
-    interaction: {
-      mode: "index" as const,
-      intersect: false,
-    },
-    stacked: false,
-    plugins: {
-      title: {
-        display: true,
-      },
-    },
-    scales: {
-      y: {
-        type: "linear" as const,
-        display: true,
-        position: "left" as const,
-      },
-      y1: {
-        type: "linear" as const,
-        display: true,
-        position: "right" as const,
-        grid: {
-          drawOnChartArea: false,
-        },
-      },
-    },
-  };
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - daysRange + 1);
 
-  const navigate = useNavigate();
-
-  const searchHandle = (e: any) => {
-    const keyword = e.target.value.trim();
-    if (keyword === "") return;
-
-    navigate({ pathname: "/packages", search: `?code=${keyword}` });
-  };
-
-  const handleKeyDown = (e: any) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchHandle(e);
-    }
-  };
-
-  const dateformat = (date: Date) => {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-    const dd = String(date.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
-  const goListpackage = (status: string) => {
-    const mapdays = { d7: 7, d14: 14, d30: 30 };
-    //@ts-ignore
-    const num = mapdays[time] || 14;
-
-    const t = new Date();
-    const ed = dateformat(t);
-
-    t.setDate(t.getDate() - num + 1);
-    const sd = dateformat(t);
+    const format = (d: Date) =>
+      `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 
     navigate({
       pathname: "/packages",
-      search: `?status=${status}&start_date=${sd}&end_date=${ed}`,
+      search: `?status=${status}&start_date=${format(start)}&end_date=${format(end)}`,
     });
   };
-
-  interface TransformedDataItem {
-    date: string;
-  }
-
-  const transformedData: TransformedDataItem[] = days.map((item, index) => {
-    const year = new Date().getFullYear();
-    const formattedDate = `${year}-${item.split("/").reverse().join("-")}`;
-
-    return {
-      date: formattedDate,
-    };
-  });
-
-  const formatChartData = () => {
-    const labels = transformedData;
-    const intransitData = datavalues.intransit;
-    const deliveredData = datavalues.delivered;
-    const pretransitData = datavalues.pendingPickup;
-
-    const formattedChartData = labels.map((label: any, index: number) => ({
-      date: label.date,
-      intransit: intransitData[index],
-      delivered: deliveredData[index],
-      pretransit: pretransitData[index],
-    }));
-
-    return formattedChartData;
-  };
-
-  const formattedData = formatChartData();
 
   return (
     <>
       <PageHead title="Dashboard | Ananbay" />
-      <div className="">
-        <div className="p-4 pt-6 md:p-8 max-w-full mx-auto">
-          <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Chào mừng quay trở lại 👋
-            </h2>
-            <div className="actions">
-              <select
-                defaultValue={"d14"}
-                value={time}
-                onChange={(e) => setTime(e.target.value as TimeFrame)}
-                className="rounded-xl border bg-[#fff] px-3 pb-[7px] pt-[3px] leading-[2.2rem] text-[#626363]"
-              >
-                <option selected value=""></option>
-                <option value="d7">7 ngày gần đây</option>
-                <option value="d14">14 ngày gần đây</option>
-                <option value="d30">30 ngày gần đây</option>
-              </select>
-              {startDate && (
-                <p>
-                  {startDate.toLocaleDateString()} -{" "}
-                  {endDate.toLocaleDateString()}
-                </p>
-              )}
-            </div>
+      <div className="p-4 pt-6 md:p-8 max-w-full mx-auto">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold">Chào mừng quay trở lại 👋</h2>
+          <div className="flex items-center gap-3">
+            <select
+              value={time}
+              onChange={(e) => setTime(e.target.value as TimeFrame)}
+              className="rounded-xl border bg-white px-3 py-1 text-[#626363]"
+            >
+              <option value="d7">7 ngày gần đây</option>
+              <option value="d14">14 ngày gần đây</option>
+              <option value="d30">30 ngày gần đây</option>
+            </select>
+            <p>
+              {startDate.toLocaleDateString()} -{" "}
+              {endDate.toLocaleDateString()}
+            </p>
           </div>
-          {/* <div className="relative">
-            <Input
-              className="rounded-3xl h-[3rem] pl-[1.5rem] mt-4"
-              placeholder="Search by tracking code"
-              onKeyDown={handleKeyDown}
-            />
-            <Search className="absolute right-[15px] top-[12px]" />
-          </div> */}
-          {/* <div className="grid grid-cols-4 mt-5 max-sm:grid-cols-1">
-            <a
-              onClick={() => goListpackage("Pre-Transit")}
-              className="cursor-pointer max-sm:mb-3"
-            >
-              <div className="shadow-xl shadow-[#F9F0FF] p-8 rounded-2xl sm:mr-3 border">
-                <div className="float-left">
-                  <Box className="h-10 w-10 text-[#722ED1]" strokeWidth={1} />
-                </div>
-                <p className="text-[#722ED1] text-lg font-bold">PRE-TRANSIT</p>
-                <p className="font-bold text-3xl">{numbers.pendingPickup}</p>
-              </div>
-            </a>
-            <a
-              onClick={() => goListpackage("In-Transit")}
-              className="cursor-pointer"
-            >
-              <div className="shadow-xl shadow-[#ddf3f4] p-8 rounded-2xl sm:mr-3 bg-[#fff] max-sm:mb-3 border">
-                <div className="float-left">
-                  <Plane className="text-[#02baba] w-10 h-10" strokeWidth={1} />
-                </div>
-                <p className="text-[#02baba] text-lg font-bold">IN-TRANSIT</p>
-                <p className="font-bold text-3xl">{numbers.intransit}</p>
-              </div>
-            </a>
-            <a
-              onClick={() => goListpackage("Delivered")}
-              className="cursor-pointer max-sm:mb-3"
-            >
-              <div className="shadow-xl shadow-[#f0fff3] p-8 rounded-2xl sm:mr-3 bg-[#fff] border">
-                <div className="float-left">
-                  <PackageCheck
-                    className="h-10 w-10 text-[#48be78]"
-                    strokeWidth={1}
-                  />
-                </div>
-                <p className="text-[#48be78] text-lg font-bold">DELIVERED</p>
-                <p className="font-bold text-3xl">{numbers.delivered}</p>
-              </div>
-            </a>
-            <a
-              onClick={() => goListpackage("Canceled")}
-              className="cursor-pointer"
-            >
-              <div className="shadow-xl shadow-[#FFF1F0] p-8 rounded-2xl border">
-                <div className="float-left">
-                  <PackageX
-                    className="h-10 w-10 text-[#F5222D]"
-                    strokeWidth={1}
-                  />
-                </div>
-                <p className="text-[#F5222D] text-lg font-bold">CANCELED</p>
-                <p className="font-bold text-3xl">{numbers.cancelled}</p>
-              </div>
-            </a>
-          </div> */}
-          {/* <Tabs defaultValue="overview" className="space-y-4 mt-5">
-            <TabsContent value="overview" className="space-y-4">
-              <div className="">
-                <Card className="">
-                  <CardHeader>
-                    <CardTitle className="text-xl">Thống kê đơn hàng</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <OrderStatsChart chartData={chartData} options={options} />
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs> */}
-          <ChartBackUp
-            chartData={formattedData}
-            goListpackage={goListpackage}
-          />
         </div>
+
+        <ChartBackUp chartData={formatChartData} goListpackage={goListPackage} />
       </div>
     </>
   );

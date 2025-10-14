@@ -4,13 +4,15 @@ import { EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { useRouter } from "@/routes/hooks";
-import { userService } from "@/services/auth";
-import { useAuthStore } from "@/store/authStore";
-import "react-toastify/dist/ReactToastify.css";
 import PageHead from "@/components/shared/page-head";
+import { useRouter } from "@/routes/hooks";
+import { login } from "@/services/auth";
+import { useAuthStore } from "@/store/authStore";
+import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const router = useRouter();
   const [shouldShowPassword, setShouldShowPassword] = useState<boolean>(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -19,23 +21,15 @@ const LoginPage = () => {
   const [password, setPassword] = useState<string>("");
 
   const handleLoginBtnClick = async () => {
-    try {
-      const loginResponse = await userService.login(email, password);
-
-      if (!loginResponse.access_token) {
-        toast.error("Đăng nhập thất bại");
-        return;
-      }
+    const loginResponse = await login(email, password);
+    if (loginResponse.access_token) {
       setIsLogin(true);
-
       useAuthStore
         .getState()
         .login(loginResponse.access_token, loginResponse.user);
 
-      window.location.reload();
-    } catch (err) {
-      console.log(err);
-      toast.error("Lỗi server");
+      toast.success("Đăng nhập thành công!");
+      navigate("/dashboard", { replace: true });
     }
   };
 
@@ -117,3 +111,4 @@ const LoginPage = () => {
 };
 
 export { LoginPage };
+

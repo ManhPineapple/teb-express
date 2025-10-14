@@ -200,7 +200,10 @@ export default function PackagesTable({
           } else if (fileBlob.type.startsWith("image/")) {
             files.push({ blob: fileBlob, type: "image" });
           } else {
-            toast.error("Unsupported file type", { autoClose: 3000 });
+            toast.error(
+              "Kiểu tệp tải xuống không hỗ trợ (Yêu cầu pdf/image).",
+              { autoClose: 3000 }
+            );
           }
         } catch (error) {
           toast.error("Lỗi khi lấy tệp từ URL", { autoClose: 3000 });
@@ -210,9 +213,6 @@ export default function PackagesTable({
 
         if (!res || res.error) {
           toast.error(res?.errorMessage || "Lỗi khi lấy tệp", {
-            autoClose: 3000,
-          });
-          toast.error(res?.errorMessage || "Error fetching file", {
             autoClose: 3000,
           });
           return;
@@ -324,23 +324,12 @@ export default function PackagesTable({
     };
 
     const result = await processPackage(params);
-
-    if (!result || !result.success) {
-      toast.error(result.message, {
-        autoClose: 3000,
-      });
-      return;
+    if (result.success) {
+      toast.success(
+        "Đơn hàng đang được xử lý và mã theo dõi đã được tạo, thông tin xử lý sẽ được cập nhật sau."
+      );
     }
 
-    let msg = "Tạo mã theo dõi thành công";
-    if (result.promotion_label) {
-      msg =
-        "Đơn hàng đang được xử lý và mã theo dõi đã được tạo, thông tin xử lý sẽ được cập nhật sau.";
-    }
-
-    toast.success(msg, {
-      autoClose: 3000,
-    });
     setTimeout(() => {
       window.location.reload();
     }, 5000);

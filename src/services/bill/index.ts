@@ -1,4 +1,7 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
+
+// 📄 Get list of transactions
 export async function getTransactions(
   page: number,
   limit: number,
@@ -8,96 +11,96 @@ export async function getTransactions(
   try {
     const queryString =
       `?page=${page}&limit=${limit}` +
-      (search.get("start_date")
+      (search?.get("start_date")
         ? `&start_date=${search.get("start_date")}`
         : "") +
-      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (search?.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
       (selectedType ? `&type=${selectedType}` : "");
 
-    const res = await CustomAxios.get(`/transactions${queryString}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/transactions${queryString}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách giao dịch");
   }
 }
 
+// 💰 Get list of bills
 export async function getBillList(page: number, limit: number, search?: any) {
   try {
     const queryString =
       `?page=${page}&limit=${limit}` +
-      (search.get("start_date")
+      (search?.get("start_date")
         ? `&start_date=${search.get("start_date")}`
         : "") +
-      (search.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
-      (search.get("search") ? `&search=${search.get("search")}` : "");
+      (search?.get("end_date") ? `&end_date=${search.get("end_date")}` : "") +
+      (search?.get("search") ? `&search=${search.get("search")}` : "");
 
-    const res = await CustomAxios.get(`/bills/list${queryString}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/bills/list${queryString}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách hóa đơn");
   }
 }
 
+// 🧾 Get bill detail
 export async function getBillDetails(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/${code}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/bills/${code}`);
+    return data;
   } catch (error) {
-    throw new Error("Failed to fetch bill detail");
+    return handleAxiosError(error, "Không thể tải chi tiết hóa đơn");
   }
 }
 
+// 📦 Get packages in a bill
 export async function getBillPackages(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/packages/${code}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/bills/packages/${code}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách kiện hàng");
   }
 }
 
+// 💸 Get extra fee info
 export async function getExtraFee(code: string) {
   try {
-    const res = await CustomAxios.get(`/bills/fees/${code}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/bills/fees/${code}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải phí phát sinh");
   }
 }
 
+// 🧾 Get invoice download URL
 export async function getInvoiceDownloadUrl(invoiceId: string) {
   try {
-    const res = await CustomAxios.get(`/bills/invoice/${invoiceId}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/bills/invoice/${invoiceId}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải link hóa đơn");
   }
 }
 
+// 📥 Download invoice file
 export async function getInvoice(invoiceUrl: string) {
   try {
-    const res = await CustomAxios.get(
+    const { data } = await CustomAxios.get(
       `/uploads/file-export/download?type=export_billing&url=${invoiceUrl}`,
       { responseType: "blob" }
     );
-    return res.data;
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải file hóa đơn");
   }
 }
 
+// 🧾 Create pending transaction
 export async function createPendingTransaction(body: any) {
   try {
-    const res = await CustomAxios.post('/transactions', body);
-    return res.data;
+    const { data } = await CustomAxios.post("/transactions", body);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tạo giao dịch mới");
   }
 }

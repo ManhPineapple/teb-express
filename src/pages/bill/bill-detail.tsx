@@ -55,35 +55,23 @@ const BillDetail: React.FC = () => {
   const [extraFee, setExtraFee] = useState<ExtraFee[] | null>([]);
   useEffect(() => {
     const fetchBillDetail = async () => {
-      try {
-        if (code) {
-          const data = await getBillDetails(code);
-          setBillDetail(data.bill);
-        }
-      } catch (error) {
-        /* empty */
+      if (code) {
+        const data = await getBillDetails(code);
+        setBillDetail(data.bill);
       }
     };
 
     const fetchBillPackage = async () => {
-      try {
-        if (code) {
-          const data = await getBillPackages(code);
-          setBillPackage(data.packages);
-        }
-      } catch (error) {
-        /* empty */
+      if (code) {
+        const data = await getBillPackages(code);
+        setBillPackage(data.packages);
       }
     };
 
     const fetchExtraFee = async () => {
-      try {
-        if (code) {
-          const data = await getExtraFee(code);
-          setExtraFee(data.fees);
-        }
-      } catch (error) {
-        /* empty */
+      if (code) {
+        const data = await getExtraFee(code);
+        setExtraFee(data.fees);
       }
     };
 
@@ -135,7 +123,8 @@ const BillDetail: React.FC = () => {
               <TableHead className="text-right">Phí tạo</TableHead>
             </TableRow>
           </TableHeader>
-          {billPackage && billPackage.length > 0 &&
+          {billPackage &&
+            billPackage.length > 0 &&
             billPackage?.map((item) => (
               <TableBody>
                 <TableRow>
@@ -148,9 +137,9 @@ const BillDetail: React.FC = () => {
                   <TableCell>
                     {item.created_at
                       ? format(
-                        new Date(item.created_at),
-                        "dd/MM/yyyy - HH:mm:ss"
-                      )
+                          new Date(item.created_at),
+                          "dd/MM/yyyy - HH:mm:ss"
+                        )
                       : "N/A"}
                   </TableCell>
                   <TableCell>{item.tracking_number}</TableCell>
@@ -178,7 +167,8 @@ const BillDetail: React.FC = () => {
               <TableHead className="text-right">Phí bổ sung</TableHead>
             </TableRow>
           </TableHeader>
-          {extraFee?.length && extraFee?.length > 0 &&
+          {extraFee?.length &&
+            extraFee?.length > 0 &&
             extraFee?.map((item) => (
               <TableBody>
                 <TableRow>
@@ -192,9 +182,9 @@ const BillDetail: React.FC = () => {
                   <TableCell>
                     {item.created_at
                       ? format(
-                        new Date(item.created_at),
-                        "dd/MM/yyyy - HH:mm:ss"
-                      )
+                          new Date(item.created_at),
+                          "dd/MM/yyyy - HH:mm:ss"
+                        )
                       : "N/A"}
                   </TableCell>
                   <TableCell>{item.type_name}</TableCell>

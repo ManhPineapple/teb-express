@@ -9,9 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { validateAddress } from "@/services/packages";
+import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { TriangleAlert } from "lucide-react";
 
 type AddressProps = {
   add: string;
@@ -29,7 +29,7 @@ export function ModalConfirmAddress({ add, id }: AddressProps) {
 
     try {
       const res = await validateAddress(params);
-      if (res.data.success) {
+      if (res.success) {
         toast.success("Xác thực địa chỉ thành công");
       }
       setOpen(false);

@@ -29,19 +29,14 @@ const LianlianTopup: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      const body = {
-        type: 8,
-        transaction_id: transactionId,
-        amount: amount,
-      };
+    const body = {
+      type: 8,
+      transaction_id: transactionId,
+      amount: amount,
+    };
 
-      await createPendingTransaction(body);
-      toast.success("Yêu cầu của bạn đang được xử lý");
-    } catch (error) {
-      toast.error("Something went wrong");
-      console.error(error);
-    }
+    const res = await createPendingTransaction(body);
+    if (res.success) toast.success("Yêu cầu của bạn đang được xử lý");
   };
 
   return (

@@ -1,21 +1,20 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
-export async function getListServices() {
+export const getListServices = async () => {
   try {
-    const res = await CustomAxios.get(`/services`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/services`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách dịch vụ");
   }
-}
+};
 
-export async function getServicePrices() {
+export const getServicePrices = async () => {
   try {
-    const res = await CustomAxios.get(`/services?has_price=yes`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/services?has_price=yes`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải bảng giá dịch vụ");
   }
-}
+};

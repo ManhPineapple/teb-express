@@ -1,6 +1,6 @@
 import PageHead from "@/components/shared/page-head";
 import { OPTIONS_PACKAGES } from "@/constants/auth";
-import { userService } from "@/services/auth";
+import { signup } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon } from "lucide-react";
 import React, { useState } from "react";
@@ -37,17 +37,12 @@ const SignUp: React.FC = () => {
     // @ts-expect-error no-error
     values.package = Number(values.package);
 
-    try {
-      const res = await userService.signup(values);
-      if (res.errors && res.errors.length) {
-        toast.error(res.errors[0]);
-      } else {
-        setIsSuccess(true);
-        toast.success("Đăng ký thành công");
-      }
-    } catch (error) {
-      console.error("Lỗi khi đăng ký:", error);
-      toast.error("Đã xảy ra lỗi, vui lòng thử lại");
+    const res = await signup(values);
+    if (res.errors && res.errors.length) {
+      toast.error(res.errors[0]);
+    } else {
+      setIsSuccess(true);
+      toast.success("Đăng ký thành công");
     }
   };
 
@@ -202,7 +197,9 @@ const SignUp: React.FC = () => {
             </p>
             <p className="text-center text-sm text-gray-600 mt-2">
               Hoặc liên hệ
-              <span className="mx-1 font-medium text-[#008A7F]">0782.374.341</span>
+              <span className="mx-1 font-medium text-[#008A7F]">
+                0782.374.341
+              </span>
               để được hỗ trợ xử lý sớm hơn.
             </p>
           </div>

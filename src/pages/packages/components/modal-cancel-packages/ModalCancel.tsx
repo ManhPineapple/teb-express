@@ -21,8 +21,7 @@ export function ModalCancel(ids: ModalCancelProps) {
   const handleConfirm = async () => {
     try {
       const result = await cancelPackages(ids);
-      console.log("Packages cancelled successfully", result);
-      toast.success("Hủy đơn hàng thành công");
+      if (result.success) toast.success("Hủy đơn hàng thành công");
       setOpen(false);
       setTimeout(() => {
         window.location.reload();

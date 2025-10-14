@@ -1,5 +1,6 @@
+import PageHead from "@/components/shared/page-head";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { userService } from "@/services/auth";
+import { getUserInfo } from "@/services/auth";
 import { getTransactions } from "@/services/bill";
 import { ArrowRightLeft, FileClock, FileCog, Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -10,7 +11,6 @@ import PendingTab from "./bill-tab/pending";
 import Topup from "./bill-tab/top-up";
 import Withdraw from "./bill-tab/withdraw";
 import WalletBalance from "./components/wallet-balance";
-import PageHead from "@/components/shared/page-head";
 
 const Bill: React.FC = () => {
   const [balance, setBalance] = useState(0.0);
@@ -26,17 +26,13 @@ const Bill: React.FC = () => {
   });
 
   const handleGetTransaction = async () => {
-    try {
-      const result = await getTransactions(1, 50, searchParams);
-      setBalance(result.balance);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    }
+    const result = await getTransactions(1, 50, searchParams);
+    setBalance(result.balance);
   };
 
   const handleGetHolding = async () => {
     try {
-      const result = await userService.getUserInfo();
+      const result = await getUserInfo();
       setPendingAmount(result.user.holding_money);
       setUserInfo(result.user.user_info);
     } catch (error) {

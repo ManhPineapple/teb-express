@@ -36,25 +36,17 @@ const PayoneerTopup: React.FC = () => {
       return;
     }
 
-    try {
-      const body = {
-        type: 5,
-        transaction_id: transactionId,
-        amount: Number(amount),
-      };
+    const body = {
+      type: 5,
+      transaction_id: transactionId,
+      amount: Number(amount),
+    };
 
-      const result = await createPendingTransaction(body);
-      if (!result || !result.success) {
-        toast.error(result.message);
-        return;
-      }
+    const result = await createPendingTransaction(body);
+    if (result.success) {
       toast.success("Yêu cầu của bạn đang được xử lý");
-    } catch (error) {
-      toast.error("Đã có lỗi xảy ra");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   return (

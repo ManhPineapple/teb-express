@@ -24,19 +24,6 @@ type ModalCancelProps = {
 };
 export function ModalCancelPackages({ selectedRowsLabel }: ModalCancelProps) {
   const [open, setOpen] = useState(false);
-  //   const handleConfirm = async () => {
-  //     try {
-  //       const result = await cancelPackages(ids);
-  //       console.log("Packages cancelled successfully", result);
-  //       toast.success("Packages cancelled successfully");
-  //       setOpen(false);
-  //       setTimeout(() => {
-  //         window.location.reload();
-  //       }, 3000);
-  //     } catch (error) {
-  //       console.error("Failed to cancel packages:", error);
-  //     }
-  //   };
 
   const handleCancel = async () => {
     const selectedInvalid = selectedRowsLabel.filter(

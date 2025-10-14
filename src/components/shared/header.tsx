@@ -1,6 +1,6 @@
 import { navItems } from "@/constants/data";
 import { usePathname } from "@/routes/hooks";
-import { userService } from "@/services/auth";
+import { getUserInfo } from "@/services/auth";
 import { Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,12 +33,12 @@ export default function Header() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const navigate = useNavigate();
 
-  const getUserInfo = async () => {
-    const response = await userService.getUserInfo();
+  const getUserData = async () => {
+    const response = await getUserInfo();
     setUserInfo(response.user);
   };
   useEffect(() => {
-    getUserInfo();
+    getUserData();
   }, []);
 
   return (

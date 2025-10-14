@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -93,7 +93,7 @@ export function ChartBackUp({
                 onClick={() => setActiveChart(chart)}
               >
                 <span
-                  //@ts-ignore
+                  //@ts-expect-error has field
                   className={`text-xs  text-[${chartConfig[chart].color}] flex whitespace-nowrap`}
                 >
                   {chartConfig[chart].label.toLocaleUpperCase()}

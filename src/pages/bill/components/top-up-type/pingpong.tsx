@@ -36,25 +36,18 @@ const PingpongTopup: React.FC = () => {
       return;
     }
 
-    try {
-      const body = {
-        type: 6,
-        transaction_id: transactionId,
-        amount: Number(amount),
-      };
+    const body = {
+      type: 6,
+      transaction_id: transactionId,
+      amount: Number(amount),
+    };
 
-      const result = await createPendingTransaction(body);
-      if (!result || !result.success) {
-        toast.error(result.message);
-        return;
-      }
+    const result = await createPendingTransaction(body);
+    if (result.success) {
       toast.success("Yêu cầu của bạn đang được xử lý");
-    } catch (error) {
-      toast.error("Something went wrong");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -108,9 +101,9 @@ const PingpongTopup: React.FC = () => {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-                <Button onClick={handleSubmit} disabled={isSubmitting}>
-                  {isSubmitting ? "Đang lưu..." : "Lưu"}
-                </Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Đang lưu..." : "Lưu"}
+        </Button>
         <div className="w-2/3 ml-auto text-xs text-right italic">
           Thời gian xử lý khoảng 15 phút. Nếu tiền không được chuyển vào topup
           sau thời gian này, vui lòng liên hệ bộ phận support của AnanBay để

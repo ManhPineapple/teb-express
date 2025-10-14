@@ -206,7 +206,7 @@ export default function PackageDetailChina() {
       pdf.save(`barcode_${packageDetail!.code_package}.pdf`);
     } catch (error) {
       console.error("Error generating barcode:", error);
-      toast.error("Error generating barcode", {
+      toast.error("Lỗi khi tạo barcode, hãy thử lại sau", {
         autoClose: 3000,
       });
     }

@@ -7,7 +7,7 @@ interface UpdateUserPayload {
   name: string;
 }
 
-const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string) => {
   try {
     const { data } = await CustomAxios.post("/auth/sign-in", {
       email,
@@ -15,20 +15,20 @@ const login = async (email: string, password: string) => {
     });
     return data;
   } catch (error) {
-    return handleAxiosError(error);
+    return handleAxiosError(error, "Đăng nhập thất bại");
   }
 };
 
-const signup = async (user: any) => {
+export const signup = async (user: any) => {
   try {
     const { data } = await CustomAxios.post("/auth/sign-up", { user });
     return data;
   } catch (error) {
-    return handleAxiosError(error);
+    return handleAxiosError(error, "Đăng ký thất bại");
   }
 };
 
-const getUserInfo = async () => {
+export const getUserInfo = async () => {
   try {
     const { data } = await CustomAxios.get("/users");
     return data;
@@ -37,7 +37,7 @@ const getUserInfo = async () => {
   }
 };
 
-const updateUser = async (payload: UpdateUserPayload) => {
+export const updateUser = async (payload: UpdateUserPayload) => {
   try {
     if (payload.password === payload.newPassword) {
       throw new Error("Mật khẩu mới phải khác mật khẩu hiện tại");
@@ -54,11 +54,11 @@ const updateUser = async (payload: UpdateUserPayload) => {
     const { data } = await CustomAxios.put("/users/update", body);
     return data;
   } catch (error) {
-    return handleAxiosError(error);
+    return handleAxiosError(error, "Cập nhật thông tin thất bại");
   }
 };
 
-const getToken = async () => {
+export const getToken = async () => {
   try {
     const { data } = await CustomAxios.get("/users/token");
     return data?.token;
@@ -67,20 +67,11 @@ const getToken = async () => {
   }
 };
 
-const resetToken = async () => {
+export const resetToken = async () => {
   try {
     const { data } = await CustomAxios.put("/users/token");
     return data?.token;
   } catch (error) {
     return handleAxiosError(error);
   }
-};
-
-export const userService = {
-  login,
-  signup,
-  getUserInfo,
-  updateUser,
-  getToken,
-  resetToken,
 };

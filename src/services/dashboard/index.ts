@@ -1,4 +1,5 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
 export async function fetchAnalytics(startDate: any, endDate: any) {
   try {
@@ -7,7 +8,6 @@ export async function fetchAnalytics(startDate: any, endDate: any) {
     );
     return res.data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error);
   }
 }

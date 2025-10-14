@@ -1,4 +1,5 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
 interface LogsRequest {
   codes: string[];
@@ -8,7 +9,6 @@ export async function getLogs(payload: LogsRequest) {
     const res = await CustomAxios.post(`/packages/logs`, payload);
     return res.data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error);
   }
 }

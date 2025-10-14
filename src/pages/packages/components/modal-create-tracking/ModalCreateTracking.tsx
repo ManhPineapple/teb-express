@@ -26,20 +26,15 @@ export function ModalCreateTracking({ sumFee }: { sumFee: () => number }) {
       coupon_user_id: null,
     };
 
-    try {
-      const res = await processPackage(params);
-      if (res.success) {
-        toast.success(
-          "The order is being processed and tracking is created, processing information will be updated later"
-        );
-      }
-    } catch (err: any) {
-      console.error("Error processing package:", err);
-      toast.error(err.response?.data || err.message);
-    } finally {
-      setLoading(false);
-      setOpen(false);
+    const res = await processPackage(params);
+    if (res.success) {
+      toast.success(
+        "Tạo theo dõi đơn thành công, thông tin có thể cập nhật trễ vài phút."
+      );
     }
+
+    setLoading(false);
+    setOpen(false);
   };
 
   return (

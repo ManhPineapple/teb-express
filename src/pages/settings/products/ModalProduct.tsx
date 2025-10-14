@@ -8,7 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CustomAxios } from "@/utils/customAxios";
+import {
+  createProduct,
+  getProductLogs,
+  updateProduct,
+} from "@/services/settings/products";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -33,24 +37,25 @@ type ProductEdit = z.infer<typeof productSchema>;
 const ModalAddOrUpdateProduct: React.FC<{
   product?: ProductEdit;
   updateId?: number;
-}> = ({ product: initProduct, updateId: updateId }) => {
+}> = ({ product: initProduct, updateId }) => {
   const countries = ["US"];
-  if (!initProduct)
-    initProduct = {
-      name: "",
-      sku: "",
-      stock: 0,
-      price: 0,
-      detail: "",
-      material: "",
-      weight: 0,
-      country: "",
-      length: 0,
-      width: 0,
-      height: 0,
-    };
+  const defaultProduct: ProductEdit = {
+    name: "",
+    sku: "",
+    stock: 0,
+    price: 0,
+    detail: "",
+    material: "",
+    weight: 0,
+    country: "",
+    length: 0,
+    width: 0,
+    height: 0,
+  };
 
-  const [productEdit, setProductEdit] = useState<ProductEdit>(initProduct);
+  const [productEdit, setProductEdit] = useState<ProductEdit>(
+    initProduct || defaultProduct
+  );
   const [errors, setErrors] = useState<
     Partial<Record<keyof ProductEdit, string>>
   >({});
@@ -78,44 +83,37 @@ const ModalAddOrUpdateProduct: React.FC<{
     const { name, value } = e.target;
     setProductEdit((prev) => ({
       ...prev,
-      [name]:
-        name === "weight" ||
-        name === "length" ||
-        name === "width" ||
-        name === "height" ||
-        name === "stock" ||
-        name === "price"
-          ? parseFloat(value)
-          : value,
+      [name]: [
+        "weight",
+        "length",
+        "width",
+        "height",
+        "stock",
+        "price",
+      ].includes(name)
+        ? parseFloat(value)
+        : value,
     }));
   };
 
-  const handleSelectChange = (name: any, value: string) => {
+  const handleSelectChange = (name: keyof ProductEdit, value: string) => {
     setProductEdit((prev) => ({ ...prev, [name]: value }));
   };
 
   const onSave = async () => {
-    if (validateProduct()) {
-      try {
-        if (!updateId) {
-          const response = await CustomAxios.post(
-            "/products/create",
-            productEdit
-          );
-          if (response.status === 200)
-            toast.success("Create product successfully!");
-        } else {
-          const response = await CustomAxios.put(
-            `/products/${updateId}`,
-            productEdit
-          );
-          if (response.status === 200)
-            toast.success("Update product successfully!");
-        }
-        setTimeout(() => window.location.reload(), 1000);
-      } catch (e: any) {
-        toast.error(e.response.data || e.message);
+    if (!validateProduct()) return;
+
+    try {
+      if (!updateId) {
+        const res = await createProduct(productEdit);
+        if (res) toast.success("Tạo sản phẩm thành công!");
+      } else {
+        const res = await updateProduct(updateId, productEdit);
+        if (res) toast.success("Cập nhật sản phẩm thành công!");
       }
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error: any) {
+      toast.error(error?.response?.data || "Có lỗi xảy ra khi lưu sản phẩm");
     }
   };
 
@@ -370,20 +368,16 @@ export const ModalProductLog: React.FC<ModalProductLogProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      fetchLogs();
-    }
+    if (isOpen) fetchLogs();
   }, [isOpen]);
 
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await CustomAxios.get(`/products/log/${product.id}`);
-      if (response.status === 200) {
-        setLogs(response.data);
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data || "Failed to fetch logs");
+      const res = await getProductLogs(product.id);
+      if (res) setLogs(res);
+    } catch {
+      toast.error("Không thể tải lịch sử sản phẩm");
     } finally {
       setLoading(false);
     }
@@ -392,67 +386,65 @@ export const ModalProductLog: React.FC<ModalProductLogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
-          <h2 className="text-lg font-semibold mb-4">Lịch sử sản phẩm</h2>
-          <div className="overflow-auto max-h-60">
-            {loading ? (
-              <p>Loading...</p>
-            ) : logs.length > 0 ? (
-              <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <th className="border p-2">SKU</th>
-                    <th className="border p-2">Ngày cập nhật</th>
-                    <th className="border p-2">Số lượng</th>
-                    <th className="border p-2">Hình thức</th>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
+        <h2 className="text-lg font-semibold mb-4">Lịch sử sản phẩm</h2>
+        <div className="overflow-auto max-h-60">
+          {loading ? (
+            <p>Loading...</p>
+          ) : logs.length > 0 ? (
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border p-2">SKU</th>
+                  <th className="border p-2">Ngày cập nhật</th>
+                  <th className="border p-2">Số lượng</th>
+                  <th className="border p-2">Hình thức</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logs.map((log, index) => (
+                  <tr key={index} className="text-center">
+                    <td className="border p-2">{product.sku}</td>
+                    <td className="border p-2">
+                      {new Date(log.updated_at).toLocaleDateString("en-GB")}
+                    </td>
+                    <td className="border p-2">{log.quantity}</td>
+                    <td className="border p-2">
+                      {log.package_id > 0 ? (
+                        <>
+                          <span className="mx-1">Đơn</span>
+                          <Link
+                            to={`/package/details/${log.package_id}`}
+                            className="text-blue-500 underline"
+                          >
+                            {log.package_id}
+                          </Link>
+                        </>
+                      ) : log.package_id === -1 ? (
+                        "Sửa trực tiếp"
+                      ) : (
+                        "Nhập hàng"
+                      )}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {logs.map((log, index) => (
-                    <tr key={index} className="text-center">
-                      <td className="border p-2">{product.sku}</td>
-                      <td className="border p-2">
-                        {new Date(log.updated_at).toLocaleDateString("en-GB")}
-                      </td>
-                      <td className="border p-2">{log.quantity}</td>
-                      <td className="border p-2">
-                        {log.package_id > 0 ? (
-                          <>
-                            <span className="mx-1">Đơn</span>
-                            <Link
-                              to={`/package/details/${log.package_id}`}
-                              className="text-blue-500 underline"
-                            >
-                              {log.package_id}
-                            </Link>
-                          </>
-                        ) : log.package_id === -1 ? (
-                          "Sửa trực tiếp"
-                        ) : (
-                          "Nhập hàng"
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p>No logs available.</p>
-            )}
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button
-              className="px-4 py-2 bg-gray-500 text-white rounded-md"
-              onClick={onClose}
-            >
-              Close
-            </button>
-          </div>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No logs available.</p>
+          )}
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-md"
+            onClick={onClose}
+          >
+            Close
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

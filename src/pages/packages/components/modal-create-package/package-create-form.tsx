@@ -375,36 +375,30 @@ const OrderCreateForm = ({
 
     setLoading(true);
 
-    try {
-      if (values.image) {
-        const uploadUrl = await uploadImage(values.image);
-        values = {
-          ...values,
-          image_upload: uploadUrl,
-        };
-      }
-
-      await createPackage(values);
-      toast.success("Order created successfully");
-      modalClose();
-      const { setPackages } = usePackageStore.getState();
-      const newPackages = await getListPackages(
-        1,
-        50,
-        "",
-        "",
-        undefined,
-        undefined,
-        undefined
-      );
-      setPackages(newPackages.packages);
-    } catch (error) {
-      console.error("Error creating order:", error);
-      //@ts-expect-error expected
-      toast.error(error.response.data || error.message);
-    } finally {
-      setLoading(false);
+    if (values.image) {
+      const uploadUrl = await uploadImage(values.image);
+      values = {
+        ...values,
+        image_upload: uploadUrl,
+      };
     }
+
+    const res = await createPackage(values);
+    if (res.id) toast.success("Tạo đơn hàng thành công");
+    
+    modalClose();
+    const { setPackages } = usePackageStore.getState();
+    const newPackages = await getListPackages(
+      1,
+      50,
+      "",
+      "",
+      undefined,
+      undefined,
+      undefined
+    );
+    setPackages(newPackages.packages);
+    setLoading(false);
   };
 
   const selectedService =
@@ -947,9 +941,7 @@ const OrderCreateForm = ({
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
-                          <FormLabel>
-                            Dùng label có sẵn
-                          </FormLabel>
+                          <FormLabel>Dùng label có sẵn</FormLabel>
                         </div>
                       </FormControl>
                       <FormMessage />

@@ -1,71 +1,68 @@
 import { CustomAxios } from "@/utils/customAxios";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
+// 🎟️ Fetch all claims
 export async function fetchClaim() {
   try {
-    const res = await CustomAxios.get(`/tickets`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/tickets`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách yêu cầu");
   }
 }
 
-export const createClaim = async (payload: any) => {
+// 📝 Create new claim
+export async function createClaim(payload: any) {
   try {
-    const res = await CustomAxios.post(`/tickets`, payload);
-    return res;
+    const { data } = await CustomAxios.post(`/tickets`, payload);
+    return data;
   } catch (error) {
-    console.error("Error creating order:", error);
-    throw error;
+    return handleAxiosError(error, "Không thể tạo yêu cầu mới");
   }
-};
+}
 
+// 🔍 Fetch ticket detail
 export async function fetchTicket(id: number) {
   try {
-    const res = await CustomAxios.get(`/tickets/${id}`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/tickets/${id}`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải chi tiết yêu cầu");
   }
 }
 
+// 💬 Fetch messages in a ticket
 export async function fetchMessage(id: number) {
   try {
-    const res = await CustomAxios.get(`/tickets/${id}/messages`);
-    return res.data;
+    const { data } = await CustomAxios.get(`/tickets/${id}/messages`);
+    return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    return handleAxiosError(error, "Không thể tải danh sách tin nhắn");
   }
 }
 
-export const reply = async (
-  ticketId: number,
-  messageContent: string,
-  file: any
-) => {
+// 📩 Reply to a ticket
+export async function reply(ticketId: number, messageContent: string, file?: any) {
   try {
-    const res = await CustomAxios.post(`/tickets/${ticketId}/messages`, {
+    const { data } = await CustomAxios.post(`/tickets/${ticketId}/messages`, {
       ticket_id: ticketId,
       content: messageContent,
       urls: file || [],
     });
-    return res.data;
+    return data;
   } catch (error) {
-    console.error("Error creating reply:", error);
-    throw error;
+    return handleAxiosError(error, "Không thể gửi phản hồi");
   }
-};
+}
 
-export const updateFileTicket = async (payload: { file: File }) => {
+// 📎 Upload file to ticket
+export async function updateFileTicket(payload: { file: File }) {
   try {
     const formData = new FormData();
     formData.append("file", payload.file);
-    const res = await CustomAxios.post(`/tickets/file`, formData);
-    return res.data;
+    const { data } = await CustomAxios.post(`/tickets/file`, formData);
+    return data;
   } catch (error) {
-    console.error("Error creating reply:", error);
-    throw error;
+    return handleAxiosError(error, "Không thể tải lên tệp");
   }
-};
+}

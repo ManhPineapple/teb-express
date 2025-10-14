@@ -49,9 +49,10 @@ CustomAxios.interceptors.response.use(
     if (status === 401) {
       window.localStorage.removeItem("auth-storage");
       toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-      window.location.href = "/login";
-    } else if (status === 500) {
-      toast.error("Có lỗi xảy ra!");
+
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
     }
     return Promise.reject(error);
   }

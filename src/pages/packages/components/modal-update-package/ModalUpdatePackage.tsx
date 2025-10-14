@@ -51,6 +51,7 @@ type PackageDetailProps = {
 const ModalUpdatePackage = ({
   modalClose,
   packageDetail,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   packageListType,
 }: PackageDetailProps) => {
   const [selectedState, setSelectedState] = useState(packageDetail.state_code);
@@ -227,28 +228,20 @@ const ModalUpdatePackage = ({
     }
 
     setLoading(true);
-
-    try {
-      if (values.image) {
-        const uploadUrl = await uploadImage(values.image);
-        values = {
-          ...values,
-          cn_invoice_image: uploadUrl,
-        };
-      }
-      await updatePackages(packageDetail.id, values);
-      toast.success("Order updated successfully");
-      modalClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-    } catch (error) {
-      console.error("Error creating order:", error);
-      //@ts-expect-error expected
-      toast.error(error.response.data || error.message);
-    } finally {
-      setLoading(false);
+    if (values.image) {
+      const uploadUrl = await uploadImage(values.image);
+      values = {
+        ...values,
+        cn_invoice_image: uploadUrl,
+      };
     }
+    const res = await updatePackages(packageDetail.id, values);
+    if (res.success) toast.success("Cập nhật đơn hàng thành công");
+    modalClose();
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+    setLoading(false);
   };
 
   const selectedService =

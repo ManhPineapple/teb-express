@@ -164,12 +164,8 @@ export function ListClaimTable() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const claims = await fetchClaim();
-        setData(claims.tickets);
-      } catch (error) {
-        console.error("Error fetching claims:", error);
-      }
+      const claims = await fetchClaim();
+      setData(claims.tickets);
     };
 
     fetchData();

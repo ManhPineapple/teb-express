@@ -29,13 +29,8 @@ const ModalAddClaim: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     data.reason = Number(data.reason);
 
-    try {
-      const response = await createClaim(data);
-      if (response.status === 200) toast.success("Tạo khiếu nại thành công");
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.response.data.error);
-    }
+    const response = await createClaim(data);
+    if (response.status === 200) toast.success("Tạo khiếu nại thành công");
   };
 
   return (
