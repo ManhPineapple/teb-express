@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MAP_SHIPMENT_STATUS } from "@/constants/shipments";
+import { ContainerType, MAP_SHIPMENT_STATUS } from "@/constants/shipments";
 import { fulfillShipment, getListShipments } from "@/services/shipments";
 import {
   ColumnDef,
@@ -61,6 +61,10 @@ export function Shipments() {
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
 
+    const [showFulfillModal, setShowFulfillModal] = useState(false);
+  const [selectedCarrier, setSelectedCarrier] = useState<ContainerType>();
+  const [currentShipmentId, setCurrentShipmentId] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,10 +78,16 @@ export function Shipments() {
     fetchData();
   }, []);
 
-  const handleFulfillShipment = async (id: number) => {
-    setLoadingId(id);
+  const handleFulfillShipment = async () => {
+    if (!selectedCarrier || !currentShipmentId) {
+      toast.error("Vui lòng chọn hãng vận chuyển.");
+      return;
+    }
 
-    const res = await fulfillShipment(id);
+    setLoadingId(currentShipmentId);
+    setShowFulfillModal(false);
+
+    const res = await fulfillShipment(currentShipmentId, selectedCarrier);
     toast.success(res);
 
     const shipments = await getListShipments();
@@ -150,13 +160,16 @@ export function Shipments() {
         return <div className="text-right font-semibold">{formatted}</div>;
       },
     },
-    {
+{
       id: "actions",
       header: "ACTIONS",
-      cell: ({ row }) => (
+      cell: ({ row }: any) => (
         <div className="flex justify-center">
           <Button
-            onClick={() => handleFulfillShipment(row.original.id)}
+            onClick={() => {
+              setCurrentShipmentId(row.original.id);
+              setShowFulfillModal(true);
+            }}
             disabled={loadingId === row.original.id}
             className="bg-[#00978c] text-white font-bold px-4 py-2 rounded"
           >
@@ -337,6 +350,52 @@ export function Shipments() {
           </Button>
         </div>
       </div>
+
+      {showFulfillModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70">
+          <div className="bg-white rounded-xl p-6 w-[400px] shadow-xl">
+            <h2 className="text-lg font-bold mb-4 text-center text-[#00978c]">
+              Chọn hãng vận chuyển
+            </h2>
+
+            <div className="space-y-3 mb-5">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedCarrier === ContainerType.Ups}
+                  onChange={() => setSelectedCarrier(ContainerType.Ups)}
+                />
+                <span>Chuyển UPS</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedCarrier === ContainerType.FedEx}
+                  onChange={() => setSelectedCarrier(ContainerType.FedEx)}
+                />
+                <span>Chuyển FedEx</span>
+              </label>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowFulfillModal(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                className="bg-[#00978c] text-white"
+                onClick={handleFulfillShipment}
+                disabled={!selectedCarrier}
+              >
+                Xác nhận
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showImportModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-70">

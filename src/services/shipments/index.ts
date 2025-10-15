@@ -1,3 +1,4 @@
+import { ContainerType } from "@/constants/shipments";
 import { CustomAxios } from "@/utils/customAxios";
 import { handleAxiosError } from "@/utils/handleAxiosError";
 
@@ -28,9 +29,11 @@ export const getShipmentDetail = async (id: string | number) => {
   }
 };
 
-export const fulfillShipment = async (id: string | number) => {
+export const fulfillShipment = async (id: string | number, shipmentCarrier: ContainerType) => {
   try {
-    const { data } = await CustomAxios.post(`/shipments/fulfill/${id}`);
+    const { data } = await CustomAxios.post(`/shipments/fulfill/${id}`, {
+      container_type: shipmentCarrier
+    });
     return data;
   } catch (error) {
     return handleAxiosError(error, "Không thể xác nhận lô hàng");

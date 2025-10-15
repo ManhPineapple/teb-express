@@ -82,3 +82,9 @@ export const MAP_SHIPMENT_STATUS: Status = {
     className: "text-[#f5222d] bg-[#fff1f0]",
   },
 };
+
+export enum ContainerType {
+  Ups = 1,
+  Manual = 2,
+  FedEx = 3,
+}

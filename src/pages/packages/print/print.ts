@@ -142,7 +142,7 @@ export async function prints(url: string) {
 
   try {
     const res = await fetchLabel({url: url, type: "labels"})
-    const src = (window.webkitURL || window.URL).createObjectURL(res.data);
+    const src = (window.webkitURL || window.URL).createObjectURL(res);
 
     if (ext === "pdf") {
       printDocument(src);
@@ -150,7 +150,6 @@ export async function prints(url: string) {
       printImage(src);
     }
   } catch (error) {
-    console.error("Error printing:", error);
-    // Handle error as needed
+    console.error("Error fetching or printing label:", error);
   }
 }
