@@ -157,58 +157,73 @@ function PackageDatePickerWithRange({
       : undefined,
   });
 
+  const [byDate, setByDate] = React.useState(
+    searchParams.get("by_date") || "created_at"
+  );
+
+  // Update URL immediately when user changes the "by_date" dropdown
+  const handleChangeByDate = (value: string) => {
+    setByDate(value);
+    const params = new URLSearchParams(searchParams);
+    params.set("by_date", value);
+    params.set("page", "1");
+    setSearchParams(params);
+    window.location.reload();
+  };
+
   const handleCancel = () => {
     searchParams.delete("start_date");
     searchParams.delete("end_date");
     searchParams.delete("by_date");
     setDate({ from: undefined, to: undefined });
+    setByDate("created_at");
     setSearchParams(searchParams);
     window.location.reload();
   };
 
-  const handleCreateDate = () => {
+  const handleApply = () => {
+    const params = new URLSearchParams(searchParams);
+
     if (date?.from && date?.to) {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        page: "1",
-        by_date: "create",
-        start_date: format(date.from, "yyyy-MM-dd"),
-        end_date: format(date.to, "yyyy-MM-dd"),
-      });
+      params.set("start_date", format(date.from, "yyyy-MM-dd"));
+      params.set("end_date", format(date.to, "yyyy-MM-dd"));
     } else {
-      searchParams.delete("start_date");
-      searchParams.delete("end_date");
-      searchParams.delete("by_date");
-      setSearchParams(searchParams);
+      params.delete("start_date");
+      params.delete("end_date");
     }
+
+    params.set("by_date", byDate);
+    params.set("page", "1");
+
+    setSearchParams(params);
     window.location.reload();
   };
 
-  // const handleAcceptDate = () => {
-  //   if (date?.from && date?.to) {
-  //     setSearchParams({
-  //       ...Object.fromEntries(searchParams),
-  //       page: "1",
-  //       by_date: "accept",
-  //       start_date: format(date.from, "yyyy-MM-dd"),
-  //       end_date: format(date.to, "yyyy-MM-dd"),
-  //     });
-  //   } else {
-  //     searchParams.delete("start_date");
-  //     searchParams.delete("end_date");
-  //     searchParams.delete("by_date");
-  //     setSearchParams(searchParams);
-  //   }
-  //   window.location.reload();
-  // };
-
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
+      {/* Dropdown for by_date */}
+      <select
+        className={cn(
+          "h-[40px] min-w-[160px] rounded-md border border-gray-300 bg-white",
+          "px-3 text-sm font-medium text-gray-700 shadow-sm",
+          "focus:outline-none focus:ring-2 focus:ring-[#00978c] focus:border-[#00978c]",
+          "hover:border-gray-400 transition-colors"
+        )}
+        value={byDate}
+        onChange={(e) => handleChangeByDate(e.target.value)}
+      >
+        <option value="created_at">Ngày tạo</option>
+        <option value="checkin_warehouse_at">Ngày nhập kho</option>
+        <option value="scan_weight_at">Ngày cân</option>
+        <option value="delivered_at">Ngày giao hàng</option>
+      </select>
+
+      {/* Date Range Picker */}
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
-            variant={"outline"}
+            variant="outline"
             className={cn(
               "w-[250px] justify-start text-left font-normal h-[40px]",
               !date && "text-muted-foreground"
@@ -229,7 +244,8 @@ function PackageDatePickerWithRange({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 z-10  bg-white" align="start">
+
+        <PopoverContent className="w-auto p-0 z-10 bg-white" align="start">
           <Calendar
             initialFocus
             mode="range"
@@ -238,14 +254,16 @@ function PackageDatePickerWithRange({
             onSelect={setDate}
             numberOfMonths={2}
           />
-          <div className="flex justify-end gap-2 my-2 r-0">
-            <Button onClick={handleCancel}>Hủy</Button>
-            <Button className="bg-green-400" onClick={handleCreateDate}>
-              Chọn
+          <div className="flex justify-end gap-2 my-2 mr-2">
+            <Button variant="outline" onClick={handleCancel}>
+              Hủy
             </Button>
-            {/* <Button className="bg-green-400" onClick={handleAcceptDate}>
-              AcceptDate
-            </Button> */}
+            <Button
+              className="bg-green-500 hover:bg-green-600"
+              onClick={handleApply}
+            >
+              Áp dụng
+            </Button>
           </div>
         </PopoverContent>
       </Popover>
