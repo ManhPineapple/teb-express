@@ -17,7 +17,6 @@ import {
   createTopupTransaction,
   updateTopupTransaction,
 } from "@/services/transaction";
-import axios from "axios";
 import { ArrowLeftRight, Copy } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -32,8 +31,8 @@ const BankingAccount = {
 };
 
 const BankingTopup: React.FC = () => {
-  const [exchangeRate, setExchangeRate] = useState(28000);
-  const [rateLastUpdate, setRateLastUpdate] = useState("01/01/2020");
+  const [exchangeRate, setExchangeRate] = useState(27200);
+  const [rateLastUpdate, setRateLastUpdate] = useState("24/10/2025");
   const [topupId, setTopupId] = useState<number>();
   const [usd, setUsd] = useState("");
   const [vnd, setVnd] = useState("");
@@ -49,24 +48,22 @@ const BankingTopup: React.FC = () => {
     []
   );
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    return `${String(d.getDate()).padStart(2, "0")}/${String(
-      d.getMonth() + 1
-    ).padStart(2, "0")}/${d.getFullYear()}`;
-  };
-
-  // Fetch exchange rate + create topup transaction
+  // const formatDate = (iso: string) => {
+  //   const d = new Date(iso);
+  //   return `${String(d.getDate()).padStart(2, "0")}/${String(
+  //     d.getMonth() + 1
+  //   ).padStart(2, "0")}/${d.getFullYear()}`;
+  // };
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
+    // const today = new Date().toISOString().split("T")[0];
 
-    axios
-      .get(`https://www.vietcombank.com.vn/api/exchangerates?date=${today}`)
-      .then(({ data }) => {
-        setExchangeRate(data.Data[0].sell);
-        setRateLastUpdate(formatDate(data.Date));
-      })
-      .catch(() => console.warn("⚠️ Không thể tải tỉ giá, sử dụng mặc định."));
+    // axios
+    //   .get(`https://www.vietcombank.com.vn/api/exchangerates?date=${today}`)
+    //   .then(({ data }) => {
+    //     setExchangeRate(data.Data[0].sell);
+    //     setRateLastUpdate(formatDate(data.Date));
+    //   })
+    //   .catch(() => console.warn("⚠️ Không thể tải tỉ giá, sử dụng mặc định."));
 
     createTopupTransaction()
       .then((res) => setTopupId(res.topup.id))
