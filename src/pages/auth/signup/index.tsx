@@ -38,9 +38,7 @@ const SignUp: React.FC = () => {
     values.package = Number(values.package);
 
     const res = await signup(values);
-    if (res.errors && res.errors.length) {
-      toast.error(res.errors[0]);
-    } else {
+    if (res.user) {
       setIsSuccess(true);
       toast.success("Đăng ký thành công");
     }

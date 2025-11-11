@@ -7,9 +7,15 @@ export function handleAxiosError(err: unknown, customErrorMessage?: string) {
   if (isAxiosError(err) && err.response) {
     const data = err.response.data;
 
-    if (typeof data === "object" && data?.error) {
-      toast.error(data.error);
-      return;
+    if (typeof data === "object") {
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+      if (data.errors && data.errors.length > 0) {
+        toast.error(data.errors[0]);
+        return;
+      }
     }
 
     if (typeof data === "string") {
@@ -20,5 +26,5 @@ export function handleAxiosError(err: unknown, customErrorMessage?: string) {
 
   console.error("Unhandled error:", err);
   toast.error(defaultMessage);
-  return err
+  return err;
 }
